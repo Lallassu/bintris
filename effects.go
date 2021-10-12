@@ -3,5 +3,6 @@ package main
 type Effect int
 
 const (
-	EffectBlobs = iota + 1
+	EffectMetaballs = iota + 1
+	EffectWobble
 )

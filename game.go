@@ -40,6 +40,7 @@ type Game struct {
 	program gl.Program
 	projf   []float32
 	viewf   []float32
+	font    *Font
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -69,13 +70,15 @@ func (g *Game) Init(glctx gl.Context) {
 	g.glc.Enable(gl.DEPTH_TEST)
 	g.glc.DepthFunc(gl.LESS)
 
-	s2 := &Sprite{}
-	s2.Init(0, 320, 0, 1.0, "bg3.png", g)
-	g.AddObjects(s2)
+	g.font = &Font{}
+	g.font.Init(g)
 
-	s1 := &Sprite{}
-	s1.Init(210, 310, 1, 0.8, "logo.png", g)
-	g.AddObjects(s1)
+	g.AddObjects(g.font.AddText("bintris", 209, 310, 0.1, 0.8, EffectWobble)...)
+
+	s2 := &Sprite{}
+	s2.Init(0, 320, 0, 1.0, "bg3.png", nil, g)
+	s2.effect = EffectMetaballs
+	g.AddObjects(s2)
 
 	g.images = glutil.NewImages(g.glc)
 	g.fps = debug.NewFPS(g.images)

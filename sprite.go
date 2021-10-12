@@ -18,6 +18,7 @@ type Sprite struct {
 	gh        *Game
 	id        int
 	uModel    gl.Uniform
+	uEffect   gl.Uniform
 	aPosition gl.Attrib
 	aTexture  gl.Attrib
 	texture   gl.Texture
@@ -33,12 +34,14 @@ type Sprite struct {
 	height    float32
 	sx        float64
 	sy        float64
+	effect    Effect
 }
 
-func (s *Sprite) Init(x, y, z, scale float64, file string, g *Game) {
+func (s *Sprite) Init(x, y, z, scale float64, file string, img *image.RGBA, g *Game) {
 	s.gh = g
 	s.vertices = f32.Bytes(binary.LittleEndian, 0)
 	s.uModel = s.gh.glc.GetUniformLocation(s.gh.program, "model")
+	s.uEffect = s.gh.glc.GetUniformLocation(s.gh.program, "effect")
 	s.aPosition = s.gh.glc.GetAttribLocation(s.gh.program, "position")
 	s.aTexture = s.gh.glc.GetAttribLocation(s.gh.program, "texture")
 	s.scale = scale
@@ -60,12 +63,12 @@ func (s *Sprite) Init(x, y, z, scale float64, file string, g *Game) {
 	)
 
 	var err error
-	s.texture, s.sx, s.sy, err = s.LoadTexture(file)
+	s.texture, s.sx, s.sy, err = s.LoadTexture(file, img)
 	if err != nil {
 		panic(err)
 	}
 
-	//glc.GenerateMipmap(gl.TEXTURE_2D)
+	//g.glc.GenerateMipmap(gl.TEXTURE_2D)
 
 	s.id = s.gh.NewID()
 }
@@ -86,6 +89,7 @@ func (s *Sprite) Draw(dt float64) {
 
 	s.gh.glc.UniformMatrix4fv(s.uModel, s.modelf)
 	s.gh.glc.Uniform1f(s.gh.uTime, float32(s.gh.elapsed))
+	s.gh.glc.Uniform1i(s.uEffect, int(s.effect))
 
 	s.gh.glc.EnableVertexAttribArray(s.aPosition)
 	s.gh.glc.VertexAttribPointer(s.aPosition, 4, gl.FLOAT, false, 0, 0)
@@ -135,30 +139,31 @@ func EncodeObject(vertices ...[]float32) []byte {
 	return buf.Bytes()
 }
 
-func (s *Sprite) LoadTexture(name string) (tex gl.Texture, x float64, y float64, err error) {
-	imgFile, err := asset.Open(name)
-	if err != nil {
-		return
+func (s *Sprite) LoadTexture(name string, rgba *image.RGBA) (tex gl.Texture, x float64, y float64, err error) {
+	if rgba == nil {
+		imgFile, e := asset.Open(name)
+		if e != nil {
+			err = e
+			return
+		}
+
+		img, _, e := image.Decode(imgFile)
+		if e != nil {
+			err = e
+			return
+		}
+
+		rgba = image.NewRGBA(img.Bounds())
+		b := image.Rectangle{
+			Min: image.Point{0, 0},
+			Max: image.Point{img.Bounds().Max.X, img.Bounds().Max.Y},
+		}
+
+		//image_draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, image_draw.Src)
+		draw.Draw(rgba, b, img, image.Point{0, 0}, draw.Src)
 	}
-
-	img, _, err := image.Decode(imgFile)
-	if err != nil {
-		return
-	}
-
-	rgba := image.NewRGBA(img.Bounds())
-
-	b := image.Rectangle{
-		Min: image.Point{0, 0},
-		//Max: image.Point{233, 100},
-		Max: image.Point{img.Bounds().Max.X, img.Bounds().Max.Y},
-	}
-
-	//image_draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, image_draw.Src)
-	draw.Draw(rgba, b, img, image.Point{0, 0}, draw.Src)
-
-	x = float64(img.Bounds().Max.X)
-	y = float64(img.Bounds().Max.Y)
+	x = float64(rgba.Bounds().Max.X - rgba.Bounds().Min.X)
+	y = float64(rgba.Bounds().Max.Y - rgba.Bounds().Min.Y)
 
 	tex = s.gh.glc.CreateTexture()
 	s.gh.glc.ActiveTexture(gl.TEXTURE0)
@@ -167,8 +172,8 @@ func (s *Sprite) LoadTexture(name string) (tex gl.Texture, x float64, y float64,
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	// s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
 	s.gh.glc.TexImage2D(
 		gl.TEXTURE_2D,
