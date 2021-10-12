@@ -82,15 +82,17 @@ void main() {
     }
 
     // Draw cells
-    color += step(0.2*pos.y, m_dist);
+    color += step(0.4*pos.y, m_dist);
 
-	if (c.a > 0.0) {
-		color.r += 0.5;
-		color.g += 0.4;
-		color.b += 0.9;
+	if (color.r > 0.0 && color.b > 0.0 && color.g > 0.0) {
+		if (c.a > 0.0) {
+	  		 c.r += 0.1*cos(uTime);
+	   		 c.g += 0.1;
+	  		 c.b += 0.1*sin(uTime);
+	    }
 		color2 = c * vec4(color,1.0);
 	} else {
-		color2 = c * vec4(color,1.0);
+		color2 = c;
 	}
 }
 `

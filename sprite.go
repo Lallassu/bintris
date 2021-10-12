@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
-	"io/ioutil"
+	_ "image/png"
 
 	"github.com/go-gl/mathgl/mgl32"
 	"golang.org/x/mobile/asset"
@@ -15,9 +15,12 @@ import (
 )
 
 type Sprite struct {
+	gh        *Game
+	id        int
 	uModel    gl.Uniform
 	aPosition gl.Attrib
 	aTexture  gl.Attrib
+	texture   gl.Texture
 	vbo       gl.Buffer
 	vertices  []byte
 	x         float64
@@ -26,13 +29,10 @@ type Sprite struct {
 	scale     float64
 	modelf    []float32
 	rotation  float64
-	texture   gl.Texture
 	width     float32
 	height    float32
 	sx        float64
 	sy        float64
-	gh        *Game
-	id        int
 }
 
 func (s *Sprite) Init(x, y, z, scale float64, file string, g *Game) {
@@ -119,26 +119,7 @@ func (s *Sprite) UpdatePosition() {
 	rot := mgl32.HomogRotate3D(float32(mgl32.DegToRad(float32(s.rotation))), mgl32.Vec3{1.0, 0.0, 0.0})
 	trans = translate.Mul4(scalem4).Mul4(rot)
 
-	p := []float32{}
-	c1, c2, c3, c4 := trans.Cols()
-
-	p = append(p, c1.X())
-	p = append(p, c1.Y())
-	p = append(p, c1.Z())
-	p = append(p, c1.W())
-	p = append(p, c2.X())
-	p = append(p, c2.Y())
-	p = append(p, c2.Z())
-	p = append(p, c2.W())
-	p = append(p, c3.X())
-	p = append(p, c3.Y())
-	p = append(p, c3.Z())
-	p = append(p, c3.W())
-	p = append(p, c4.X())
-	p = append(p, c4.Y())
-	p = append(p, c4.Z())
-	p = append(p, c4.W())
-	s.modelf = p
+	s.modelf = trans[:]
 }
 
 // EncodeObject converts float32 vertices into a LittleEndian byte array.
@@ -154,20 +135,12 @@ func EncodeObject(vertices ...[]float32) []byte {
 	return buf.Bytes()
 }
 
-func (s *Sprite) LoadAsset(name string) ([]byte, error) {
-	f, err := asset.Open(name)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return ioutil.ReadAll(f)
-}
-
 func (s *Sprite) LoadTexture(name string) (tex gl.Texture, x float64, y float64, err error) {
 	imgFile, err := asset.Open(name)
 	if err != nil {
 		return
 	}
+
 	img, _, err := image.Decode(imgFile)
 	if err != nil {
 		return
@@ -180,6 +153,7 @@ func (s *Sprite) LoadTexture(name string) (tex gl.Texture, x float64, y float64,
 		//Max: image.Point{233, 100},
 		Max: image.Point{img.Bounds().Max.X, img.Bounds().Max.Y},
 	}
+
 	//image_draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, image_draw.Src)
 	draw.Draw(rgba, b, img, image.Point{0, 0}, draw.Src)
 

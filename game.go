@@ -153,50 +153,12 @@ func (g *Game) UpdateProjection() {
 	wh := float32(320)
 
 	projection := mgl32.Ortho2D(0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
-
-	projf := []float32{}
-	c1, c2, c3, c4 := projection.Cols()
-	projf = append(projf, c1.X())
-	projf = append(projf, c1.Y())
-	projf = append(projf, c1.Z())
-	projf = append(projf, c1.W())
-	projf = append(projf, c2.X())
-	projf = append(projf, c2.Y())
-	projf = append(projf, c2.Z())
-	projf = append(projf, c2.W())
-	projf = append(projf, c3.X())
-	projf = append(projf, c3.Y())
-	projf = append(projf, c3.Z())
-	projf = append(projf, c3.W())
-	projf = append(projf, c4.X())
-	projf = append(projf, c4.Y())
-	projf = append(projf, c4.Z())
-	projf = append(projf, c4.W())
-
-	g.projf = projf
+	g.projf = projection[:]
 }
 
 func (g *Game) UpdateView() {
 	view := mgl32.Translate3D(float32(0), float32(0), float32(0.0))
-	p := []float32{}
-	c1, c2, c3, c4 := view.Cols()
-	p = append(p, c1.X())
-	p = append(p, c1.Y())
-	p = append(p, c1.Z())
-	p = append(p, c1.W())
-	p = append(p, c2.X())
-	p = append(p, c2.Y())
-	p = append(p, c2.Z())
-	p = append(p, c2.W())
-	p = append(p, c3.X())
-	p = append(p, c3.Y())
-	p = append(p, c3.Z())
-	p = append(p, c3.W())
-	p = append(p, c4.X())
-	p = append(p, c4.Y())
-	p = append(p, c4.Z())
-	p = append(p, c4.W())
-	g.viewf = p
+	g.viewf = view[:]
 }
 
 func (g *Game) AddObjects(obj ...Object) {

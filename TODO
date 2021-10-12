@@ -1,2 +1,5 @@
 - UpdateProjection/UpdateView rewrite -> easier as m[:]
 - 320x320 -> Remove/Remake projection
+- Cleanup shaders (effects in frag shader instead)
+- 
+
