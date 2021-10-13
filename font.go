@@ -64,7 +64,7 @@ func (f *Font) Init(g *Game) {
 			}
 
 			rgba := image.NewRGBA(b)
-			draw.Draw(rgba, b, img, b.Bounds().Min, draw.Src)
+			draw.Draw(rgba, b, img, b.Bounds().Min, draw.Over)
 			f.chars[c].Init(0, 0, 0, 0, "", rgba, g)
 		}
 		x++

@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"encoding/binary"
-	"fmt"
 	"image"
 	"image/draw"
 	_ "image/png"
@@ -109,7 +107,7 @@ func (s *Sprite) Draw(dt float64) {
 }
 
 func (s *Sprite) Delete() {
-
+	s.hidden = true
 }
 func (s *Sprite) GetY() float64 {
 	return s.y
@@ -122,11 +120,8 @@ func (s *Sprite) GetID() int {
 }
 
 func (s *Sprite) UpdatePosition() {
-	//translate := mgl32.Translate3D(float32(int(c.x)-sz.WidthPx/2/100), float32(c.y), float32(c.z))
 	translate := mgl32.Translate3D(float32(s.x), float32(s.y), float32(s.z))
-	// 320 = img.Height
 	trans := translate
-	// 320 = img.Width x img.Height
 
 	scalem4 := mgl32.Scale3D(float32(s.sx*s.scale), float32(s.sy*s.scale), 0.0)
 
@@ -134,19 +129,6 @@ func (s *Sprite) UpdatePosition() {
 	trans = translate.Mul4(scalem4).Mul4(rot)
 
 	s.modelf = trans[:]
-}
-
-// EncodeObject converts float32 vertices into a LittleEndian byte array.
-func EncodeObject(vertices ...[]float32) []byte {
-	buf := bytes.Buffer{}
-	for _, v := range vertices {
-		err := binary.Write(&buf, binary.LittleEndian, v)
-		if err != nil {
-			panic(fmt.Sprintln("binary.Write failed:", err))
-		}
-	}
-
-	return buf.Bytes()
 }
 
 func (s *Sprite) LoadTexture(name string, rgba *image.RGBA) (tex gl.Texture, x float64, y float64, err error) {
@@ -182,8 +164,8 @@ func (s *Sprite) LoadTexture(name string, rgba *image.RGBA) (tex gl.Texture, x f
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-	// s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
-	// s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+	//s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+	//s.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
 	s.gh.glc.TexImage2D(
 		gl.TEXTURE_2D,

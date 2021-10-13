@@ -1,5 +1,6 @@
-- UpdateProjection/UpdateView rewrite -> easier as m[:]
+- Fix click position
+- Fix delete object
+- Re-use tile rows
 - 320x320 -> Remove/Remake projection
 - Cleanup shaders (effects in frag shader instead)
-- 
-
+- Rewrite the tile part of sharing VBO

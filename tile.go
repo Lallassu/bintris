@@ -47,27 +47,28 @@ func (t *TileSet) Init(scale float64, size int, number int, x, y float64, g *Gam
 	t.scale = scale
 
 	t.NumberStr = strconv.Itoa(number)
+	c := &Sprite{hidden: false}
+	t.Objects = append(t.Objects, c)
+
+	// TBD: rewrite this
+	c.Init(13, t.Y, 0.6, 1.0, "tile.png", nil, g)
+	tileVBO = c.vbo
+	tileInited = true
+	if tileInited {
+		c.vbo = tileVBO
+	}
 
 	for x := tileWidth / 4; x < tileWidth; x += tileWidth / 4 {
 		txt := g.font.AddText("0", float64(x-(tileWidth/8)+8), float64(y)-3, 0.7, 0.7, 0)
 		t.numberSlots = append(t.numberSlots, txt...)
-		txt = g.font.AddText("1", float64(x-(tileWidth/8)+6), float64(y), 0.7, 0.7, 0)
+		txt = g.font.AddText("1", float64(x-(tileWidth/8)+8), float64(y)-3, 0.7, 0.7, 0)
 		txt[0].(*Sprite).hidden = true
 		t.numberSlots = append(t.numberSlots, txt...)
-		t.number = g.font.AddText(t.NumberStr, 280, t.Y-2, 0.7, 0.8, 0)
-		t.Objects = append(t.Objects, t.number...)
 	}
-	c := &Sprite{hidden: false}
-	c.Init(13, t.Y, 0.6, 1.0, "tile.png", nil, g)
-	t.Objects = append(t.Objects, c)
 
+	t.number = g.font.AddText(t.NumberStr, 280, t.Y-2, 0.7, 0.8, 0)
+	t.Objects = append(t.Objects, t.number...)
 	// Create tileset based on size
-
-	//tileVBO = c.vbo
-	//tileInited = true
-	// } else {
-	// 	c.vbo = tileVBO
-	// }
 
 	//t.ClickFunc = func(x, y float32) {
 	//	c.Click(x, y)

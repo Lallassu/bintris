@@ -25,7 +25,8 @@ void main() {
 	} else if (effect == 2) { // Wobble
 	  	//p.y += sin(p.x + p.y + uTime);
 	} else if(effect == 3) {
-		//p.y += sin(uTime)*p.y*p.x;
+		//p.x += sin(uTime)*p.y*p.x/10.0;
+		//p.y += sin(uTime)*p.y*p.x/10.0;
 	}
 
 	gl_Position = projection * view * model * vec4(p.x, p.y,0.0, 1.0); 
@@ -88,9 +89,8 @@ void main() {
    		     }
    		 }
 
-   		 // Draw cells
-   		 color += step(0.4*pos.y, m_dist);
 
+		 color += step(0.4*pos.y, m_dist);
    		 if (color.r > 0.0 && color.b > 0.0 && color.g > 0.0) {
    		 	if (c.a > 0.0) {
    		   		 c.r += 0.1*cos(uTime);
