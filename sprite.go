@@ -15,26 +15,28 @@ import (
 )
 
 type Sprite struct {
-	gh        *Game
-	id        int
-	uModel    gl.Uniform
-	uEffect   gl.Uniform
-	aPosition gl.Attrib
-	aTexture  gl.Attrib
-	texture   gl.Texture
-	vbo       gl.Buffer
-	vertices  []byte
-	x         float64
-	y         float64
-	z         float64
-	scale     float64
-	modelf    []float32
-	rotation  float64
-	width     float32
-	height    float32
-	sx        float64
-	sy        float64
-	effect    Effect
+	gh         *Game
+	id         int
+	uModel     gl.Uniform
+	uEffect    gl.Uniform
+	aPosition  gl.Attrib
+	aTexture   gl.Attrib
+	texture    gl.Texture
+	vbo        gl.Buffer
+	vertices   []byte
+	x          float64
+	y          float64
+	z          float64
+	scale      float64
+	modelf     []float32
+	rotation   float64
+	width      float32
+	height     float32
+	sx         float64
+	sy         float64
+	effect     Effect
+	hidden     bool
+	objectType ObjectType
 }
 
 func (s *Sprite) Init(x, y, z, scale float64, file string, img *image.RGBA, g *Game) {
@@ -73,10 +75,18 @@ func (s *Sprite) Init(x, y, z, scale float64, file string, img *image.RGBA, g *G
 	s.id = s.gh.NewID()
 }
 
+func (s *Sprite) GetObjectType() ObjectType {
+	return ObjectTypeSprite
+}
+
 func (s *Sprite) Update(dt float64) {
 }
 
 func (s *Sprite) Draw(dt float64) {
+	if s.hidden {
+		return
+	}
+
 	s.UpdatePosition()
 
 	s.gh.glc.UseProgram(s.gh.program)

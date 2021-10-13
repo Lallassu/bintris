@@ -24,6 +24,8 @@ void main() {
 	    }
 	} else if (effect == 2) { // Wobble
 	  	//p.y += sin(p.x + p.y + uTime);
+	} else if(effect == 3) {
+		//p.y += sin(uTime)*p.y*p.x;
 	}
 
 	gl_Position = projection * view * model * vec4(p.x, p.y,0.0, 1.0); 
@@ -49,7 +51,7 @@ vec2 random2( vec2 p ) {
 void main() {	
 	vec4 c =  texture(image, TexCoords);
 
-	if (effect == 1) { // Metaballs
+	if (effect == 1 || effect == 3) { // Metaballs + MetaballsBlue
    		 vec2 u_resolution = vec2(600.0, 800.0);
 
    		 vec2 st = gl_FragCoord.xy/u_resolution.xy;
@@ -95,12 +97,24 @@ void main() {
    		    		 c.g += 0.1;
    		   		 c.b += 0.1*sin(uTime);
    		     }
+			 if (effect == 3) {
+		    	if (c.a > 0.0 && color.r > 0.5) {
+		    		c.b += sin(uTime)/5.0+pos.x*pos.y;
+		    		c.b = max(0.8, c.b);
+		    	}
+			}
    		 	color2 = c * vec4(color,1.0);
    		 } else {
    		 	color2 = c;
    		 }
 	} else if(effect == 2) {
-
+		color2 = c;
+	} else if(effect == 3) {
+		if (c.a > 0.0) {
+			c.b += sin(uTime)/5.0+pos.x*pos.y;
+			c.b = max(0.8, c.b);
+		}
+		color2 = c;
 	} else {
 		color2 = c;
 	}

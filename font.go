@@ -19,7 +19,7 @@ type Font struct {
 func (f *Font) Init(g *Game) {
 	f.g = g
 
-	imgFile, err := asset.Open("font2.png")
+	imgFile, err := asset.Open("font.png")
 	if err != nil {
 		return
 	}

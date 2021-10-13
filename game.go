@@ -66,19 +66,21 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.objects = make(map[int]Object)
 
-	g.glc.CullFace(gl.BACK)
-	g.glc.Enable(gl.DEPTH_TEST)
-	g.glc.DepthFunc(gl.LESS)
-
 	g.font = &Font{}
 	g.font.Init(g)
 
-	g.AddObjects(g.font.AddText("bintris", 209, 310, 0.1, 0.8, EffectWobble)...)
+	g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
 
 	s2 := &Sprite{}
 	s2.Init(0, 320, 0, 1.0, "bg3.png", nil, g)
 	s2.effect = EffectMetaballs
 	g.AddObjects(s2)
+
+	for i := 1; i < 8; i++ {
+		tSet := &TileSet{}
+		tSet.Init(1.0, 4, i, 12, float64(100+i*30), g)
+		g.AddObjects(tSet)
+	}
 
 	g.images = glutil.NewImages(g.glc)
 	g.fps = debug.NewFPS(g.images)
@@ -95,10 +97,11 @@ func (g *Game) Draw() {
 	dt := time.Since(g.lastTS).Seconds()
 	g.frameDt += dt
 	g.lastTS = time.Now()
-	g.glc.Enable(gl.BLEND)
+	g.glc.CullFace(gl.BACK)
+	//g.glc.Enable(gl.BLEND)
+	//g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	g.glc.Enable(gl.DEPTH_TEST)
 	g.glc.DepthFunc(gl.LESS)
-	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	g.glc.ClearColor(0.0, 0.0, 0.0, 1.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
