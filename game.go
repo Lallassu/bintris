@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	wMaxInvFPS = 1 / 30.0
+	wMaxInvFPS = 1 / 60.0
 )
 
 type Game struct {
@@ -98,14 +98,16 @@ func (g *Game) Draw() {
 	dt := time.Since(g.lastTS).Seconds()
 	g.frameDt += dt
 	g.lastTS = time.Now()
+
+	g.glc.FrontFace(gl.CCW)
 	g.glc.CullFace(gl.BACK)
+	g.glc.Enable(gl.CULL_FACE)
 	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	g.glc.Enable(gl.BLEND)
 	g.glc.Enable(gl.DEPTH_TEST)
 	g.glc.DepthFunc(gl.LESS)
 	g.glc.ClearColor(0, 0, 0, 0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
 	for {
 		if g.frameDt >= wMaxInvFPS {
 			g.elapsed += wMaxInvFPS
@@ -123,6 +125,7 @@ func (g *Game) Draw() {
 		g.objects[k].Draw(float64(wMaxInvFPS))
 	}
 
+	g.glc.FrontFace(gl.CW)
 	g.glc.Disable(gl.DEPTH_TEST)
 	g.fps.Draw(g.size)
 }
@@ -134,7 +137,7 @@ func (g *Game) Click(x, y float32) {
 	}
 	g.lastX = int(x)
 	g.lastY = int(y)
-	g.AddObjects(g.font.AddText(fmt.Sprintf("%vx%v", g.size.WidthPx, g.size.HeightPx), 100, 100, 1.0, 0.3, EffectMetaballsBlue)...)
+	//g.AddObjects(g.font.AddText(fmt.Sprintf("%vx%v", g.size.WidthPx, g.size.HeightPx), 100, 100, 1.0, 0.3, EffectMetaballsBlue)...)
 
 	ah := float32(g.size.HeightPx) / 320
 	aw := float32(g.size.WidthPx) / 320
@@ -182,7 +185,7 @@ func (g *Game) UpdateProjection() {
 	if h > float32(g.size.HeightPx) {
 		h = float32(g.size.HeightPx)
 	}
-	projection := mgl32.Ortho2D(0, ww, 0, h) //float32(g.size.HeightPx))
+	projection := mgl32.Ortho2D(0, ww, 0, h+10) //float32(g.size.HeightPx))
 	fmt.Printf("Left: %v Right: %v Top: %v Bottom: %v\n", 0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
 
 	g.projf = projection[:]

@@ -73,6 +73,25 @@ func (s *Sprite) Init(x, y, z, scale float64, file string, img *image.RGBA, g *G
 	s.id = s.gh.NewID()
 }
 
+func (s *Sprite) Copy(x, y, z, scale float64, fs *Sprite) {
+	s.gh = fs.gh
+	s.id = s.gh.NewID()
+	s.vbo = fs.vbo
+	s.texture = fs.texture
+	s.sx = fs.sx
+	s.sy = fs.sy
+	s.vertices = fs.vertices
+	s.rotation = fs.rotation
+	s.x = x
+	s.y = y
+	s.z = z
+	s.scale = scale
+	s.uModel = s.gh.glc.GetUniformLocation(s.gh.program, "model")
+	s.uEffect = s.gh.glc.GetUniformLocation(s.gh.program, "effect")
+	s.aPosition = s.gh.glc.GetAttribLocation(s.gh.program, "position")
+	s.aTexture = s.gh.glc.GetAttribLocation(s.gh.program, "texture")
+}
+
 func (s *Sprite) GetObjectType() ObjectType {
 	return ObjectTypeSprite
 }

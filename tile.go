@@ -3,8 +3,6 @@ package main
 import (
 	"strconv"
 	"time"
-
-	"golang.org/x/mobile/gl"
 )
 
 type TileSet struct {
@@ -31,7 +29,7 @@ type TileSet struct {
 const tileWidth = 241
 const tileHeight = 30
 
-var tileVBO gl.Buffer
+var tileSprite *Sprite
 var tileInited bool
 
 func (t *TileSet) Init(scale float64, size int, number int, x, y float64, g *Game) {
@@ -51,11 +49,12 @@ func (t *TileSet) Init(scale float64, size int, number int, x, y float64, g *Gam
 	t.Objects = append(t.Objects, c)
 
 	// TBD: rewrite this
-	c.Init(13, t.Y, 0.6, 1.0, "tile.png", nil, g)
-	tileVBO = c.vbo
-	tileInited = true
 	if tileInited {
-		c.vbo = tileVBO
+		c.Copy(13, t.Y, 0.6, 1.0, tileSprite)
+	} else {
+		c.Init(13, t.Y, 0.6, 1.0, "tile.png", nil, g)
+		tileSprite = c
+		tileInited = true
 	}
 
 	for x := tileWidth / 4; x < tileWidth; x += tileWidth / 4 {

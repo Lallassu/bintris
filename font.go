@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"golang.org/x/mobile/asset"
-	"golang.org/x/mobile/gl"
 )
 
 type Font struct {
@@ -78,25 +77,27 @@ func (f *Font) AddText(txt string, px, py, pz, scale float64, effect Effect) []O
 	}
 	txt = strings.ToLower(txt)
 
-	vbos := make(map[string]gl.Buffer)
+	//vbos := make(map[string]gl.Buffer)
 
 	for i, ch := range txt {
 		if _, ok := f.chars[string(ch)]; !ok {
 			continue
 		}
 		c := *f.chars[string(ch)]
-		if _, ok := vbos[string(ch)]; !ok {
-			vbos[string(ch)] = f.chars[string(ch)].vbo
-		}
+		//   if _, ok := vbos[string(ch)]; !ok {
+		//   	vbos[string(ch)] = f.chars[string(ch)].vbo
+		//   }
 
-		c.vbo = vbos[string(ch)]
-		c.id = f.g.NewID()
-		c.x = px + float64(i*(f.width))*scale
-		c.effect = effect
-		c.y = py
-		c.z = pz
-		c.scale = scale
-		obj = append(obj, &c)
+		s := &Sprite{}
+		s.Copy(px+float64(i*(f.width))*scale, py, pz, scale, &c)
+		s.effect = effect
+		//c.id = f.g.NewID()
+		//c.x = px + float64(i*(f.width))*scale
+		//c.effect = effect
+		//c.y = py
+		//c.z = pz
+		//c.scale = scale
+		obj = append(obj, s)
 	}
 	return obj
 }
