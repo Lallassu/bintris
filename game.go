@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -38,11 +37,12 @@ type Game struct {
 	lastY   int
 	size    size.Event
 	//objects map[int]Object
-	objects []Object
+	objects []Sprite
 	program gl.Program
 	projf   []float32
 	viewf   []float32
-	font    *Font
+	tex     Textures
+	//font    *Font
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -68,24 +68,46 @@ func (g *Game) Init(glctx gl.Context) {
 
 	//g.objects = make(map[int]Object)
 
-	g.font = &Font{}
-	g.font.Init(g)
+	//  g.font = &Font{}
+	//  g.font.Init(g)
 
-	for i := 1; i < 8; i++ {
-		tSet := &TileSet{}
-		tSet.Init(1.0, 4, i, 12, float64(100+i*30), g)
-		g.AddObjects(tSet)
+	//  for i := 1; i < 8; i++ {
+	//  	tSet := &TileSet{}
+	//  	tSet.Init(1.0, 4, i, 12, float64(100+i*30), g)
+	//  	g.AddObjects(tSet)
+	//  }
+	//g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
+
+	g.glc.FrontFace(gl.CCW)
+	g.glc.CullFace(gl.BACK)
+	g.glc.Enable(gl.CULL_FACE)
+	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	g.glc.Enable(gl.BLEND)
+	g.glc.Disable(gl.DEPTH_TEST)
+	g.glc.Disable(gl.SCISSOR_TEST)
+
+	//g.glc.DepthFunc(gl.LESS)
+
+	g.tex = Textures{}
+	if err = g.tex.Load("packed.png", "packed.json", g); err != nil {
+		panic(err)
 	}
-	g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
 
-	s2 := &Sprite{}
-	s2.Init(0, 320, 0, 1.0, "bg3.png", nil, g)
-	s2.effect = EffectMetaballs
+	for i := 0; i < 100; i++ {
+		s2 := Sprite{}
+		s2.Init(float32(i*10), float32(i*10), 0, 1.0, "4.png", g)
+		g.AddObjects(s2)
+	}
+	s2 := Sprite{}
+	s2.Init(0, 0, 0, 1.0, "bg3.png", g)
 	g.AddObjects(s2)
+
+	g.tex.Init()
 
 	g.images = glutil.NewImages(g.glc)
 	g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
+
 }
 
 func (g *Game) Stop() {
@@ -99,20 +121,18 @@ func (g *Game) Draw() {
 	g.frameDt += dt
 	g.lastTS = time.Now()
 
-	g.glc.FrontFace(gl.CCW)
-	g.glc.CullFace(gl.BACK)
-	g.glc.Enable(gl.CULL_FACE)
-	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	g.glc.Enable(gl.BLEND)
-	g.glc.Enable(gl.DEPTH_TEST)
-	g.glc.DepthFunc(gl.LESS)
-	g.glc.ClearColor(0, 0, 0, 0)
-	g.glc.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	g.glc.ClearColor(0.1, 0.1, 0.1, 1.0)
+	g.glc.Clear(gl.COLOR_BUFFER_BIT) // | gl.DEPTH_BUFFER_BIT)
+
 	for {
 		if g.frameDt >= wMaxInvFPS {
 			g.elapsed += wMaxInvFPS
 			for k := range g.objects {
-				g.objects[k].Update(float64(wMaxInvFPS))
+				if g.objects[k].Hidden() {
+					continue
+				}
+				//g.objects[k].Update(float64(wMaxInvFPS))
+				g.tex.Update()
 			}
 		} else {
 			break
@@ -122,12 +142,13 @@ func (g *Game) Draw() {
 	}
 
 	for k := range g.objects {
-		g.objects[k].Draw(float64(wMaxInvFPS))
+		if g.objects[k].Hidden() {
+			continue
+		}
+		//g.objects[k].Draw(float64(wMaxInvFPS))
 	}
-
-	g.glc.FrontFace(gl.CW)
-	g.glc.Disable(gl.DEPTH_TEST)
-	g.fps.Draw(g.size)
+	g.tex.Draw()
+	//g.fps.Draw(g.size)
 }
 
 func (g *Game) Click(x, y float32) {
@@ -144,18 +165,14 @@ func (g *Game) Click(x, y float32) {
 	y = 320 - (y / ah)
 	x = x / aw
 
-	for i := range g.objects {
-		switch g.objects[i].(type) {
-		case *TileSet:
-			c := g.objects[i].(*TileSet)
-			if !c.deleted {
-				if float64(x) > c.X && float64(x) < c.X+(float64(c.sizex)*float64(c.scale)) &&
-					float64(y) < c.Y && float64(y) > c.Y-(float64(c.sizey)*float64(c.scale)) {
-					c.Click(x, y)
-				}
-			}
-		}
-	}
+	// for i := range g.objects {
+	// 	if !c.deleted {
+	// 		if float64(x) > c.X && float64(x) < c.X+(float64(c.sizex)*float64(c.scale)) &&
+	// 			float64(y) < c.Y && float64(y) > c.Y-(float64(c.sizey)*float64(c.scale)) {
+	// 			c.Click(x, y)
+	// 		}
+	// 	}
+	// }
 }
 
 func (g *Game) Resize(e size.Event) {
@@ -165,8 +182,6 @@ func (g *Game) Resize(e size.Event) {
 }
 
 func (g *Game) UpdateProjection() {
-	ww := float32(320)
-	wh := float32(320)
 
 	//a := ww / wh
 	//v := float32(g.size.WidthPx) / float32(g.size.HeightPx)
@@ -180,15 +195,15 @@ func (g *Game) UpdateProjection() {
 
 	//aspect := float32(g.size.WidthPx) / float32(g.size.HeightPx)
 	//projection := mgl32.Ortho2D(0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
-	fmt.Printf("> %vx%v\n", g.size.WidthPx, g.size.HeightPx)
-	h := float32(320)
-	if h > float32(g.size.HeightPx) {
-		h = float32(g.size.HeightPx)
-	}
-	projection := mgl32.Ortho2D(0, ww, 0, h+10) //float32(g.size.HeightPx))
-	fmt.Printf("Left: %v Right: %v Top: %v Bottom: %v\n", 0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
+	// fmt.Printf("> %vx%v\n", g.size.WidthPx, g.size.HeightPx)
+	// h := float32(320)
+	// if h > float32(g.size.HeightPx) {
+	// 	h = float32(g.size.HeightPx)
+	// }
+	//projection := mgl32.Ortho2D(0, ww, 0, h+10) //float32(g.size.HeightPx))
+	//fmt.Printf("Left: %v Right: %v Top: %v Bottom: %v\n", 0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
 
-	g.projf = projection[:]
+	//g.projf = projection[:]
 }
 
 func (g *Game) UpdateView() {
@@ -196,7 +211,7 @@ func (g *Game) UpdateView() {
 	g.viewf = view[:]
 }
 
-func (g *Game) AddObjects(obj ...Object) {
+func (g *Game) AddObjects(obj ...Sprite) {
 	for i := range obj {
 		//if _, ok := g.objects[obj[i].GetID()]; !ok {
 		//g.objects[obj[i].GetID()] = obj[i]
@@ -205,9 +220,9 @@ func (g *Game) AddObjects(obj ...Object) {
 	}
 }
 
-func (g *Game) DeleteObject(obj Object) {
+func (g *Game) DeleteObject(obj Sprite) {
 	for i := range g.objects {
-		if obj.GetID() == g.objects[i].GetID() {
+		if obj.id == g.objects[i].id {
 			g.objects[i].Delete()
 			//		delete(g.objects, i)
 		}
@@ -219,5 +234,5 @@ func (g *Game) NewID() int {
 	defer g.idLock.Unlock()
 
 	g.ids++
-	return g.ids
+	return g.ids - 1
 }

@@ -1,14 +1,35 @@
 package main
 
 const vertexShader = `#version 300 es
+layout (location = 0) in vec2 vert;
+layout (location = 1) in vec2 uvs;
+
+out vec2 uv;
+
+void main() {
+	uv = uvs;
+	gl_Position = vec4(vert.x/400.0 - 1.0, vert.y/300.0 - 1.0, 0.0, 1.0);
+}
+`
+const fragmentShader = `#version 300 es
+in mediump vec2 uv;
+uniform sampler2D image;
+layout (location = 0) out highp vec4 color;
+
+void main() {
+	color = texture(image, uv);
+}
+
+`
+
+const vertexShader2 = `#version 300 es
 layout (location = 0) in vec4 position;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float uTime;
-uniform float uDt;
-uniform int effect;
+uniform highp float uTime;
+//uniform int effect;
 
 out vec2 TexCoords;
 out mediump vec4 vColor;
@@ -17,31 +38,20 @@ void main() {
     TexCoords = position.zw;
 
 	vec4 p = position;
-	if (effect == 0) { // EffectBlueShine
-	    vColor.b += (sin(uTime/2.0)*p.y)/p.x;
-	    vColor.b = max(vColor.b, 0.4);
-	    if (vColor.b > 0.9 && vColor.r > 0.9 && vColor.g > 0.5) {
-	    }
-	} else if (effect == 2) { // Wobble
-	  	//p.y += sin(p.x + p.y + uTime);
-	} else if(effect == 3) {
-		//p.x += sin(uTime)*p.y*p.x/10.0;
-		//p.y += sin(uTime)*p.y*p.x/10.0;
-	}
 
 	gl_Position = projection * view * model * vec4(p.x, p.y,0.0, 1.0); 
 	pos = position;
 }`
 
-const fragmentShader = `#version 300 es
+const fragmentShader2 = `#version 300 es
 in mediump vec2 TexCoords;
 uniform sampler2D image;
 in mediump vec4 pos;
 
 precision highp float;
-precision highp int;
-layout (location = 0) out mediump vec4 color2;
-uniform float uTime;
+precision lowp int;
+layout (location = 0) out highp vec4 color2;
+uniform highp float uTime;
 uniform int effect;
 
 
@@ -52,7 +62,9 @@ vec2 random2( vec2 p ) {
 void main() {	
 	vec4 c =  texture(image, TexCoords);
 
-	if (effect == 1 || effect == 3) { // Metaballs + MetaballsBlue
+	if (effect == 0) {
+		color2 = c;
+ 	} else if (effect == 1 || effect == 3) { // Metaballs + MetaballsBlue
    		 vec2 u_resolution = vec2(600.0, 800.0);
 
    		 vec2 st = gl_FragCoord.xy/u_resolution.xy;
@@ -114,8 +126,6 @@ void main() {
 			c.b += sin(uTime)/5.0+pos.x*pos.y;
 			c.b = max(0.8, c.b);
 		}
-		color2 = c;
-	} else {
 		color2 = c;
 	}
 }

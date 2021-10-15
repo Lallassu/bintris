@@ -4,6 +4,7 @@ type Object interface {
 	Draw(dt float64)
 	GetObjectType() ObjectType
 	Delete()
+	Hidden() bool
 	GetID() int
 	Update(float64)
 	GetX() float64

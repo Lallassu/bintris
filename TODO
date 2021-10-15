@@ -3,4 +3,6 @@
 - Re-use tile rows
 - 320x320 -> Remove/Remake projection
 - Cleanup shaders (effects in frag shader instead)
-- Rewrite the tile part of sharing VBO
+
+Optimize:
+https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp
