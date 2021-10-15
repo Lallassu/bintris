@@ -78,14 +78,14 @@ func (g *Game) Init(glctx gl.Context) {
 	//  }
 	//g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
 
-	g.glc.FrontFace(gl.CCW)
-	g.glc.CullFace(gl.BACK)
-	g.glc.Enable(gl.CULL_FACE)
 	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	g.glc.Enable(gl.CULL_FACE)
+	g.glc.FrontFace(gl.CCW)
 	g.glc.Enable(gl.BLEND)
 	g.glc.Disable(gl.DEPTH_TEST)
 	g.glc.Disable(gl.SCISSOR_TEST)
 
+	g.glc.CullFace(gl.BACK)
 	//g.glc.DepthFunc(gl.LESS)
 
 	g.tex = Textures{}
@@ -93,15 +93,15 @@ func (g *Game) Init(glctx gl.Context) {
 		panic(err)
 	}
 
+	s2 := Sprite{}
+	s2.Init(0, 0, 0, 1.0, "bg3.png", g)
+	g.AddObjects(s2)
+
 	for i := 0; i < 100; i++ {
 		s2 := Sprite{}
 		s2.Init(float32(i*10), float32(i*10), 0, 1.0, "4.png", g)
 		g.AddObjects(s2)
 	}
-	s2 := Sprite{}
-	s2.Init(0, 0, 0, 1.0, "bg3.png", g)
-	g.AddObjects(s2)
-
 	g.tex.Init()
 
 	g.images = glutil.NewImages(g.glc)
@@ -122,7 +122,7 @@ func (g *Game) Draw() {
 	g.lastTS = time.Now()
 
 	g.glc.ClearColor(0.1, 0.1, 0.1, 1.0)
-	g.glc.Clear(gl.COLOR_BUFFER_BIT) // | gl.DEPTH_BUFFER_BIT)
+	g.glc.Clear(gl.COLOR_BUFFER_BIT) //| gl.DEPTH_BUFFER_BIT)
 
 	for {
 		if g.frameDt >= wMaxInvFPS {
