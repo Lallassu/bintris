@@ -1,3 +1,7 @@
+- Remove "font" -> in texture add Text(txt string) -> Object
+- Object -> collection of sprites that moves the same and same effect.
+- Resize all sprites on resize event.
+
 - Fix click position
 - Fix delete object
 - Re-use tile rows

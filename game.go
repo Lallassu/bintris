@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-gl/mathgl/mgl32"
 	"golang.org/x/mobile/event/size"
 	"golang.org/x/mobile/exp/app/debug"
 	"golang.org/x/mobile/exp/gl/glutil"
@@ -56,12 +55,8 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	g.UpdateView()
 	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
 
-	g.uModel = g.glc.GetUniformLocation(g.program, "model")
-	g.uView = g.glc.GetUniformLocation(g.program, "view")
-	g.uProj = g.glc.GetUniformLocation(g.program, "projection")
 	g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 
@@ -94,27 +89,31 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	s2 := Sprite{}
-	s2.Init(0, 0, 0, 1.0, "bg3.png", g)
-	s2.scale = float32(g.size.HeightPx) / s2.Texture.Height
-	fmt.Printf("s2.scale: %v\n", s2.scale)
+	s2.Init(0, 0, 0, 1.0, 1.0, "bg3", g)
+	s2.scalex = float32(g.size.WidthPx) / s2.Texture.Width
+	s2.scaley = float32(g.size.HeightPx) / s2.Texture.Height
+	fmt.Printf("X: %v Y: %v\n", s2.scalex, s2.scaley)
+	s2.dirty = true
+	fmt.Printf("s2.scale: %v, height: %v text: %v\n", s2.scalex, g.size.HeightPx, s2.Texture.Height)
+	fmt.Printf("s2.scale: %v, width: %v text: %v\n", s2.scaley, g.size.WidthPx, s2.Texture.Width)
 	g.AddObjects(s2)
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		s2 := Sprite{}
-		s2.Init(float32(i*10), float32(i*10), 0, 1.0, "4.png", g)
+		s2.Init(float32(i*20), float32(i*20), 0, 1.0, 1.0, "4", g)
 		g.AddObjects(s2)
 	}
 	g.tex.Init()
 
-	//g.images = glutil.NewImages(g.glc)
-	//	g.fps = debug.NewFPS(g.images)
+	//  g.images = glutil.NewImages(g.glc)
+	//  g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
 
 }
 
 func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
-	//  g.fps.Release()
+	//g.fps.Release()
 	//  g.images.Release()
 }
 
@@ -133,8 +132,7 @@ func (g *Game) Draw() {
 				if g.objects[k].Hidden() {
 					continue
 				}
-				//g.objects[k].Update(float64(wMaxInvFPS))
-				g.tex.Update()
+				g.objects[k].Update(float64(wMaxInvFPS))
 			}
 		} else {
 			break
@@ -149,6 +147,8 @@ func (g *Game) Draw() {
 		}
 		//g.objects[k].Draw(float64(wMaxInvFPS))
 	}
+	g.tex.SetResolution()
+	g.tex.Update()
 	g.tex.Draw()
 	//g.fps.Draw(g.size)
 }
@@ -179,38 +179,8 @@ func (g *Game) Click(x, y float32) {
 
 func (g *Game) Resize(e size.Event) {
 	g.size = e
-	g.UpdateProjection()
-	g.UpdateView()
-}
-
-func (g *Game) UpdateProjection() {
-
-	//a := ww / wh
-	//v := float32(g.size.WidthPx) / float32(g.size.HeightPx)
-
-	//projection := mgl32.Mat4{}
-	//if v >= a {
-	//	projection = mgl32.Ortho2D(0, 2*v/a*ww/2.0, 0, 2*(wh/2.0))
-	//} else {
-	//	projection = mgl32.Ortho2D(0, 2*ww/2.0, 0, (a/v*wh/2.0)*2)
-	//}
-
-	//aspect := float32(g.size.WidthPx) / float32(g.size.HeightPx)
-	//projection := mgl32.Ortho2D(0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
-	// fmt.Printf("> %vx%v\n", g.size.WidthPx, g.size.HeightPx)
-	// h := float32(320)
-	// if h > float32(g.size.HeightPx) {
-	// 	h = float32(g.size.HeightPx)
-	// }
-	//projection := mgl32.Ortho2D(0, ww, 0, h+10) //float32(g.size.HeightPx))
-	//fmt.Printf("Left: %v Right: %v Top: %v Bottom: %v\n", 0, ww, -(ww/g.size.PixelsPerPt)/2, wh+(ww/g.size.PixelsPerPt)/2)
-
-	//g.projf = projection[:]
-}
-
-func (g *Game) UpdateView() {
-	view := mgl32.Translate3D(float32(0), float32(0), float32(0))
-	g.viewf = view[:]
+	g.tex.SetResolution()
+	fmt.Printf("REsize: %v\n", e)
 }
 
 func (g *Game) AddObjects(obj ...Sprite) {

@@ -2,7 +2,6 @@ package main
 
 import (
 	_ "image/png"
-	"math/rand"
 
 	"golang.org/x/mobile/gl"
 )
@@ -14,7 +13,8 @@ type Sprite struct {
 	x       float32
 	y       float32
 	z       float32
-	scale   float32
+	scalex  float32
+	scaley  float32
 	effect  Effect
 	hidden  bool
 	prevX   float32
@@ -23,10 +23,11 @@ type Sprite struct {
 	dirty   bool
 }
 
-func (s *Sprite) Init(x, y, z, scale float32, tex string, g *Game) {
+func (s *Sprite) Init(x, y, z, scalex, scaley float32, tex string, g *Game) {
 	s.gh = g
 	//	s.uEffect = s.gh.glc.GetUniformLocation(s.gh.program, "effect")
-	s.scale = scale
+	s.scalex = scalex
+	s.scaley = scaley
 	s.x = x
 	s.y = y
 	s.z = z
@@ -34,7 +35,7 @@ func (s *Sprite) Init(x, y, z, scale float32, tex string, g *Game) {
 
 	s.Texture = s.gh.tex.Types[tex]
 	s.gh.tex.AddSprite(s)
-	s.dirty = false
+	s.dirty = true
 }
 
 func (s *Sprite) GetObjectType() ObjectType {
@@ -42,9 +43,9 @@ func (s *Sprite) GetObjectType() ObjectType {
 }
 
 func (s *Sprite) Update(dt float64) {
-	s.x += rand.Float32() * 10
-	s.y += rand.Float32() * 10
-	s.dirty = true
+	// s.x += 1 - rand.Float32()
+	// s.y += 1 - rand.Float32()
+	// s.dirty = true
 }
 
 func (s *Sprite) Hidden() bool {

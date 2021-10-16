@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"image"
 	"image/draw"
+	"math"
+	"strings"
 
 	"golang.org/x/mobile/asset"
 	"golang.org/x/mobile/exp/f32"
@@ -17,6 +19,7 @@ type Textures struct {
 	Vertices []byte
 	verts    []float32
 	uvs      []float32
+	winSize  gl.Uniform
 	vert     gl.Attrib
 	uv       gl.Attrib
 	texID    gl.Texture
@@ -117,6 +120,7 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	t.Types = make(map[string]Texture)
 
 	for k, v := range layout.Frames {
+		k = strings.Trim(k, ".png")
 		t.Types[k] = Texture{
 			Width:  v.Frame.W,
 			Height: v.Frame.H,
@@ -128,6 +132,7 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	}
 
 	t.verts = make([]float32, 1*20000)
+	t.Vertices = make([]byte, 1*200000)
 	t.uvs = make([]float32, 1*20000)
 
 	return nil
@@ -140,6 +145,8 @@ func (t *Textures) Init() {
 
 	t.vert = t.gh.glc.GetAttribLocation(t.gh.program, "vert")
 	t.uv = t.gh.glc.GetAttribLocation(t.gh.program, "uvs")
+	t.winSize = t.gh.glc.GetUniformLocation(t.gh.program, "winSize")
+	t.gh.glc.Uniform2fv(t.winSize, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
 
 	//t.gh.glc.BindVertexArray(t.vao)
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
@@ -160,6 +167,12 @@ func (t *Textures) Init() {
 
 }
 
+func (t *Textures) SetResolution() {
+	if t.gh != nil {
+		t.gh.glc.Uniform2fv(t.winSize, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
+	}
+}
+
 func (t *Textures) Cleanup() {
 	t.gh.glc.DeleteVertexArray(t.vao)
 	t.gh.glc.DeleteBuffer(t.vbo)
@@ -177,29 +190,89 @@ func (t *Textures) Update() {
 			t.UpdateObject(&t.gh.objects[i])
 		}
 	}
+	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
+	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
 	//t.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, t.Vertices)
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
-	t.verts[s.id*12] = s.x + s.Texture.Width*s.scale
-	t.verts[s.id*12+1] = s.y
+	sx := math.Float32bits(s.x)
+	sy := math.Float32bits(s.y)
+	sxw := math.Float32bits(s.x + s.Texture.Width*s.scalex)
+	syh := math.Float32bits(s.y + s.Texture.Height*s.scaley)
 
-	t.verts[s.id*12+2] = s.x + s.Texture.Width*s.scale
-	t.verts[s.id*12+3] = s.y + s.Texture.Height*s.scale
+	//t.verts[s.id*12] = s.x + s.Texture.Width*s.scale
+	t.Vertices[4*s.id*12] = byte(sxw >> 0)
+	t.Vertices[4*s.id*12+1] = byte(sxw >> 8)
+	t.Vertices[4*s.id*12+2] = byte(sxw >> 16)
+	t.Vertices[4*s.id*12+3] = byte(sxw >> 24)
 
-	t.verts[s.id*12+4] = s.x
-	t.verts[s.id*12+5] = s.y
+	//t.verts[s.id*12+1] = s.y
+	t.Vertices[4*s.id*12+4] = byte(sy >> 0)
+	t.Vertices[4*s.id*12+5] = byte(sy >> 8)
+	t.Vertices[4*s.id*12+6] = byte(sy >> 16)
+	t.Vertices[4*s.id*12+7] = byte(sy >> 24)
 
-	t.verts[s.id*12+6] = s.x + s.Texture.Width*s.scale
-	t.verts[s.id*12+7] = s.y + s.Texture.Height*s.scale
+	//t.verts[s.id*12+2] = s.x + s.Texture.Width*s.scale
+	t.Vertices[4*s.id*12+8] = byte(sxw >> 0)
+	t.Vertices[4*s.id*12+9] = byte(sxw >> 8)
+	t.Vertices[4*s.id*12+10] = byte(sxw >> 16)
+	t.Vertices[4*s.id*12+11] = byte(sxw >> 24)
 
-	t.verts[s.id*12+8] = s.x
-	t.verts[s.id*12+9] = s.y + s.Texture.Height*s.scale
+	//t.verts[s.id*12+3] = s.y + s.Texture.Height*s.scale
+	t.Vertices[4*s.id*12+12] = byte(syh >> 0)
+	t.Vertices[4*s.id*12+13] = byte(syh >> 8)
+	t.Vertices[4*s.id*12+14] = byte(syh >> 16)
+	t.Vertices[4*s.id*12+15] = byte(syh >> 24)
 
-	t.verts[s.id*12+10] = s.x
-	t.verts[s.id*12+11] = s.y
+	// t.verts[s.id*12+4] = s.x
+	t.Vertices[4*s.id*12+16] = byte(sx >> 0)
+	t.Vertices[4*s.id*12+17] = byte(sx >> 8)
+	t.Vertices[4*s.id*12+18] = byte(sx >> 16)
+	t.Vertices[4*s.id*12+19] = byte(sx >> 24)
 
-	t.Vertices = f32.Bytes(binary.LittleEndian, t.verts...)
+	// t.verts[s.id*12+5] = s.y
+	t.Vertices[4*s.id*12+20] = byte(sy >> 0)
+	t.Vertices[4*s.id*12+21] = byte(sy >> 8)
+	t.Vertices[4*s.id*12+22] = byte(sy >> 16)
+	t.Vertices[4*s.id*12+23] = byte(sy >> 24)
+
+	//t.verts[s.id*12+6] = s.x + s.Texture.Width*s.scale
+	t.Vertices[4*s.id*12+24] = byte(sxw >> 0)
+	t.Vertices[4*s.id*12+25] = byte(sxw >> 8)
+	t.Vertices[4*s.id*12+26] = byte(sxw >> 16)
+	t.Vertices[4*s.id*12+27] = byte(sxw >> 24)
+
+	// t.verts[s.id*12+7] = s.y + s.Texture.Height*s.scale
+	t.Vertices[4*s.id*12+28] = byte(syh >> 0)
+	t.Vertices[4*s.id*12+29] = byte(syh >> 8)
+	t.Vertices[4*s.id*12+30] = byte(syh >> 16)
+	t.Vertices[4*s.id*12+31] = byte(syh >> 24)
+
+	//t.verts[s.id*12+8] = s.x
+	t.Vertices[4*s.id*12+32] = byte(sx >> 0)
+	t.Vertices[4*s.id*12+33] = byte(sx >> 8)
+	t.Vertices[4*s.id*12+34] = byte(sx >> 16)
+	t.Vertices[4*s.id*12+35] = byte(sx >> 24)
+
+	//t.verts[s.id*12+9] = s.y + s.Texture.Height*s.scale
+	t.Vertices[4*s.id*12+36] = byte(syh >> 0)
+	t.Vertices[4*s.id*12+37] = byte(syh >> 8)
+	t.Vertices[4*s.id*12+38] = byte(syh >> 16)
+	t.Vertices[4*s.id*12+39] = byte(syh >> 24)
+
+	//t.verts[s.id*12+10] = s.x
+	t.Vertices[4*s.id*12+40] = byte(sx >> 0)
+	t.Vertices[4*s.id*12+41] = byte(sx >> 8)
+	t.Vertices[4*s.id*12+42] = byte(sx >> 16)
+	t.Vertices[4*s.id*12+43] = byte(sx >> 24)
+
+	//t.verts[s.id*12+11] = s.y
+	t.Vertices[4*s.id*12+44] = byte(sy >> 0)
+	t.Vertices[4*s.id*12+45] = byte(sy >> 8)
+	t.Vertices[4*s.id*12+46] = byte(sy >> 16)
+	t.Vertices[4*s.id*12+47] = byte(sy >> 24)
+	s.dirty = false
 }
 
 func (t *Textures) AddSprite(s *Sprite) {

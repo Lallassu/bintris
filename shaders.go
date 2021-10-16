@@ -4,11 +4,14 @@ const vertexShader = `#version 300 es
 layout (location = 0) in vec2 vert;
 layout (location = 1) in vec2 uvs;
 
+uniform vec2 winSize;
+
 out vec2 uv;
 
 void main() {
 	uv = uvs;
-	gl_Position = vec4(vert.x/400.0 - 1.0, vert.y/300.0 - 1.0, 0.0, 1.0);
+	//gl_Position = vec4(vert.x/1000.0 - 1.0, vert.y/500.0 - 1.0, 0.0, 1.0);
+	gl_Position = vec4(vert.x/(winSize.x/2.0) - 1.0, vert.y/(winSize.y/2.0) - 1.0, 0.0, 1.0);
 }
 `
 const fragmentShader = `#version 300 es
