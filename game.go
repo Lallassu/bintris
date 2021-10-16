@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -84,7 +85,6 @@ func (g *Game) Init(glctx gl.Context) {
 	g.glc.Enable(gl.BLEND)
 	g.glc.Disable(gl.DEPTH_TEST)
 	g.glc.Disable(gl.SCISSOR_TEST)
-
 	g.glc.CullFace(gl.BACK)
 	//g.glc.DepthFunc(gl.LESS)
 
@@ -95,6 +95,8 @@ func (g *Game) Init(glctx gl.Context) {
 
 	s2 := Sprite{}
 	s2.Init(0, 0, 0, 1.0, "bg3.png", g)
+	s2.scale = float32(g.size.HeightPx) / s2.Texture.Height
+	fmt.Printf("s2.scale: %v\n", s2.scale)
 	g.AddObjects(s2)
 
 	for i := 0; i < 100; i++ {
@@ -104,16 +106,16 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 	g.tex.Init()
 
-	g.images = glutil.NewImages(g.glc)
-	g.fps = debug.NewFPS(g.images)
+	//g.images = glutil.NewImages(g.glc)
+	//	g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
 
 }
 
 func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
-	g.fps.Release()
-	g.images.Release()
+	//  g.fps.Release()
+	//  g.images.Release()
 }
 
 func (g *Game) Draw() {

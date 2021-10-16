@@ -82,7 +82,7 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	// y = float64(rgba.Bounds().Max.Y - rgba.Bounds().Min.Y)
 
 	t.texID = t.gh.glc.CreateTexture()
-	// t.gh.glc.ActiveTexture(gl.TEXTURE0)
+	//t.gh.glc.ActiveTexture(gl.TEXTURE0)
 	t.gh.glc.BindTexture(gl.TEXTURE_2D, t.texID)
 	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -90,8 +90,8 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE) // REPEAT?
 	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE) // REPEAT?
-	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
-	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 
 	t.gh.glc.TexImage2D(
 		gl.TEXTURE_2D,
@@ -181,20 +181,20 @@ func (t *Textures) Update() {
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
-	t.verts[s.id*12] = s.x + s.Texture.Width
+	t.verts[s.id*12] = s.x + s.Texture.Width*s.scale
 	t.verts[s.id*12+1] = s.y
 
-	t.verts[s.id*12+2] = s.x + s.Texture.Width
-	t.verts[s.id*12+3] = s.y + s.Texture.Height
+	t.verts[s.id*12+2] = s.x + s.Texture.Width*s.scale
+	t.verts[s.id*12+3] = s.y + s.Texture.Height*s.scale
 
 	t.verts[s.id*12+4] = s.x
 	t.verts[s.id*12+5] = s.y
 
-	t.verts[s.id*12+6] = s.x + s.Texture.Width
-	t.verts[s.id*12+7] = s.y + s.Texture.Height
+	t.verts[s.id*12+6] = s.x + s.Texture.Width*s.scale
+	t.verts[s.id*12+7] = s.y + s.Texture.Height*s.scale
 
 	t.verts[s.id*12+8] = s.x
-	t.verts[s.id*12+9] = s.y + s.Texture.Height
+	t.verts[s.id*12+9] = s.y + s.Texture.Height*s.scale
 
 	t.verts[s.id*12+10] = s.x
 	t.verts[s.id*12+11] = s.y
