@@ -19,7 +19,7 @@ type Textures struct {
 	Vertices []byte
 	verts    []float32
 	uvs      []float32
-	winSize  gl.Uniform
+	res      gl.Uniform
 	vert     gl.Attrib
 	uv       gl.Attrib
 	texID    gl.Texture
@@ -145,8 +145,8 @@ func (t *Textures) Init() {
 
 	t.vert = t.gh.glc.GetAttribLocation(t.gh.program, "vert")
 	t.uv = t.gh.glc.GetAttribLocation(t.gh.program, "uvs")
-	t.winSize = t.gh.glc.GetUniformLocation(t.gh.program, "winSize")
-	t.gh.glc.Uniform2fv(t.winSize, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
+	t.res = t.gh.glc.GetUniformLocation(t.gh.program, "res")
+	t.gh.glc.Uniform2fv(t.res, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
 
 	//t.gh.glc.BindVertexArray(t.vao)
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
@@ -169,7 +169,7 @@ func (t *Textures) Init() {
 
 func (t *Textures) SetResolution() {
 	if t.gh != nil {
-		t.gh.glc.Uniform2fv(t.winSize, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
+		t.gh.glc.Uniform2fv(t.res, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
 	}
 }
 
@@ -187,7 +187,7 @@ func (t *Textures) Draw() {
 func (t *Textures) Update() {
 	for i := range t.gh.objects {
 		if t.gh.objects[i].dirty {
-			t.UpdateObject(&t.gh.objects[i])
+			t.UpdateObject(t.gh.objects[i])
 		}
 	}
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)

@@ -4,14 +4,15 @@ const vertexShader = `#version 300 es
 layout (location = 0) in vec2 vert;
 layout (location = 1) in vec2 uvs;
 
-uniform vec2 winSize;
+uniform vec2 res;
 
 out vec2 uv;
 
 void main() {
 	uv = uvs;
-	//gl_Position = vec4(vert.x/1000.0 - 1.0, vert.y/500.0 - 1.0, 0.0, 1.0);
-	gl_Position = vec4(vert.x/(winSize.x/2.0) - 1.0, vert.y/(winSize.y/2.0) - 1.0, 0.0, 1.0);
+	//gl_Position = vec4(vert.x/500.0 - 1.0, vert.y/200.0 - 1.0, 0.0, 1.0);
+	// gl_Position = vec4(vert.x/(winSize[0]/2.0) - 1.0, vert.y/(winSize[1]/2.0) - 1.0, 0.0, 1.0);
+	gl_Position = vec4(vert.x/(res.x/2.0) - 1.0, vert.y/(res.y/2.0) - 1.0, 0.0, 1.0);
 }
 `
 const fragmentShader = `#version 300 es
@@ -23,9 +24,9 @@ void main() {
 	color = texture(image, uv);
 	// Not sure why transparent was shown as black even with
 	// blendingFunc/Blending enabled.
-	if (color.a <= 0.0) {
-		discard;
-	}
+   // if (color.a <= 0.0) {
+   // 	//discard;
+   // }
 }
 
 `

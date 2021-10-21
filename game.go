@@ -37,7 +37,7 @@ type Game struct {
 	lastY   int
 	size    size.Event
 	//objects map[int]Object
-	objects []Sprite
+	objects []*Sprite
 	program gl.Program
 	projf   []float32
 	viewf   []float32
@@ -74,12 +74,12 @@ func (g *Game) Init(glctx gl.Context) {
 	//  }
 	//g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
 
-	g.glc.BlendFunc(gl.BLEND_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	g.glc.Enable(gl.CULL_FACE)
+	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
 	g.glc.Enable(gl.BLEND)
-	g.glc.Disable(gl.DEPTH_TEST)
+	//	g.glc.Enable(gl.DEPTH_TEST)
 	g.glc.Disable(gl.SCISSOR_TEST)
+	g.glc.Enable(gl.CULL_FACE)
 	g.glc.CullFace(gl.BACK)
 	//g.glc.DepthFunc(gl.LESS)
 
@@ -88,7 +88,7 @@ func (g *Game) Init(glctx gl.Context) {
 		panic(err)
 	}
 
-	s2 := Sprite{}
+	s2 := &Sprite{}
 	s2.Init(0, 0, 0, 1.0, 1.0, "bg3", g)
 	s2.scalex = float32(g.size.WidthPx) / s2.Texture.Width
 	s2.scaley = float32(g.size.HeightPx) / s2.Texture.Height
@@ -98,11 +98,19 @@ func (g *Game) Init(glctx gl.Context) {
 	fmt.Printf("s2.scale: %v, width: %v text: %v\n", s2.scaley, g.size.WidthPx, s2.Texture.Width)
 	g.AddObjects(s2)
 
+	s := Sprite{}
+	s.Init(0, 0, 0, 1, 1, "r", g)
+	g.AddObjects(&s)
+
+	s3 := Sprite{}
+	s3.Init(float32(g.size.WidthPx)/2, float32(g.size.HeightPx)/2, 0, 1, 1, "b", g)
+	g.AddObjects(&s3)
 	for i := 0; i < 10; i++ {
-		s2 := Sprite{}
-		s2.Init(float32(i*20), float32(i*20), 0, 1.0, 1.0, "4", g)
-		g.AddObjects(s2)
+		s := Sprite{}
+		s.Init(float32(i*20), float32(i*20), 0, 1.0, 1.0, "7", g)
+		g.AddObjects(&s)
 	}
+
 	g.tex.Init()
 
 	//  g.images = glutil.NewImages(g.glc)
@@ -122,7 +130,7 @@ func (g *Game) Draw() {
 	g.frameDt += dt
 	g.lastTS = time.Now()
 
-	g.glc.ClearColor(0.1, 0.1, 0.1, 1.0)
+	g.glc.ClearColor(0.1, 0.1, 0.1, 0.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT) //| gl.DEPTH_BUFFER_BIT)
 
 	for {
@@ -147,25 +155,19 @@ func (g *Game) Draw() {
 		}
 		//g.objects[k].Draw(float64(wMaxInvFPS))
 	}
-	g.tex.SetResolution()
 	g.tex.Update()
 	g.tex.Draw()
 	//g.fps.Draw(g.size)
 }
 
 func (g *Game) Click(x, y float32) {
+	g.tex.SetResolution()
 	// Make sure we don't generate too many clicks.
 	if g.lastX == int(x) && g.lastY == int(y) {
 		return
 	}
 	g.lastX = int(x)
 	g.lastY = int(y)
-	//g.AddObjects(g.font.AddText(fmt.Sprintf("%vx%v", g.size.WidthPx, g.size.HeightPx), 100, 100, 1.0, 0.3, EffectMetaballsBlue)...)
-
-	ah := float32(g.size.HeightPx) / 320
-	aw := float32(g.size.WidthPx) / 320
-	y = 320 - (y / ah)
-	x = x / aw
 
 	// for i := range g.objects {
 	// 	if !c.deleted {
@@ -178,12 +180,20 @@ func (g *Game) Click(x, y float32) {
 }
 
 func (g *Game) Resize(e size.Event) {
+	if g.glc != nil {
+		g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+	}
+	fmt.Printf("Resize: %#v\n", e)
 	g.size = e
 	g.tex.SetResolution()
-	fmt.Printf("REsize: %v\n", e)
+
+	// Resize objects.
+	for i := range g.objects {
+		g.objects[i].Resize()
+	}
 }
 
-func (g *Game) AddObjects(obj ...Sprite) {
+func (g *Game) AddObjects(obj ...*Sprite) {
 	for i := range obj {
 		//if _, ok := g.objects[obj[i].GetID()]; !ok {
 		//g.objects[obj[i].GetID()] = obj[i]

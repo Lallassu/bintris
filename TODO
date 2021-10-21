@@ -1,6 +1,10 @@
+- Test to print pixelsPerPoint in resize in studio
+    -> could be used for scaling?
+- Resize all sprites on resize event.
+    -> scale based on set scale.
+    -> "full" scaled -> full-scale calc.
 - Remove "font" -> in texture add Text(txt string) -> Object
 - Object -> collection of sprites that moves the same and same effect.
-- Resize all sprites on resize event.
 
 - Fix click position
 - Fix delete object

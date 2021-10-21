@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	_ "image/png"
+	"strings"
 
 	"golang.org/x/mobile/gl"
 )
@@ -25,6 +27,7 @@ type Sprite struct {
 
 func (s *Sprite) Init(x, y, z, scalex, scaley float32, tex string, g *Game) {
 	s.gh = g
+	tex = strings.ToLower(tex)
 	//	s.uEffect = s.gh.glc.GetUniformLocation(s.gh.program, "effect")
 	s.scalex = scalex
 	s.scaley = scaley
@@ -60,4 +63,14 @@ func (s *Sprite) Draw(dt float64) {
 
 func (s *Sprite) Delete() {
 	s.hidden = true
+}
+
+func (s *Sprite) Resize() {
+	if s.scalex != 1.0 {
+		s.scalex = float32(s.gh.size.WidthPx) / s.Texture.Width
+		s.scaley = float32(s.gh.size.HeightPx) / s.Texture.Height
+		fmt.Printf("SCALE_1: %vx%v\n", s.scalex, s.scaley)
+		fmt.Printf("SCALE_2: %vx%v\n", 1/s.scalex, 1/s.scaley)
+		s.dirty = true
+	}
 }
