@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -18,31 +17,32 @@ const (
 )
 
 type Game struct {
-	ids     int
-	idLock  sync.Mutex
-	images  *glutil.Images
-	fps     *debug.FPS
-	glc     gl.Context
-	lastTS  time.Time
-	frameDt float64
-	elapsed float64
-	uEffect gl.Uniform
-	uTime   gl.Uniform
-	uModel  gl.Uniform
-	uView   gl.Uniform
-	uProj   gl.Uniform
-	touchX  float32
-	touchY  float32
-	lastX   int
-	lastY   int
-	size    size.Event
+	ids      int
+	idLock   sync.Mutex
+	images   *glutil.Images
+	fps      *debug.FPS
+	glc      gl.Context
+	lastTS   time.Time
+	frameDt  float64
+	elapsed  float64
+	uEffect  gl.Uniform
+	uTime    gl.Uniform
+	uModel   gl.Uniform
+	uView    gl.Uniform
+	uProj    gl.Uniform
+	touchX   float32
+	touchY   float32
+	lastX    int
+	lastY    int
+	size     size.Event
+	sizePrev size.Event
 	//objects map[int]Object
 	objects []*Sprite
 	program gl.Program
 	projf   []float32
 	viewf   []float32
 	tex     Textures
-	//font    *Font
+	tiles   []TileSet
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -72,16 +72,15 @@ func (g *Game) Init(glctx gl.Context) {
 	//  	tSet.Init(1.0, 4, i, 12, float64(100+i*30), g)
 	//  	g.AddObjects(tSet)
 	//  }
-	//g.AddObjects(g.font.AddText("bintris", 210, 311, 0.5, 0.8, EffectMetaballsBlue)...)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
 	g.glc.Enable(gl.BLEND)
-	//	g.glc.Enable(gl.DEPTH_TEST)
+	g.glc.Disable(gl.DEPTH_TEST)
 	g.glc.Disable(gl.SCISSOR_TEST)
 	g.glc.Enable(gl.CULL_FACE)
 	g.glc.CullFace(gl.BACK)
-	//g.glc.DepthFunc(gl.LESS)
+	//	g.glc.DepthFunc(gl.LESS)
 
 	g.tex = Textures{}
 	if err = g.tex.Load("packed.png", "packed.json", g); err != nil {
@@ -89,40 +88,32 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	s2 := &Sprite{}
-	s2.Init(0, 0, 0, 1.0, 1.0, "bg3", g)
+	s2.Init(0, 0, 0, 1.0, 1.0, "bg", g)
 	s2.scalex = float32(g.size.WidthPx) / s2.Texture.Width
 	s2.scaley = float32(g.size.HeightPx) / s2.Texture.Height
-	fmt.Printf("X: %v Y: %v\n", s2.scalex, s2.scaley)
 	s2.dirty = true
-	fmt.Printf("s2.scale: %v, height: %v text: %v\n", s2.scalex, g.size.HeightPx, s2.Texture.Height)
-	fmt.Printf("s2.scale: %v, width: %v text: %v\n", s2.scaley, g.size.WidthPx, s2.Texture.Width)
 	g.AddObjects(s2)
 
-	s := Sprite{}
-	s.Init(0, 0, 0, 1, 1, "r", g)
-	g.AddObjects(&s)
-
-	s3 := Sprite{}
-	s3.Init(float32(g.size.WidthPx)/2, float32(g.size.HeightPx)/2, 0, 1, 1, "b", g)
-	g.AddObjects(&s3)
-	for i := 0; i < 10; i++ {
-		s := Sprite{}
-		s.Init(float32(i*20), float32(i*20), 0, 1.0, 1.0, "7", g)
-		g.AddObjects(&s)
+	for i := 1; i < 16; i++ {
+		ts := TileSet{}
+		ts.Init(1.0, 4, i, 20, 50*float32(i), g)
+		g.tiles = append(g.tiles, ts)
 	}
+
+	g.tex.AddText("bintris", g.X(14), g.Y(288), 0.0, 4.5, 3.0, EffectMetaballsBlue)
 
 	g.tex.Init()
 
-	//  g.images = glutil.NewImages(g.glc)
-	//  g.fps = debug.NewFPS(g.images)
+	//g.images = glutil.NewImages(g.glc)
+	//	g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
 
 }
 
 func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
-	//g.fps.Release()
-	//  g.images.Release()
+	// g.fps.Release()
+	// g.images.Release()
 }
 
 func (g *Game) Draw() {
@@ -130,12 +121,16 @@ func (g *Game) Draw() {
 	g.frameDt += dt
 	g.lastTS = time.Now()
 
-	g.glc.ClearColor(0.1, 0.1, 0.1, 0.0)
+	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT) //| gl.DEPTH_BUFFER_BIT)
 
 	for {
 		if g.frameDt >= wMaxInvFPS {
 			g.elapsed += wMaxInvFPS
+			for i := range g.tiles {
+				// TBD: Only draw visible tiles
+				g.tiles[i].Update(wMaxInvFPS)
+			}
 			for k := range g.objects {
 				if g.objects[k].Hidden() {
 					continue
@@ -155,13 +150,12 @@ func (g *Game) Draw() {
 		}
 		//g.objects[k].Draw(float64(wMaxInvFPS))
 	}
-	g.tex.Update()
 	g.tex.Draw()
+	g.tex.Update()
 	//g.fps.Draw(g.size)
 }
 
 func (g *Game) Click(x, y float32) {
-	g.tex.SetResolution()
 	// Make sure we don't generate too many clicks.
 	if g.lastX == int(x) && g.lastY == int(y) {
 		return
@@ -180,16 +174,25 @@ func (g *Game) Click(x, y float32) {
 }
 
 func (g *Game) Resize(e size.Event) {
+	if g.sizePrev.WidthPx == e.WidthPx &&
+		g.sizePrev.HeightPx == e.HeightPx {
+		return
+	}
+
 	if g.glc != nil {
 		g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
 	}
-	fmt.Printf("Resize: %#v\n", e)
+
+	g.sizePrev = g.size
 	g.size = e
 	g.tex.SetResolution()
 
 	// Resize objects.
 	for i := range g.objects {
 		g.objects[i].Resize()
+	}
+	for i := range g.tiles {
+		g.tiles[i].Resize()
 	}
 }
 
@@ -217,4 +220,32 @@ func (g *Game) NewID() int {
 
 	g.ids++
 	return g.ids - 1
+}
+
+// Y calculates absolute position on a virtual sized viewport
+func (g *Game) Y(y float32) float32 {
+	vy := float32(320)
+	pp := float32(g.size.HeightPx) / vy
+	return y * pp
+}
+
+// VY returns the virtual position for a given Y
+func (g *Game) VY(y float32) float32 {
+	vy := float32(320)
+	pp := float32(g.size.HeightPx) / vy
+	return y / pp
+}
+
+// VX returns the virtual position for a given Y
+func (g *Game) VX(x float32) float32 {
+	vx := float32(320)
+	pp := float32(g.size.WidthPx) / vx
+	return x / pp
+}
+
+// X calculates absolute position on a virtual sized viewport
+func (g *Game) X(x float32) float32 {
+	vx := float32(320)
+	pp := float32(g.size.WidthPx) / vx
+	return x * pp
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	_ "image/png"
 	"strings"
 
@@ -46,9 +45,24 @@ func (s *Sprite) GetObjectType() ObjectType {
 }
 
 func (s *Sprite) Update(dt float64) {
-	// s.x += 1 - rand.Float32()
-	// s.y += 1 - rand.Float32()
-	// s.dirty = true
+}
+
+func (s *Sprite) Hide() {
+	// Offset far away to "hide" it. Since we are already including
+	// it in the vertice list.
+	s.x += 10000
+	s.hidden = true
+	s.dirty = true
+}
+
+func (s *Sprite) Show() {
+	s.x -= 10000
+	s.dirty = true
+}
+
+func (s *Sprite) ChangeY(dy float32) {
+	s.y += dy
+	s.dirty = true
 }
 
 func (s *Sprite) Hidden() bool {
@@ -61,16 +75,27 @@ func (s *Sprite) Draw(dt float64) {
 	}
 }
 
+func (s *Sprite) GetID() int {
+	return s.id
+}
+
+func (s *Sprite) GetX() float32 {
+	return s.x
+}
+
+func (s *Sprite) GetY() float32 {
+	return s.y
+}
+
 func (s *Sprite) Delete() {
 	s.hidden = true
 }
 
 func (s *Sprite) Resize() {
-	if s.scalex != 1.0 {
-		s.scalex = float32(s.gh.size.WidthPx) / s.Texture.Width
-		s.scaley = float32(s.gh.size.HeightPx) / s.Texture.Height
-		fmt.Printf("SCALE_1: %vx%v\n", s.scalex, s.scaley)
-		fmt.Printf("SCALE_2: %vx%v\n", 1/s.scalex, 1/s.scaley)
-		s.dirty = true
-	}
+	//a := float32(s.gh.size.WidthPx) / float32(s.gh.size.HeightPx)
+	s.scalex *= float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
+	s.scaley *= float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+	s.x *= float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
+	s.y *= float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+	s.dirty = true
 }

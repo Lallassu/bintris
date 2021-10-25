@@ -30,6 +30,7 @@ type Textures struct {
 }
 
 type Texture struct {
+	Name   string
 	Width  float32
 	Height float32
 	U1     float32
@@ -78,21 +79,12 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 		Max: image.Point{img.Bounds().Max.X, img.Bounds().Max.Y},
 	}
 
-	//image_draw.Draw(rgba, rgba.Bounds(), img, image.Point{0, 0}, image_draw.Src)
 	draw.Draw(rgba, b, img, image.Point{0, 0}, draw.Src)
 
-	// x = float64(rgba.Bounds().Max.X - rgba.Bounds().Min.X)
-	// y = float64(rgba.Bounds().Max.Y - rgba.Bounds().Min.Y)
-
 	t.texID = t.gh.glc.CreateTexture()
-	//t.gh.glc.ActiveTexture(gl.TEXTURE0)
 	t.gh.glc.BindTexture(gl.TEXTURE_2D, t.texID)
-	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE) // REPEAT?
-	//t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE) // REPEAT?
 	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	t.gh.glc.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 
@@ -120,8 +112,9 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	t.Types = make(map[string]Texture)
 
 	for k, v := range layout.Frames {
-		k = strings.Trim(k, ".png")
+		k = strings.TrimSuffix(k, ".png")
 		t.Types[k] = Texture{
+			Name:   k,
 			Width:  v.Frame.W,
 			Height: v.Frame.H,
 			U2:     float32(v.Frame.X+v.Frame.W) / float32(layout.Meta.Size.W),
@@ -131,6 +124,7 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 		}
 	}
 
+	// TBD: Dynamic sizes?
 	t.verts = make([]float32, 1*20000)
 	t.Vertices = make([]byte, 1*200000)
 	t.uvs = make([]float32, 1*20000)
@@ -163,8 +157,6 @@ func (t *Textures) Init() {
 	t.gh.glc.UseProgram(t.gh.program)
 	t.gh.glc.ActiveTexture(gl.TEXTURE0)
 	t.gh.glc.BindTexture(gl.TEXTURE_2D, t.texID)
-	//t.gh.glc.BindVertexArray(t.vao) // NEEDED?
-
 }
 
 func (t *Textures) SetResolution() {
@@ -181,7 +173,7 @@ func (t *Textures) Cleanup() {
 }
 
 func (t *Textures) Draw() {
-	t.gh.glc.DrawArrays(gl.TRIANGLES, 0, len(t.Vertices)) // ObjectCount * 6
+	t.gh.glc.DrawArrays(gl.TRIANGLES, 0, len(t.Vertices)/6)
 }
 
 func (t *Textures) Update() {
@@ -192,7 +184,6 @@ func (t *Textures) Update() {
 	}
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
 	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
-	//t.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, t.Vertices)
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
@@ -200,6 +191,10 @@ func (t *Textures) UpdateObject(s *Sprite) {
 	sy := math.Float32bits(s.y)
 	sxw := math.Float32bits(s.x + s.Texture.Width*s.scalex)
 	syh := math.Float32bits(s.y + s.Texture.Height*s.scaley)
+
+	// Exploding the updates instead of generating a new
+	// byte array for each quad increases the performance from 100us
+	// down to about 100ns per sprite.
 
 	//t.verts[s.id*12] = s.x + s.Texture.Width*s.scale
 	t.Vertices[4*s.id*12] = byte(sxw >> 0)
@@ -295,6 +290,28 @@ func (t *Textures) AddSprite(s *Sprite) {
 	t.uvs[s.id*12+10] = s.Texture.U1
 	t.uvs[s.id*12+11] = s.Texture.V2
 
+	// UVs are just updated once per sprite so we never need to generate this
+	// more than once, compared to vertices.
 	t.Vertices = f32.Bytes(binary.LittleEndian, t.verts...)
 	t.Uvs = f32.Bytes(binary.LittleEndian, t.uvs...)
+}
+
+func (t *Textures) AddText(txt string, px, py, pz, scalex, scaley float32, effect Effect) []*Sprite {
+	obj := []*Sprite{}
+	if txt == "" {
+		return obj
+	}
+	txt = strings.ToLower(txt)
+
+	for i, ch := range txt {
+		s := Sprite{}
+		s.Init(px, py, pz, scalex, scaley, string(ch), t.gh)
+
+		// 10 is just an arbitrary offset between characters
+		s.x += float32(i)*s.Texture.Width*scalex + float32(i)*10
+		t.gh.AddObjects(&s)
+		obj = append(obj, &s)
+	}
+
+	return obj
 }
