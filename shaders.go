@@ -10,6 +10,7 @@ out vec2 uv;
 
 void main() {
 	uv = uvs;
+	//gl_Position = vec4(vert.x/(800.0/2.0) - 1.0, vert.y/(600.0/2.0) - 1.0, 0.0, 1.0);
 	gl_Position = vec4(vert.x/(res.x/2.0) - 1.0, vert.y/(res.y/2.0) - 1.0, 0.0, 1.0);
 }
 `

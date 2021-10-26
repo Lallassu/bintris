@@ -100,7 +100,7 @@ func (g *Game) Init(glctx gl.Context) {
 		g.tiles = append(g.tiles, ts)
 	}
 
-	g.tex.AddText("bintris", g.X(14), g.Y(288), 0.0, 4.5, 3.0, EffectMetaballsBlue)
+	g.tex.AddText("bintris", g.X(14), g.Y(288), 0.0, 3.0, 3.0, EffectMetaballsBlue)
 
 	g.tex.Init()
 

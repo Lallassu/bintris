@@ -45,19 +45,19 @@ func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Gam
 	c := &Sprite{hidden: false}
 	t.Sprites = append(t.Sprites, c)
 
-	c.Init(g.X(13), t.Y, 0.6, 6.0, 5.0, "tile", g)
+	c.Init(g.X(13), t.Y, 0.6, 3.0, 5.0, "tile", g)
 	g.AddObjects(c)
 
 	for x := 241 / 4; x < 241; x += 241 / 4 {
-		s := g.tex.AddText("0", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 4.5, 3.0, EffectMetaballsBlue)
+		s := g.tex.AddText("0", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 2.5, 2.0, EffectMetaballsBlue)
 
 		t.numberSlots = append(t.numberSlots, s...)
-		s = g.tex.AddText("1", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 4.5, 3.0, EffectMetaballsBlue)
+		s = g.tex.AddText("1", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 2.5, 2.0, EffectMetaballsBlue)
 		s[0].Hide()
 		t.numberSlots = append(t.numberSlots, s...)
 	}
 
-	n := g.tex.AddText(t.NumberStr, g.X(270), g.Y(y+7), 0.7, 4.5, 3.0, EffectMetaballsBlue)
+	n := g.tex.AddText(t.NumberStr, g.X(270), g.Y(y+7), 0.7, 2.5, 2.0, EffectMetaballsBlue)
 	t.Sprites = append(t.Sprites, n...)
 
 	//t.ClickFunc = func(x, y float32) {
