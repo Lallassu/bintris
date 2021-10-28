@@ -37,12 +37,13 @@ type Game struct {
 	size     size.Event
 	sizePrev size.Event
 	//objects map[int]Object
-	objects []*Sprite
-	program gl.Program
-	projf   []float32
-	viewf   []float32
-	tex     Textures
-	tiles   []TileSet
+	objects  []*Sprite
+	program  gl.Program
+	projf    []float32
+	viewf    []float32
+	tex      Textures
+	tiles    []TileSet
+	initDone bool
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -55,10 +56,12 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+	if g.size.HeightPx != 0 {
+		g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+	}
 
-	g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
-	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
+	// g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
+	// g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 
 	rand.Seed(time.Now().Unix())
 
@@ -80,7 +83,6 @@ func (g *Game) Init(glctx gl.Context) {
 	g.glc.Disable(gl.SCISSOR_TEST)
 	g.glc.Enable(gl.CULL_FACE)
 	g.glc.CullFace(gl.BACK)
-	//	g.glc.DepthFunc(gl.LESS)
 
 	g.tex = Textures{}
 	if err = g.tex.Load("packed.png", "packed.json", g); err != nil {
@@ -94,20 +96,42 @@ func (g *Game) Init(glctx gl.Context) {
 	s2.dirty = true
 	g.AddObjects(s2)
 
-	for i := 1; i < 16; i++ {
+	for i := 1; i < 4; i++ {
 		ts := TileSet{}
 		ts.Init(1.0, 4, i, 20, 50*float32(i), g)
 		g.tiles = append(g.tiles, ts)
 	}
 
-	g.tex.AddText("bintris", g.X(14), g.Y(288), 0.0, 3.0, 3.0, EffectMetaballsBlue)
+	g.tex.AddText("bintris", g.X(225), g.Y(290), 0.0,
+		g.SX(6),
+		g.SY(4.6),
+		EffectMetaballsBlue)
+
+	g.tex.AddText("Score:", g.X(15), g.Y(295), 0.0,
+		g.SX(8),
+		g.SY(10),
+		EffectMetaballsBlue)
+	g.tex.AddText("0000", g.X(70), g.Y(295), 0.0,
+		g.SX(8),
+		g.SY(10),
+		EffectMetaballsBlue)
+
+	g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
+		g.SX(8),
+		g.SY(10),
+		EffectMetaballsBlue)
+	g.tex.AddText("0000", g.X(165), g.Y(295), 0.0,
+		g.SX(8),
+		g.SY(10),
+		EffectMetaballsBlue)
 
 	g.tex.Init()
+	g.tex.SetResolution()
 
 	//g.images = glutil.NewImages(g.glc)
 	//	g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
-
+	g.initDone = true
 }
 
 func (g *Game) Stop() {
@@ -122,7 +146,7 @@ func (g *Game) Draw() {
 	g.lastTS = time.Now()
 
 	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
-	g.glc.Clear(gl.COLOR_BUFFER_BIT) //| gl.DEPTH_BUFFER_BIT)
+	g.glc.Clear(gl.COLOR_BUFFER_BIT)
 
 	for {
 		if g.frameDt >= wMaxInvFPS {
@@ -150,6 +174,7 @@ func (g *Game) Draw() {
 		}
 		//g.objects[k].Draw(float64(wMaxInvFPS))
 	}
+
 	g.tex.Draw()
 	g.tex.Update()
 	//g.fps.Draw(g.size)
@@ -185,7 +210,10 @@ func (g *Game) Resize(e size.Event) {
 
 	g.sizePrev = g.size
 	g.size = e
-	g.tex.SetResolution()
+
+	if g.initDone {
+		g.tex.SetResolution()
+	}
 
 	// Resize objects.
 	for i := range g.objects {
@@ -234,6 +262,17 @@ func (g *Game) VY(y float32) float32 {
 	vy := float32(320)
 	pp := float32(g.size.HeightPx) / vy
 	return y / pp
+}
+
+// SY converts to relative scale of window size
+// TBD: These are inverted meaning 3 > 2
+func (g *Game) SY(y float32) float32 {
+	return float32(g.size.HeightPx) / (y * 100)
+}
+
+// SX converts to relative scale of window size
+func (g *Game) SX(x float32) float32 {
+	return float32(g.size.WidthPx) / (x * 100)
 }
 
 // VX returns the virtual position for a given Y

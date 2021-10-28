@@ -30,7 +30,7 @@ type TileSet struct {
 func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Game) {
 	t.gh = g
 	t.id = g.NewID()
-	t.Speed = 200
+	t.Speed = float64(g.size.HeightPx / 5)
 	t.Number = number
 	t.Size = size
 	t.Y = g.Y(y)
@@ -45,19 +45,22 @@ func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Gam
 	c := &Sprite{hidden: false}
 	t.Sprites = append(t.Sprites, c)
 
-	c.Init(g.X(13), t.Y, 0.6, 3.0, 5.0, "tile", g)
+	c.Init(g.X(13), t.Y, 0.6, 1.0, 1.0, "tile", g)
+	c.scalex = c.gh.SX(3.2)
+	c.scaley = c.gh.SY(2)
 	g.AddObjects(c)
 
+	offset := float32(t.gh.size.HeightPx / 25)
 	for x := 241 / 4; x < 241; x += 241 / 4 {
-		s := g.tex.AddText("0", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 2.5, 2.0, EffectMetaballsBlue)
+		s := g.tex.AddText("0", g.X(float32(x)-(241/8)+8), t.Y+offset, 0.7, c.gh.SX(3.8), c.gh.SY(4.0), EffectMetaballsBlue)
 
 		t.numberSlots = append(t.numberSlots, s...)
-		s = g.tex.AddText("1", g.X(float32(x)-(241/8)+8), t.Y+30, 0.7, 2.5, 2.0, EffectMetaballsBlue)
+		s = g.tex.AddText("1", g.X(float32(x)-(241/8)+8), t.Y+offset, 0.7, c.gh.SX(3.8), c.gh.SY(4.0), EffectMetaballsBlue)
 		s[0].Hide()
 		t.numberSlots = append(t.numberSlots, s...)
 	}
 
-	n := g.tex.AddText(t.NumberStr, g.X(270), g.Y(y+7), 0.7, 2.5, 2.0, EffectMetaballsBlue)
+	n := g.tex.AddText(t.NumberStr, g.X(270), g.Y(y+10), 0.7, c.gh.SX(3.8), c.gh.SY(4.0), EffectMetaballsBlue)
 	t.Sprites = append(t.Sprites, n...)
 
 	//t.ClickFunc = func(x, y float32) {

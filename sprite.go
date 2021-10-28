@@ -93,9 +93,12 @@ func (s *Sprite) Delete() {
 
 func (s *Sprite) Resize() {
 	//a := float32(s.gh.size.WidthPx) / float32(s.gh.size.HeightPx)
-	s.scalex *= float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
-	s.scaley *= float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
-	s.x *= float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
-	s.y *= float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+	sx := float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
+	sy := float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+
+	s.scalex *= sx // float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
+	s.scaley *= sy // float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+	s.x *= sx      //float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
+	s.y *= sy      //float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
 	s.dirty = true
 }

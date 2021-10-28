@@ -304,8 +304,12 @@ func (t *Textures) AddText(txt string, px, py, pz, scalex, scaley float32, effec
 	txt = strings.ToLower(txt)
 
 	for i, ch := range txt {
+		c := string(ch)
+		if ch == ':' {
+			c = "colon"
+		}
 		s := Sprite{}
-		s.Init(px, py, pz, scalex, scaley, string(ch), t.gh)
+		s.Init(px, py, pz, scalex, scaley, c, t.gh)
 
 		// 10 is just an arbitrary offset between characters
 		s.x += float32(i)*s.Texture.Width*scalex + float32(i)*10

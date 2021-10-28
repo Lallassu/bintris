@@ -1,6 +1,6 @@
+-  game.Init() anropas flera ggr. Nytt glc?
+
 - black screen when starting up
-- ppt should affect speed perhaps?
-- Aspect ratio for scaling?
 - Set effect as an value for the ubo as a stride.
     - applied once per uv-set
 - Object -> collection of sprites that moves the same and same effect.

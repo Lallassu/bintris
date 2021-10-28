@@ -10,15 +10,17 @@ import (
 )
 
 func main() {
-	game := Game{}
-
 	app.Main(func(a app.App) {
+		game := Game{}
 		for e := range a.Events() {
 			switch e := a.Filter(e).(type) {
 			case lifecycle.Event:
 				switch e.Crosses(lifecycle.StageVisible) {
 				case lifecycle.CrossOn:
 					glc, _ := e.DrawContext.(gl.Context)
+					if glc == nil {
+						continue
+					}
 					game.Init(glc)
 					a.Send(paint.Event{})
 				case lifecycle.CrossOff:
