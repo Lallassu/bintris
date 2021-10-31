@@ -56,9 +56,12 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	if g.size.HeightPx != 0 {
-		g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+	if g.size.HeightPx == 0 {
+		g.size.WidthPx = 1080
+		g.size.HeightPx = 2000
+
 	}
+	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
 
 	// g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
 	// g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
@@ -96,7 +99,7 @@ func (g *Game) Init(glctx gl.Context) {
 	s2.dirty = true
 	g.AddObjects(s2)
 
-	for i := 1; i < 4; i++ {
+	for i := 1; i < 5; i++ {
 		ts := TileSet{}
 		ts.Init(1.0, 4, i, 20, 50*float32(i), g)
 		g.tiles = append(g.tiles, ts)
@@ -136,6 +139,7 @@ func (g *Game) Init(glctx gl.Context) {
 
 func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
+	//g.tex.Cleanup()
 	// g.fps.Release()
 	// g.images.Release()
 }
@@ -153,7 +157,9 @@ func (g *Game) Draw() {
 			g.elapsed += wMaxInvFPS
 			for i := range g.tiles {
 				// TBD: Only draw visible tiles
-				g.tiles[i].Update(wMaxInvFPS)
+				if !g.tiles[i].Hidden() {
+					g.tiles[i].Update(wMaxInvFPS)
+				}
 			}
 			for k := range g.objects {
 				if g.objects[k].Hidden() {
@@ -188,14 +194,16 @@ func (g *Game) Click(x, y float32) {
 	g.lastX = int(x)
 	g.lastY = int(y)
 
-	// for i := range g.objects {
-	// 	if !c.deleted {
-	// 		if float64(x) > c.X && float64(x) < c.X+(float64(c.sizex)*float64(c.scale)) &&
-	// 			float64(y) < c.Y && float64(y) > c.Y-(float64(c.sizey)*float64(c.scale)) {
-	// 			c.Click(x, y)
-	// 		}
-	// 	}
-	// }
+	y = float32(g.size.HeightPx) - y
+
+	for i, c := range g.tiles {
+		if !c.hidden {
+			if float32(x) > c.X && float32(x) < c.X+(float32(c.tileWidth)) &&
+				float32(y) > c.Y && float32(y) < c.Y+(float32(c.tileHeight)) {
+				g.tiles[i].Click(x, y)
+			}
+		}
+	}
 }
 
 func (g *Game) Resize(e size.Event) {

@@ -12,6 +12,7 @@ type Sprite struct {
 	id      int
 	uEffect gl.Uniform
 	x       float32
+	ox      float32
 	y       float32
 	z       float32
 	scalex  float32
@@ -48,15 +49,23 @@ func (s *Sprite) Update(dt float64) {
 }
 
 func (s *Sprite) Hide() {
+	if s.hidden {
+		return
+	}
 	// Offset far away to "hide" it. Since we are already including
 	// it in the vertice list.
-	s.x += 10000
+	s.ox = s.x
+	s.x = 100000
 	s.hidden = true
 	s.dirty = true
 }
 
 func (s *Sprite) Show() {
-	s.x -= 10000
+	if !s.hidden {
+		return
+	}
+	s.x = s.ox
+	s.hidden = false
 	s.dirty = true
 }
 
@@ -99,6 +108,7 @@ func (s *Sprite) Resize() {
 	s.scalex *= sx // float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
 	s.scaley *= sy // float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
 	s.x *= sx      //float32(s.gh.size.WidthPx) / float32(s.gh.sizePrev.WidthPx)
-	s.y *= sy      //float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
+	s.ox *= sx
+	s.y *= sy //float32(s.gh.size.HeightPx) / float32(s.gh.sizePrev.HeightPx)
 	s.dirty = true
 }

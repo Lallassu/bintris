@@ -25,6 +25,7 @@ type TileSet struct {
 	hidden      bool
 	tileWidth   float32
 	tileHeight  float32
+	tile        *Sprite
 }
 
 func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Game) {
@@ -48,6 +49,7 @@ func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Gam
 	c.Init(g.X(13), t.Y, 0.6, 1.0, 1.0, "tile", g)
 	c.scalex = c.gh.SX(3.2)
 	c.scaley = c.gh.SY(2)
+	t.tile = c
 	g.AddObjects(c)
 
 	offset := float32(t.gh.size.HeightPx / 25)
@@ -101,11 +103,11 @@ func (t *TileSet) Click(x, y float32) {
 	c0 := t.numberSlots[slot0]
 	c1 := t.numberSlots[slot1]
 	if c0.hidden {
-		c0.hidden = false
-		c1.hidden = true
+		c0.Show()
+		c1.Hide()
 	} else {
-		c0.hidden = true
-		c1.hidden = false
+		c0.Hide()
+		c1.Show()
 	}
 
 	// Verify number
@@ -122,11 +124,12 @@ func (t *TileSet) VerifyNumber() {
 
 	if num == t.Number {
 		for i := range t.Sprites {
-			t.gh.DeleteObject(*t.Sprites[i])
+			t.Sprites[i].Hide()
 		}
 		for i := range t.numberSlots {
-			t.gh.DeleteObject(*t.numberSlots[i])
+			t.numberSlots[i].Hide()
 		}
+		t.tile.Hide()
 		t.hidden = true
 	}
 }
@@ -156,18 +159,16 @@ func (t *TileSet) Update(dt float64) {
 		return
 	}
 
-	for _, o := range t.gh.objects {
-		if o.GetObjectType() == ObjectTypeTileSet {
-			if o.hidden {
-				continue
-			}
-			if o.GetID() == t.id {
-				continue
-			}
+	for _, o := range t.gh.tiles {
+		if o.hidden {
+			continue
+		}
+		if o.GetID() == t.id {
+			continue
+		}
 
-			if int(t.Y-t.tileHeight-4) < int(o.GetY()) && int(o.GetY()) < int(t.Y) {
-				return
-			}
+		if int(t.Y-t.tileHeight-t.gh.Y(10)) < int(o.GetY()) && int(o.GetY()) < int(t.Y) {
+			return
 		}
 	}
 
@@ -182,6 +183,8 @@ func (t *TileSet) Update(dt float64) {
 
 func (t *TileSet) Resize() {
 	//a := float32(s.gh.size.WidthPx) / float32(s.gh.size.HeightPx)
+	t.tileWidth *= float32(t.gh.size.WidthPx) / float32(t.gh.sizePrev.WidthPx)
+	t.tileHeight *= float32(t.gh.size.HeightPx) / float32(t.gh.sizePrev.HeightPx)
 	t.X *= float32(t.gh.size.WidthPx) / float32(t.gh.sizePrev.WidthPx)
 	t.Y *= float32(t.gh.size.HeightPx) / float32(t.gh.sizePrev.HeightPx)
 	t.Speed *= float64(float32(t.gh.size.HeightPx) / float32(t.gh.sizePrev.HeightPx))
