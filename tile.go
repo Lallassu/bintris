@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -35,6 +36,7 @@ func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Gam
 	t.Number = number
 	t.Size = size
 	t.Y = g.Y(y)
+	fmt.Printf("==> %v\n", t.Y)
 	t.X = g.X(x)
 	t.sizex = t.tileWidth
 	t.sizey = t.tileHeight
@@ -69,6 +71,10 @@ func (t *TileSet) Init(scale float32, size int, number int, x, y float32, g *Gam
 	//	c.Click(x, y)
 	//}
 
+}
+
+func (t *TileSet) SetSpeed(s int) {
+	t.Speed = float64(t.gh.size.HeightPx / s)
 }
 
 func (s *TileSet) Hidden() bool {
@@ -112,6 +118,23 @@ func (t *TileSet) Click(x, y float32) {
 
 	// Verify number
 	t.VerifyNumber()
+}
+
+func (t *TileSet) Reset() {
+	t.hidden = false
+	t.tile.Show()
+	t.Y = t.gh.Y(320)
+
+	for i := range t.Sprites {
+		t.Sprites[i].Show()
+		t.Sprites[i].x = t.gh.X(270)
+		t.Sprites[i].y = t.Y + t.gh.Y(10)
+	}
+	for i := range t.numberSlots {
+		t.numberSlots[i].Show()
+		t.numberSlots[i].x = t.X - t.gh.X(241/8) + 8
+		t.numberSlots[i].y = t.Y // 0 offset
+	}
 }
 
 func (t *TileSet) VerifyNumber() {

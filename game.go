@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -99,9 +100,10 @@ func (g *Game) Init(glctx gl.Context) {
 	s2.dirty = true
 	g.AddObjects(s2)
 
-	for i := 1; i < 5; i++ {
+	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
-		ts.Init(1.0, 4, i, 20, 50*float32(i), g)
+		ts.Init(1.0, 4, i, 20, 320, g)
+		ts.SetSpeed(4)
 		g.tiles = append(g.tiles, ts)
 	}
 
@@ -151,6 +153,22 @@ func (g *Game) Draw() {
 
 	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT)
+
+	c := 0
+	hidden := []*TileSet{}
+	for i := range g.tiles {
+		if !g.tiles[i].hidden {
+			c++
+		} else {
+			hidden = append(hidden, &g.tiles[i])
+		}
+	}
+	x := 0
+	for i := c; i <= 8; i++ {
+		fmt.Printf("ADD: %v\n", i)
+		hidden[x].Reset()
+		x++
+	}
 
 	for {
 		if g.frameDt >= wMaxInvFPS {

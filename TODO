@@ -1,5 +1,8 @@
--  game.Init() anropas flera ggr. Nytt glc?
+- On start: Init all tiles (15)
+- Reset tile -> Above board + movement (hidden=false)
+        -> inlcuding all parts.
 
+-  game.Init() anropas flera ggr. Nytt glc?
 - black screen when starting up
 - Set effect as an value for the ubo as a stride.
     - applied once per uv-set
