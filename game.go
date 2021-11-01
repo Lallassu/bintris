@@ -57,6 +57,7 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
+	// TBD: Need to handle init when we don't know screen size yet.
 	if g.size.HeightPx == 0 {
 		g.size.WidthPx = 1080
 		g.size.HeightPx = 2000
@@ -104,6 +105,7 @@ func (g *Game) Init(glctx gl.Context) {
 		ts := TileSet{}
 		ts.Init(1.0, 4, i, 20, 320, g)
 		ts.SetSpeed(4)
+		ts.Hide()
 		g.tiles = append(g.tiles, ts)
 	}
 
@@ -164,7 +166,7 @@ func (g *Game) Draw() {
 		}
 	}
 	x := 0
-	for i := c; i <= 8; i++ {
+	for i := c; i <= 4; i++ {
 		fmt.Printf("ADD: %v\n", i)
 		hidden[x].Reset()
 		x++
@@ -206,11 +208,11 @@ func (g *Game) Draw() {
 
 func (g *Game) Click(x, y float32) {
 	// Make sure we don't generate too many clicks.
-	if g.lastX == int(x) && g.lastY == int(y) {
-		return
-	}
-	g.lastX = int(x)
-	g.lastY = int(y)
+	//if g.lastX == int(x) && g.lastY == int(y) {
+	//	return
+	//}
+	//g.lastX = int(x)
+	//g.lastY = int(y)
 
 	y = float32(g.size.HeightPx) - y
 

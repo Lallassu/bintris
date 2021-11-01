@@ -125,16 +125,18 @@ func (t *TileSet) Reset() {
 	t.tile.Show()
 	t.Y = t.gh.Y(320)
 
-	for i := range t.Sprites {
-		t.Sprites[i].Show()
-		t.Sprites[i].x = t.gh.X(270)
-		t.Sprites[i].y = t.Y + t.gh.Y(10)
-	}
+	offset := float32(t.gh.size.HeightPx / 25)
 	for i := range t.numberSlots {
 		t.numberSlots[i].Show()
-		t.numberSlots[i].x = t.X - t.gh.X(241/8) + 8
-		t.numberSlots[i].y = t.Y // 0 offset
+		t.numberSlots[i].x = t.X + float32(i)*float32(t.tileWidth/4) + t.gh.X(15)
+		t.numberSlots[i].y = t.Y + offset
+		t.numberSlots[i].Show()
 	}
+
+	for i := range t.Sprites {
+		t.Sprites[i].Show()
+	}
+
 }
 
 func (t *TileSet) VerifyNumber() {
@@ -146,15 +148,19 @@ func (t *TileSet) VerifyNumber() {
 	}
 
 	if num == t.Number {
-		for i := range t.Sprites {
-			t.Sprites[i].Hide()
-		}
-		for i := range t.numberSlots {
-			t.numberSlots[i].Hide()
-		}
-		t.tile.Hide()
-		t.hidden = true
+		t.Hide()
 	}
+}
+
+func (t *TileSet) Hide() {
+	for i := range t.Sprites {
+		t.Sprites[i].Hide()
+	}
+	for i := range t.numberSlots {
+		t.numberSlots[i].Hide()
+	}
+	t.tile.Hide()
+	t.hidden = true
 }
 
 func (t *TileSet) GetObjectType() ObjectType {
