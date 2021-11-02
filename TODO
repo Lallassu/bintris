@@ -1,3 +1,7 @@
+- Rename scalex/scaley x/y:
+    -> fx, fy, tx, ty (to from)
+- Reposition all parts
+
 - On start: Init all tiles (15)
 - Reset tile -> Above board + movement (hidden=false)
         -> inlcuding all parts.
@@ -5,8 +9,6 @@
 - Type where position is below X% of screen "shatter" (for new tiles)
     -> New tiles effect
 
--  game.Init() anropas flera ggr. Nytt glc?
-- black screen when starting up
 - Set effect as an value for the ubo as a stride.
     - applied once per uv-set
 - Object -> collection of sprites that moves the same and same effect.

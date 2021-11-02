@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -58,12 +57,12 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	// TBD: Need to handle init when we don't know screen size yet.
-	if g.size.HeightPx == 0 {
-		g.size.WidthPx = 1080
-		g.size.HeightPx = 2000
+	// if g.size.HeightPx == 0 {
+	// 	g.size.WidthPx = 1080
+	// 	g.size.HeightPx = 2000
 
-	}
-	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+	// }
+	//	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
 
 	// g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
 	// g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
@@ -95,42 +94,37 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	s2 := &Sprite{}
-	s2.Init(0, 0, 0, 1.0, 1.0, "bg", g)
-	s2.scalex = float32(g.size.WidthPx) / s2.Texture.Width
-	s2.scaley = float32(g.size.HeightPx) / s2.Texture.Height
+	s2.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
 	s2.dirty = true
 	g.AddObjects(s2)
 
-	for i := 1; i <= 15; i++ {
-		ts := TileSet{}
-		ts.Init(1.0, 4, i, 20, 320, g)
-		ts.SetSpeed(4)
-		ts.Hide()
-		g.tiles = append(g.tiles, ts)
-	}
+	// for i := 1; i <= 15; i++ {
+	// 	ts := TileSet{}
+	// 	ts.Init(1.0, 4, i, 20, 320, g)
+	// 	ts.SetSpeed(4)
+	// 	ts.Hide()
+	// 	g.tiles = append(g.tiles, ts)
+	// }
 
-	g.tex.AddText("bintris", g.X(225), g.Y(290), 0.0,
-		g.SX(6),
-		g.SY(4.6),
-		EffectMetaballsBlue)
+	g.tex.AddText("bintris", 0.577, 0.90, 0.0, 0.05, 0.069, EffectMetaballsBlue)
 
-	g.tex.AddText("Score:", g.X(15), g.Y(295), 0.0,
-		g.SX(8),
-		g.SY(10),
-		EffectMetaballsBlue)
-	g.tex.AddText("0000", g.X(70), g.Y(295), 0.0,
-		g.SX(8),
-		g.SY(10),
-		EffectMetaballsBlue)
+	// g.tex.AddText("Score:", g.X(15), g.Y(295), 0.0,
+	// 	g.SX(8),
+	// 	g.SY(10),
+	// 	EffectMetaballsBlue)
+	// g.tex.AddText("0000", g.X(70), g.Y(295), 0.0,
+	// 	g.SX(8),
+	// 	g.SY(10),
+	// 	EffectMetaballsBlue)
 
-	g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
-		g.SX(8),
-		g.SY(10),
-		EffectMetaballsBlue)
-	g.tex.AddText("0000", g.X(165), g.Y(295), 0.0,
-		g.SX(8),
-		g.SY(10),
-		EffectMetaballsBlue)
+	// g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
+	// 	g.SX(8),
+	// 	g.SY(10),
+	// 	EffectMetaballsBlue)
+	// g.tex.AddText("0000", g.X(165), g.Y(295), 0.0,
+	// 	g.SX(8),
+	// 	g.SY(10),
+	// 	EffectMetaballsBlue)
 
 	g.tex.Init()
 	g.tex.SetResolution()
@@ -156,21 +150,21 @@ func (g *Game) Draw() {
 	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT)
 
-	c := 0
-	hidden := []*TileSet{}
-	for i := range g.tiles {
-		if !g.tiles[i].hidden {
-			c++
-		} else {
-			hidden = append(hidden, &g.tiles[i])
-		}
-	}
-	x := 0
-	for i := c; i <= 4; i++ {
-		fmt.Printf("ADD: %v\n", i)
-		hidden[x].Reset()
-		x++
-	}
+	// c := 0
+	// hidden := []*TileSet{}
+	// for i := range g.tiles {
+	// 	if !g.tiles[i].hidden {
+	// 		c++
+	// 	} else {
+	// 		hidden = append(hidden, &g.tiles[i])
+	// 	}
+	// }
+	// x := 0
+	// for i := c; i <= 4; i++ {
+	// 	fmt.Printf("ADD: %v\n", i)
+	// 	hidden[x].Reset()
+	// 	x++
+	// }
 
 	for {
 		if g.frameDt >= wMaxInvFPS {
@@ -233,7 +227,7 @@ func (g *Game) Resize(e size.Event) {
 	}
 
 	if g.glc != nil {
-		g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
+		//g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
 	}
 
 	g.sizePrev = g.size
@@ -244,12 +238,12 @@ func (g *Game) Resize(e size.Event) {
 	}
 
 	// Resize objects.
-	for i := range g.objects {
-		g.objects[i].Resize()
-	}
-	for i := range g.tiles {
-		g.tiles[i].Resize()
-	}
+	// for i := range g.objects {
+	// 	g.objects[i].Resize()
+	// }
+	// for i := range g.tiles {
+	// 	g.tiles[i].Resize()
+	// }
 }
 
 func (g *Game) AddObjects(obj ...*Sprite) {

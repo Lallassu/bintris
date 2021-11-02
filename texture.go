@@ -189,8 +189,8 @@ func (t *Textures) Update() {
 func (t *Textures) UpdateObject(s *Sprite) {
 	sx := math.Float32bits(s.x)
 	sy := math.Float32bits(s.y)
-	sxw := math.Float32bits(s.x + s.Texture.Width*s.scalex)
-	syh := math.Float32bits(s.y + s.Texture.Height*s.scaley)
+	sxw := math.Float32bits(s.x + s.scalex)
+	syh := math.Float32bits(s.y + s.scaley)
 
 	// Exploding the updates instead of generating a new
 	// byte array for each quad increases the performance from 100us
@@ -312,7 +312,8 @@ func (t *Textures) AddText(txt string, px, py, pz, scalex, scaley float32, effec
 		s.Init(px, py, pz, scalex, scaley, c, t.gh)
 
 		// 10 is just an arbitrary offset between characters
-		s.x += float32(i)*s.Texture.Width*scalex + float32(i)*10
+		s.x += float32(i) * 1 / (s.Texture.Width + 2)
+		s.dirty = true
 		t.gh.AddObjects(&s)
 		obj = append(obj, &s)
 	}
