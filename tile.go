@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -97,19 +98,17 @@ func (t *TileSet) Click(x, y float32) {
 }
 
 func (t *TileSet) Hide() {
-	t.hidden = true
-	t.tile.Hide()
 	for i := range t.Sprites {
 		t.Sprites[i].Hide()
 	}
 	for i := range t.numberSlots {
 		t.numberSlots[i].Hide()
 	}
+	t.hidden = true
 }
 
 func (t *TileSet) Reset(offset float32) {
-	t.tile.Show()
-	t.tile.ChangeY(offset)
+	fmt.Printf("==> RESET: %v\n", offset)
 
 	for i := range t.Sprites {
 		t.Sprites[i].Show()
@@ -160,7 +159,6 @@ func (t *TileSet) Update(dt float64) {
 		}
 	}
 
-	//t.tile.fy -= float32(t.Speed * dt)
 	for i := range t.Sprites {
 		t.Sprites[i].ChangeY(-float32(t.Speed * dt))
 	}

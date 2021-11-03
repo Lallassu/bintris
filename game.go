@@ -101,14 +101,14 @@ func (g *Game) Init(glctx gl.Context) {
 	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
 		ts.Init(4, i, g)
-		//ts.Hide()
-		ts.SetSpeed(0.5)
+		ts.Hide()
+		ts.SetSpeed(0.6)
 		g.tiles = append(g.tiles, ts)
 	}
 
 	//g.tex.AddText("bintris", 0.87, 0.0, 0.0, 0.01, 0.019, EffectMetaballsBlue)
-	g.tex.AddText("Score:", 0.05, 0.90, 0.0, 0.02, 0.029, EffectMetaballsBlue)
-	g.tex.AddText("Time:", 0.35, 0.90, 0.0, 0.02, 0.029, EffectMetaballsBlue)
+	g.tex.AddText("Score:", 0.05, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
+	g.tex.AddText("Time:", 0.35, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
 
 	// g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
 	// 	g.SX(8),
@@ -151,10 +151,8 @@ func (g *Game) Draw() {
 			hidden = append(hidden, &g.tiles[i])
 		}
 	}
-	x := 0
-	for i := c; i <= 4; i++ {
-		hidden[x].Reset(2 + float32(i)*0.2)
-		x++
+	if len(hidden) > 0 && len(hidden) > 4 {
+		hidden[rand.Intn(len(hidden))].Reset(1)
 	}
 
 	for {
