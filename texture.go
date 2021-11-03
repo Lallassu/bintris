@@ -19,7 +19,6 @@ type Textures struct {
 	Vertices []byte
 	verts    []float32
 	uvs      []float32
-	res      gl.Uniform
 	vert     gl.Attrib
 	uv       gl.Attrib
 	texID    gl.Texture
@@ -139,8 +138,6 @@ func (t *Textures) Init() {
 
 	t.vert = t.gh.glc.GetAttribLocation(t.gh.program, "vert")
 	t.uv = t.gh.glc.GetAttribLocation(t.gh.program, "uvs")
-	t.res = t.gh.glc.GetUniformLocation(t.gh.program, "res")
-	t.gh.glc.Uniform2fv(t.res, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
 
 	//t.gh.glc.BindVertexArray(t.vao)
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
@@ -157,12 +154,6 @@ func (t *Textures) Init() {
 	t.gh.glc.UseProgram(t.gh.program)
 	t.gh.glc.ActiveTexture(gl.TEXTURE0)
 	t.gh.glc.BindTexture(gl.TEXTURE_2D, t.texID)
-}
-
-func (t *Textures) SetResolution() {
-	if t.gh != nil {
-		t.gh.glc.Uniform2fv(t.res, []float32{float32(t.gh.size.WidthPx), float32(t.gh.size.HeightPx)})
-	}
 }
 
 func (t *Textures) Cleanup() {
@@ -187,10 +178,10 @@ func (t *Textures) Update() {
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
-	sx := math.Float32bits(s.x)
-	sy := math.Float32bits(s.y)
-	sxw := math.Float32bits(s.x + s.scalex)
-	syh := math.Float32bits(s.y + s.scaley)
+	sx := math.Float32bits(s.fx)
+	sy := math.Float32bits(s.fy)
+	sxw := math.Float32bits(s.fx + s.tx)
+	syh := math.Float32bits(s.fy + s.ty)
 
 	// Exploding the updates instead of generating a new
 	// byte array for each quad increases the performance from 100us
@@ -238,7 +229,7 @@ func (t *Textures) UpdateObject(s *Sprite) {
 	t.Vertices[4*s.id*12+26] = byte(sxw >> 16)
 	t.Vertices[4*s.id*12+27] = byte(sxw >> 24)
 
-	// t.verts[s.id*12+7] = s.y + s.Texture.Height*s.scale
+	// t.verts[s.id*12+7] = s.y + s.Texture.Height*s.cale
 	t.Vertices[4*s.id*12+28] = byte(syh >> 0)
 	t.Vertices[4*s.id*12+29] = byte(syh >> 8)
 	t.Vertices[4*s.id*12+30] = byte(syh >> 16)
@@ -296,7 +287,7 @@ func (t *Textures) AddSprite(s *Sprite) {
 	t.Uvs = f32.Bytes(binary.LittleEndian, t.uvs...)
 }
 
-func (t *Textures) AddText(txt string, px, py, pz, scalex, scaley float32, effect Effect) []*Sprite {
+func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect) []*Sprite {
 	obj := []*Sprite{}
 	if txt == "" {
 		return obj
@@ -309,10 +300,10 @@ func (t *Textures) AddText(txt string, px, py, pz, scalex, scaley float32, effec
 			c = "colon"
 		}
 		s := Sprite{}
-		s.Init(px, py, pz, scalex, scaley, c, t.gh)
+		s.Init(fx, fy, pz, tx, ty, c, t.gh)
 
-		// 10 is just an arbitrary offset between characters
-		s.x += float32(i) * 1 / (s.Texture.Width + 2)
+		// 0.005 is for spacing between chars
+		s.fx += float32(i) * (tx + 0.005)
 		s.dirty = true
 		t.gh.AddObjects(&s)
 		obj = append(obj, &s)

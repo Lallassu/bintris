@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"golang.org/x/mobile/app"
 	"golang.org/x/mobile/event/lifecycle"
 	"golang.org/x/mobile/event/paint"
@@ -14,10 +12,10 @@ import (
 func main() {
 	app.Main(func(a app.App) {
 		game := Game{}
+		var sz size.Event
 		for e := range a.Events() {
 			switch e := a.Filter(e).(type) {
 			case lifecycle.Event:
-				fmt.Printf("%#v\n", e)
 				switch e.Crosses(lifecycle.StageVisible) {
 				case lifecycle.CrossOn:
 					glc, _ := e.DrawContext.(gl.Context)
@@ -30,7 +28,7 @@ func main() {
 					game.Stop()
 				}
 			case size.Event:
-				game.Resize(e)
+				sz = e
 			case paint.Event:
 				if game.glc == nil || e.External {
 					continue
@@ -39,7 +37,7 @@ func main() {
 				a.Publish()
 				a.Send(paint.Event{})
 			case touch.Event:
-				game.Click(e.X, e.Y)
+				game.Click(sz, e.X, e.Y)
 			}
 		}
 	})

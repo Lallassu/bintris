@@ -4,8 +4,6 @@ const vertexShader = `#version 300 es
 layout (location = 0) in vec2 vert;
 layout (location = 1) in vec2 uvs;
 
-uniform vec2 res;
-
 out vec2 uv;
 
 void main() {
