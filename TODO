@@ -1,11 +1,28 @@
-- Rename scalex/scaley x/y:
-    -> fx, fy, tx, ty (to from)
-- Reposition all parts
+GameMode
+    -> Start(mode)
+    -> ScoreKeeper
+    -> TimeKeeper
+    -> SpeedKeeper
+- Score
+    -> number = score
+    -> bonus?
+- Time
+    - Switch numbers periodically
+        -> Change uv?
+- Menu
+    -> Start, Scoreboard, Modes, About
+- Game modes
+    -> Easy (same speed)
+    -> Normal (Increasing speed)
+    -> Hard (random speed per tile)
 
-- On start: Init all tiles (15)
-- Reset tile -> Above board + movement (hidden=false)
-        -> inlcuding all parts.
+Touchups
+--------
+- Font?
 
+
+Shader effects
+--------------
 - Type where position is below X% of screen "shatter" (for new tiles)
     -> New tiles effect
 
@@ -14,10 +31,6 @@
 - Object -> collection of sprites that moves the same and same effect.
     - For Addtext as well
 
-
-- Fix click position
-- Fix delete object
-- Re-use tile rows
 - Cleanup shaders (effects in frag shader instead)
 
 Optimize:

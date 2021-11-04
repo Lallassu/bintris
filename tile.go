@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -108,8 +107,6 @@ func (t *TileSet) Hide() {
 }
 
 func (t *TileSet) Reset(offset float32) {
-	fmt.Printf("==> RESET: %v\n", offset)
-
 	for i := range t.Sprites {
 		t.Sprites[i].Show()
 		t.Sprites[i].ChangeY(offset)
@@ -154,7 +151,7 @@ func (t *TileSet) Update(dt float64) {
 			continue
 		}
 
-		if t.tile.fy-0.1 < o.tile.fy && o.tile.fy < t.tile.fy {
+		if t.tile.fy-0.115 < o.tile.fy && o.tile.fy < t.tile.fy {
 			return
 		}
 	}

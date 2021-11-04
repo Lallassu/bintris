@@ -18,11 +18,6 @@ layout (location = 0) out highp vec4 color;
 
 void main() {
 	color = texture(image, uv);
-	// Not sure why transparent was shown as black even with
-	// blendingFunc/Blending enabled.
-   // if (color.a <= 0.0) {
-   // 	//discard;
-   // }
 }
 
 `

@@ -177,21 +177,15 @@ func (g *Game) Draw() {
 }
 
 func (g *Game) Click(sz size.Event, x, y float32) {
-	// Make sure we don't generate too many clicks.
-	//if g.lastX == int(x) && g.lastY == int(y) {
-	//	return
-	//}
-	//g.lastX = int(x)
-	//g.lastY = int(y)
-
 	x /= float32(sz.WidthPx)
 	y /= float32(sz.HeightPx)
 	y = 1 - y
 
 	for i, c := range g.tiles {
 		if !c.hidden {
+			// Offset Y a bit to have a bit off click-free area between tiles
 			if float32(x) > c.tile.fx && float32(x) < c.tile.fx+0.822 &&
-				float32(y) > c.tile.fy && float32(y) < c.tile.fy+0.18 {
+				float32(y) > c.tile.fy+0.01 && float32(y) < c.tile.fy+0.09 {
 				g.tiles[i].Click(x, y)
 			}
 		}
@@ -200,10 +194,7 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 
 func (g *Game) AddObjects(obj ...*Sprite) {
 	for i := range obj {
-		//if _, ok := g.objects[obj[i].GetID()]; !ok {
-		//g.objects[obj[i].GetID()] = obj[i]
 		g.objects = append(g.objects, obj[i])
-		//	}
 	}
 }
 
@@ -213,43 +204,4 @@ func (g *Game) NewID() int {
 
 	g.ids++
 	return g.ids - 1
-}
-
-// Y calculates absolute position on a virtual sized viewport
-func (g *Game) Y(y float32) float32 {
-	vy := float32(320)
-	pp := float32(g.size.HeightPx) / vy
-	return y * pp
-}
-
-// VY returns the virtual position for a given Y
-func (g *Game) VY(y float32) float32 {
-	vy := float32(320)
-	pp := float32(g.size.HeightPx) / vy
-	return y / pp
-}
-
-// SY converts to relative scale of window size
-// TBD: These are inverted meaning 3 > 2
-func (g *Game) SY(y float32) float32 {
-	return float32(g.size.HeightPx) / (y * 100)
-}
-
-// SX converts to relative scale of window size
-func (g *Game) SX(x float32) float32 {
-	return float32(g.size.WidthPx) / (x * 100)
-}
-
-// VX returns the virtual position for a given Y
-func (g *Game) VX(x float32) float32 {
-	vx := float32(320)
-	pp := float32(g.size.WidthPx) / vx
-	return x / pp
-}
-
-// X calculates absolute position on a virtual sized viewport
-func (g *Game) X(x float32) float32 {
-	vx := float32(320)
-	pp := float32(g.size.WidthPx) / vx
-	return x * pp
 }

@@ -187,73 +187,61 @@ func (t *Textures) UpdateObject(s *Sprite) {
 	// byte array for each quad increases the performance from 100us
 	// down to about 100ns per sprite.
 
-	//t.verts[s.id*12] = s.x + s.Texture.Width*s.scale
 	t.Vertices[4*s.id*12] = byte(sxw >> 0)
 	t.Vertices[4*s.id*12+1] = byte(sxw >> 8)
 	t.Vertices[4*s.id*12+2] = byte(sxw >> 16)
 	t.Vertices[4*s.id*12+3] = byte(sxw >> 24)
 
-	//t.verts[s.id*12+1] = s.y
 	t.Vertices[4*s.id*12+4] = byte(sy >> 0)
 	t.Vertices[4*s.id*12+5] = byte(sy >> 8)
 	t.Vertices[4*s.id*12+6] = byte(sy >> 16)
 	t.Vertices[4*s.id*12+7] = byte(sy >> 24)
 
-	//t.verts[s.id*12+2] = s.x + s.Texture.Width*s.scale
 	t.Vertices[4*s.id*12+8] = byte(sxw >> 0)
 	t.Vertices[4*s.id*12+9] = byte(sxw >> 8)
 	t.Vertices[4*s.id*12+10] = byte(sxw >> 16)
 	t.Vertices[4*s.id*12+11] = byte(sxw >> 24)
 
-	//t.verts[s.id*12+3] = s.y + s.Texture.Height*s.scale
 	t.Vertices[4*s.id*12+12] = byte(syh >> 0)
 	t.Vertices[4*s.id*12+13] = byte(syh >> 8)
 	t.Vertices[4*s.id*12+14] = byte(syh >> 16)
 	t.Vertices[4*s.id*12+15] = byte(syh >> 24)
 
-	// t.verts[s.id*12+4] = s.x
 	t.Vertices[4*s.id*12+16] = byte(sx >> 0)
 	t.Vertices[4*s.id*12+17] = byte(sx >> 8)
 	t.Vertices[4*s.id*12+18] = byte(sx >> 16)
 	t.Vertices[4*s.id*12+19] = byte(sx >> 24)
 
-	// t.verts[s.id*12+5] = s.y
 	t.Vertices[4*s.id*12+20] = byte(sy >> 0)
 	t.Vertices[4*s.id*12+21] = byte(sy >> 8)
 	t.Vertices[4*s.id*12+22] = byte(sy >> 16)
 	t.Vertices[4*s.id*12+23] = byte(sy >> 24)
 
-	//t.verts[s.id*12+6] = s.x + s.Texture.Width*s.scale
 	t.Vertices[4*s.id*12+24] = byte(sxw >> 0)
 	t.Vertices[4*s.id*12+25] = byte(sxw >> 8)
 	t.Vertices[4*s.id*12+26] = byte(sxw >> 16)
 	t.Vertices[4*s.id*12+27] = byte(sxw >> 24)
 
-	// t.verts[s.id*12+7] = s.y + s.Texture.Height*s.cale
 	t.Vertices[4*s.id*12+28] = byte(syh >> 0)
 	t.Vertices[4*s.id*12+29] = byte(syh >> 8)
 	t.Vertices[4*s.id*12+30] = byte(syh >> 16)
 	t.Vertices[4*s.id*12+31] = byte(syh >> 24)
 
-	//t.verts[s.id*12+8] = s.x
 	t.Vertices[4*s.id*12+32] = byte(sx >> 0)
 	t.Vertices[4*s.id*12+33] = byte(sx >> 8)
 	t.Vertices[4*s.id*12+34] = byte(sx >> 16)
 	t.Vertices[4*s.id*12+35] = byte(sx >> 24)
 
-	//t.verts[s.id*12+9] = s.y + s.Texture.Height*s.scale
 	t.Vertices[4*s.id*12+36] = byte(syh >> 0)
 	t.Vertices[4*s.id*12+37] = byte(syh >> 8)
 	t.Vertices[4*s.id*12+38] = byte(syh >> 16)
 	t.Vertices[4*s.id*12+39] = byte(syh >> 24)
 
-	//t.verts[s.id*12+10] = s.x
 	t.Vertices[4*s.id*12+40] = byte(sx >> 0)
 	t.Vertices[4*s.id*12+41] = byte(sx >> 8)
 	t.Vertices[4*s.id*12+42] = byte(sx >> 16)
 	t.Vertices[4*s.id*12+43] = byte(sx >> 24)
 
-	//t.verts[s.id*12+11] = s.y
 	t.Vertices[4*s.id*12+44] = byte(sy >> 0)
 	t.Vertices[4*s.id*12+45] = byte(sy >> 8)
 	t.Vertices[4*s.id*12+46] = byte(sy >> 16)
