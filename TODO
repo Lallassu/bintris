@@ -1,16 +1,7 @@
-GameMode
-    -> Start(mode)
-    -> ScoreKeeper
-    -> TimeKeeper
-    -> SpeedKeeper
-- Score
-    -> number = score
-    -> bonus?
+- sounds
 - Time
     - Switch numbers periodically
         -> Change uv?
-- Menu
-    -> Start, Scoreboard, Modes, About
 - Game modes
     -> Easy (same speed)
     -> Normal (Increasing speed)
@@ -19,10 +10,12 @@ GameMode
 Touchups
 --------
 - Font?
-
+- background?
 
 Shader effects
 --------------
+- Menu effect (select + click)
+- Menu logo effect
 - Type where position is below X% of screen "shatter" (for new tiles)
     -> New tiles effect
 

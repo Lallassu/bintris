@@ -43,7 +43,11 @@ type Game struct {
 	viewf    []float32
 	tex      Textures
 	tiles    []TileSet
+	mode     Mode
+	menu     Menu
 	initDone bool
+	score    []*Sprite
+	time     []*Sprite
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -56,29 +60,10 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	// TBD: Need to handle init when we don't know screen size yet.
-	// if g.size.HeightPx == 0 {
-	// 	g.size.WidthPx = 1080
-	// 	g.size.HeightPx = 2000
-
-	// }
-	//	g.glc.Viewport(0, 0, g.size.WidthPx, g.size.HeightPx)
-
 	// g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
 	// g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 
 	rand.Seed(time.Now().Unix())
-
-	//g.objects = make(map[int]Object)
-
-	//  g.font = &Font{}
-	//  g.font.Init(g)
-
-	//  for i := 1; i < 8; i++ {
-	//  	tSet := &TileSet{}
-	//  	tSet.Init(1.0, 4, i, 12, float64(100+i*30), g)
-	//  	g.AddObjects(tSet)
-	//  }
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -102,14 +87,16 @@ func (g *Game) Init(glctx gl.Context) {
 		ts := TileSet{}
 		ts.Init(4, i, g)
 		ts.Hide()
-		ts.SetSpeed(0.6)
 		g.tiles = append(g.tiles, ts)
 	}
 
 	//g.tex.AddText("bintris", 0.87, 0.0, 0.0, 0.01, 0.019, EffectMetaballsBlue)
-	g.tex.AddText("Score:", 0.05, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-	g.tex.AddText("Time:", 0.35, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
+	g.score = g.tex.AddText("Score:", 0.05, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
+	g.time = g.tex.AddText("Time:", 0.35, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
 
+	g.Hide()
+
+	g.menu.Init(g)
 	// g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
 	// 	g.SX(8),
 	// 	g.SY(10),
@@ -118,6 +105,8 @@ func (g *Game) Init(glctx gl.Context) {
 	// 	g.SX(8),
 	// 	g.SY(10),
 	// 	EffectMetaballsBlue)
+
+	// Test
 
 	g.tex.Init()
 
@@ -134,6 +123,26 @@ func (g *Game) Stop() {
 	// g.images.Release()
 }
 
+func (g *Game) Hide() {
+	for i := range g.score {
+		g.score[i].Hide()
+	}
+
+	for i := range g.time {
+		g.time[i].Hide()
+	}
+}
+
+func (g *Game) Show() {
+	for i := range g.score {
+		g.score[i].Show()
+	}
+
+	for i := range g.time {
+		g.time[i].Show()
+	}
+}
+
 func (g *Game) Draw() {
 	dt := time.Since(g.lastTS).Seconds()
 	g.frameDt += dt
@@ -141,19 +150,6 @@ func (g *Game) Draw() {
 
 	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
 	g.glc.Clear(gl.COLOR_BUFFER_BIT)
-
-	c := 0
-	hidden := []*TileSet{}
-	for i := range g.tiles {
-		if !g.tiles[i].hidden {
-			c++
-		} else {
-			hidden = append(hidden, &g.tiles[i])
-		}
-	}
-	if len(hidden) > 0 && len(hidden) > 4 {
-		hidden[rand.Intn(len(hidden))].Reset(1)
-	}
 
 	for {
 		if g.frameDt >= wMaxInvFPS {
@@ -163,6 +159,7 @@ func (g *Game) Draw() {
 					g.tiles[i].Update(wMaxInvFPS)
 				}
 			}
+			g.mode.Update(wMaxInvFPS)
 		} else {
 			break
 		}
@@ -181,14 +178,18 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 	y /= float32(sz.HeightPx)
 	y = 1 - y
 
-	for i, c := range g.tiles {
-		if !c.hidden {
-			// Offset Y a bit to have a bit off click-free area between tiles
-			if float32(x) > c.tile.fx && float32(x) < c.tile.fx+0.822 &&
-				float32(y) > c.tile.fy+0.01 && float32(y) < c.tile.fy+0.09 {
-				g.tiles[i].Click(x, y)
+	if g.menu.hidden {
+		for i, c := range g.tiles {
+			if !c.hidden {
+				// Offset Y a bit to have a bit off click-free area between tiles
+				if float32(x) > c.tile.fx && float32(x) < c.tile.fx+0.822 &&
+					float32(y) > c.tile.fy+0.01 && float32(y) < c.tile.fy+0.09 {
+					g.tiles[i].Click(x, y)
+				}
 			}
 		}
+	} else {
+		g.menu.KeyDown()
 	}
 }
 

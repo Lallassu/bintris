@@ -130,6 +130,7 @@ func (t *TileSet) VerifyNumber() {
 
 	if num == t.Number {
 		t.Hide()
+		t.gh.mode.AddScore(t.Number)
 	}
 }
 
@@ -152,6 +153,7 @@ func (t *TileSet) Update(dt float64) {
 		}
 
 		if t.tile.fy-0.115 < o.tile.fy && o.tile.fy < t.tile.fy {
+			t.Speed = o.Speed
 			return
 		}
 	}

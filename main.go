@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"golang.org/x/mobile/app"
+	"golang.org/x/mobile/event/key"
 	"golang.org/x/mobile/event/lifecycle"
 	"golang.org/x/mobile/event/paint"
 	"golang.org/x/mobile/event/size"
@@ -38,6 +41,14 @@ func main() {
 				a.Send(paint.Event{})
 			case touch.Event:
 				game.Click(sz, e.X, e.Y)
+			case key.Event:
+				fmt.Printf("KEY!\n")
+				if e.Code != key.CodeSpacebar {
+					break
+				}
+				if down := e.Direction == key.DirPress; down || e.Direction == key.DirRelease {
+					game.menu.KeyDown()
+				}
 			}
 		}
 	})
