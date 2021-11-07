@@ -189,7 +189,7 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 			}
 		}
 	} else {
-		g.menu.KeyDown()
+		g.menu.KeyDown(x, y)
 	}
 }
 

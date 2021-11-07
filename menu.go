@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type Menu struct {
 	hidden     bool
@@ -15,9 +18,6 @@ type Menu struct {
 
 func (m *Menu) Init(g *Game) {
 	m.gh = g
-	// Create menu sprites and position them.
-
-	// Handle keyboard input
 
 	offsetX := float32(0.02)
 	m.logo = m.gh.tex.AddText("bintris", 0.14, 0.75, 0.6, 0.1, 0.19, EffectMetaballsBlue)
@@ -84,9 +84,18 @@ func (m *Menu) Hide() {
 	}
 }
 
-func (m *Menu) KeyDown() {
-	fmt.Printf("KEYDOWN!\n")
-	m.Hide()
-	m.gh.Show()
-	m.gh.mode.Start(GameModeNormal, m.gh)
+func (m *Menu) KeyDown(x, y float32) {
+	if x > 0.36 && x < 0.36+(float32(len(m.start))*0.05) && y > 0.65 && y < 0.65+0.05 {
+		m.Hide()
+		m.gh.Show()
+		m.gh.mode.Start(GameModeNormal, m.gh)
+	} else if x > 0.18 && x < 0.18+(float32(len(m.how))*0.05) && y > 0.58 && y < 0.58+0.05 {
+		fmt.Printf("HOW\n")
+	} else if x > 0.22 && x < 0.22+(float32(len(m.scoreBoard))*0.05) && y > 0.51 && y < 0.51+0.05 {
+		fmt.Printf("Score\n")
+	} else if x > 0.36 && x < 0.36+(float32(len(m.about))*0.05) && y > 0.44 && y < 0.44+0.05 {
+		fmt.Printf("about\n")
+	} else if x > 0.39 && x < 0.39+(float32(len(m.quit))*0.05) && y > 0.37 && y < 0.37+0.05 {
+		os.Exit(0)
+	}
 }

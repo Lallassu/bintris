@@ -251,6 +251,10 @@ func (t *Textures) UpdateObject(s *Sprite) {
 
 func (t *Textures) AddSprite(s *Sprite) {
 	t.UpdateObject(s)
+	t.UpdateUV(s)
+}
+
+func (t *Textures) UpdateUV(s *Sprite) {
 	t.uvs[s.id*12] = s.Texture.U2
 	t.uvs[s.id*12+1] = s.Texture.V2
 
