@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"image"
 	"image/draw"
@@ -9,7 +8,6 @@ import (
 	"strings"
 
 	"golang.org/x/mobile/asset"
-	"golang.org/x/mobile/exp/f32"
 	"golang.org/x/mobile/gl"
 )
 
@@ -17,8 +15,6 @@ type Textures struct {
 	Types    map[string]Texture
 	Uvs      []byte
 	Vertices []byte
-	verts    []float32
-	uvs      []float32
 	vert     gl.Attrib
 	uv       gl.Attrib
 	texID    gl.Texture
@@ -124,9 +120,9 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	}
 
 	// TBD: Dynamic sizes?
-	t.verts = make([]float32, 1*20000)
+	//t.verts = make([]float32, 1*20000)
 	t.Vertices = make([]byte, 1*200000)
-	t.uvs = make([]float32, 1*20000)
+	t.Uvs = make([]byte, 1*20000)
 
 	return nil
 }
@@ -255,28 +251,70 @@ func (t *Textures) AddSprite(s *Sprite) {
 }
 
 func (t *Textures) UpdateUV(s *Sprite) {
-	t.uvs[s.id*12] = s.Texture.U2
-	t.uvs[s.id*12+1] = s.Texture.V2
+	u1 := math.Float32bits(s.Texture.U1)
+	u2 := math.Float32bits(s.Texture.U2)
+	v1 := math.Float32bits(s.Texture.V1)
+	v2 := math.Float32bits(s.Texture.V2)
 
-	t.uvs[s.id*12+2] = s.Texture.U2
-	t.uvs[s.id*12+3] = s.Texture.V1
+	t.Uvs[4*s.id*12] = byte(u2 >> 0)
+	t.Uvs[4*s.id*12+1] = byte(u2 >> 8)
+	t.Uvs[4*s.id*12+2] = byte(u2 >> 16)
+	t.Uvs[4*s.id*12+3] = byte(u2 >> 24)
 
-	t.uvs[s.id*12+4] = s.Texture.U1
-	t.uvs[s.id*12+5] = s.Texture.V2
+	t.Uvs[4*s.id*12+4] = byte(v2 >> 0)
+	t.Uvs[4*s.id*12+5] = byte(v2 >> 8)
+	t.Uvs[4*s.id*12+6] = byte(v2 >> 16)
+	t.Uvs[4*s.id*12+7] = byte(v2 >> 24)
 
-	t.uvs[s.id*12+6] = s.Texture.U2
-	t.uvs[s.id*12+7] = s.Texture.V1
+	t.Uvs[4*s.id*12+8] = byte(u2 >> 0)
+	t.Uvs[4*s.id*12+9] = byte(u2 >> 8)
+	t.Uvs[4*s.id*12+10] = byte(u2 >> 16)
+	t.Uvs[4*s.id*12+11] = byte(u2 >> 24)
 
-	t.uvs[s.id*12+8] = s.Texture.U1
-	t.uvs[s.id*12+9] = s.Texture.V1
+	t.Uvs[4*s.id*12+12] = byte(v1 >> 0)
+	t.Uvs[4*s.id*12+13] = byte(v1 >> 8)
+	t.Uvs[4*s.id*12+14] = byte(v1 >> 16)
+	t.Uvs[4*s.id*12+15] = byte(v1 >> 24)
 
-	t.uvs[s.id*12+10] = s.Texture.U1
-	t.uvs[s.id*12+11] = s.Texture.V2
+	t.Uvs[4*s.id*12+16] = byte(u1 >> 0)
+	t.Uvs[4*s.id*12+17] = byte(u1 >> 8)
+	t.Uvs[4*s.id*12+18] = byte(u1 >> 16)
+	t.Uvs[4*s.id*12+19] = byte(u1 >> 24)
 
-	// UVs are just updated once per sprite so we never need to generate this
-	// more than once, compared to vertices.
-	t.Vertices = f32.Bytes(binary.LittleEndian, t.verts...)
-	t.Uvs = f32.Bytes(binary.LittleEndian, t.uvs...)
+	t.Uvs[4*s.id*12+20] = byte(v2 >> 0)
+	t.Uvs[4*s.id*12+21] = byte(v2 >> 8)
+	t.Uvs[4*s.id*12+22] = byte(v2 >> 16)
+	t.Uvs[4*s.id*12+23] = byte(v2 >> 24)
+
+	t.Uvs[4*s.id*12+24] = byte(u2 >> 0)
+	t.Uvs[4*s.id*12+25] = byte(u2 >> 8)
+	t.Uvs[4*s.id*12+26] = byte(u2 >> 16)
+	t.Uvs[4*s.id*12+27] = byte(u2 >> 24)
+
+	t.Uvs[4*s.id*12+28] = byte(v1 >> 0)
+	t.Uvs[4*s.id*12+29] = byte(v1 >> 8)
+	t.Uvs[4*s.id*12+30] = byte(v1 >> 16)
+	t.Uvs[4*s.id*12+31] = byte(v1 >> 24)
+
+	t.Uvs[4*s.id*12+32] = byte(u1 >> 0)
+	t.Uvs[4*s.id*12+33] = byte(u1 >> 8)
+	t.Uvs[4*s.id*12+34] = byte(u1 >> 16)
+	t.Uvs[4*s.id*12+35] = byte(u1 >> 24)
+
+	t.Uvs[4*s.id*12+36] = byte(v1 >> 0)
+	t.Uvs[4*s.id*12+37] = byte(v1 >> 8)
+	t.Uvs[4*s.id*12+38] = byte(v1 >> 16)
+	t.Uvs[4*s.id*12+39] = byte(v1 >> 24)
+
+	t.Uvs[4*s.id*12+40] = byte(u1 >> 0)
+	t.Uvs[4*s.id*12+41] = byte(u1 >> 8)
+	t.Uvs[4*s.id*12+42] = byte(u1 >> 16)
+	t.Uvs[4*s.id*12+43] = byte(u1 >> 24)
+
+	t.Uvs[4*s.id*12+44] = byte(v2 >> 0)
+	t.Uvs[4*s.id*12+45] = byte(v2 >> 8)
+	t.Uvs[4*s.id*12+46] = byte(v2 >> 16)
+	t.Uvs[4*s.id*12+47] = byte(v2 >> 24)
 }
 
 func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect) []*Sprite {
