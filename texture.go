@@ -164,13 +164,23 @@ func (t *Textures) Draw() {
 }
 
 func (t *Textures) Update() {
+	uvUpdated := false
 	for i := range t.gh.objects {
 		if t.gh.objects[i].dirty {
 			t.UpdateObject(t.gh.objects[i])
 		}
+		if t.gh.objects[i].dirtyUvs {
+			t.UpdateUV(t.gh.objects[i])
+			uvUpdated = true
+		}
 	}
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
 	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
+
+	if uvUpdated {
+		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ubo)
+		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.DYNAMIC_DRAW)
+	}
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
@@ -315,6 +325,7 @@ func (t *Textures) UpdateUV(s *Sprite) {
 	t.Uvs[4*s.id*12+45] = byte(v2 >> 8)
 	t.Uvs[4*s.id*12+46] = byte(v2 >> 16)
 	t.Uvs[4*s.id*12+47] = byte(v2 >> 24)
+	s.dirtyUvs = false
 }
 
 func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect) []*Sprite {

@@ -37,17 +37,18 @@ type Game struct {
 	size     size.Event
 	sizePrev size.Event
 	//objects map[int]Object
-	objects  []*Sprite
-	program  gl.Program
-	projf    []float32
-	viewf    []float32
-	tex      Textures
-	tiles    []TileSet
-	mode     Mode
-	menu     Menu
-	initDone bool
-	score    []*Sprite
-	time     []*Sprite
+	objects      []*Sprite
+	program      gl.Program
+	projf        []float32
+	viewf        []float32
+	tex          Textures
+	tiles        []TileSet
+	mode         Mode
+	menu         Menu
+	score        []*Sprite
+	time         []*Sprite
+	currTimeTxt  []*Sprite
+	currScoreTxt []*Sprite
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -90,11 +91,11 @@ func (g *Game) Init(glctx gl.Context) {
 		g.tiles = append(g.tiles, ts)
 	}
 
-	//g.tex.AddText("bintris", 0.87, 0.0, 0.0, 0.01, 0.019, EffectMetaballsBlue)
 	g.score = g.tex.AddText("Score:", 0.05, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
+	g.currScoreTxt = g.tex.AddText("0000", 0.22, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
 	g.time = g.tex.AddText("Time:", 0.35, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-
-	g.Hide()
+	g.currTimeTxt = g.tex.AddText("0000", 0.49, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
+	//g.Hide()
 
 	g.menu.Init(g)
 	// g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
@@ -113,7 +114,6 @@ func (g *Game) Init(glctx gl.Context) {
 	g.images = glutil.NewImages(g.glc)
 	g.fps = debug.NewFPS(g.images)
 	g.lastTS = time.Now()
-	g.initDone = true
 }
 
 func (g *Game) Stop() {

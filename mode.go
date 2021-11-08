@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type Mode struct {
 	Score    int
 	gh       *Game
 	lastTile time.Time
+	secsPrev string
 }
 
 func (m *Mode) Start(gm GameMode, gh *Game) {
@@ -42,6 +44,10 @@ func (m *Mode) Reset() {
 }
 
 func (m *Mode) Update(dt float64) {
+	if m.gh == nil {
+		return
+	}
+
 	switch m.Type {
 	case GameModeEasy:
 	case GameModeNormal:
@@ -66,9 +72,27 @@ func (m *Mode) Update(dt float64) {
 		// }
 	case GameModeHard:
 	}
+
+	// Update timer
+	secs := strconv.Itoa(int(time.Since(m.Time).Seconds()))
+	// Only update if changed.
+	if secs != m.secsPrev {
+		for i := 0; i < len(secs); i++ {
+			if i < 4 {
+				m.gh.currTimeTxt[i].ChangeTexture(string(secs[i]))
+			}
+		}
+	}
+	m.secsPrev = secs
 }
 
 func (m *Mode) AddScore(points int) {
 	m.Score += points
 	// TBD: Update score text
+	txt := strconv.Itoa(m.Score)
+	for i := 0; i < len(txt); i++ {
+		if i < 4 {
+			m.gh.currScoreTxt[i].ChangeTexture(string(txt[i]))
+		}
+	}
 }

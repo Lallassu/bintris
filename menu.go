@@ -94,7 +94,8 @@ func (m *Menu) KeyDown(x, y float32) {
 	} else if x > 0.22 && x < 0.22+(float32(len(m.scoreBoard))*0.05) && y > 0.51 && y < 0.51+0.05 {
 		fmt.Printf("Score\n")
 	} else if x > 0.36 && x < 0.36+(float32(len(m.about))*0.05) && y > 0.44 && y < 0.44+0.05 {
-		fmt.Printf("about\n")
+		fmt.Printf("Menu: %v\n", m.about[0].Texture)
+		m.about[0].ChangeTexture("b")
 	} else if x > 0.39 && x < 0.39+(float32(len(m.quit))*0.05) && y > 0.37 && y < 0.37+0.05 {
 		os.Exit(0)
 	}
