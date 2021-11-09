@@ -5,19 +5,25 @@ layout (location = 0) in vec2 vert;
 layout (location = 1) in vec2 uvs;
 
 out vec2 uv;
+out vec2 pos;
 
 void main() {
 	uv = uvs;
 	gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
+	pos = vec2(gl_Position.x, gl_Position.y);
 }
 `
 const fragmentShader = `#version 300 es
 in mediump vec2 uv;
+in mediump vec2 pos;
 uniform sampler2D image;
 layout (location = 0) out highp vec4 color;
 
 void main() {
 	color = texture(image, uv);
+	if (pos.y > 0.7 ) { // fract(sin(pos.x)*1.0) > 0.5) {
+		color.a = 0.1;
+	}
 }
 
 `

@@ -15,11 +15,14 @@ type Textures struct {
 	Types    map[string]Texture
 	Uvs      []byte
 	Vertices []byte
+	Effects  []byte
 	vert     gl.Attrib
 	uv       gl.Attrib
+	ef       gl.Attrib
 	texID    gl.Texture
 	vbo      gl.Buffer
 	ubo      gl.Buffer
+	ebo      gl.Buffer // Not element buffer, it's effect buffer ;)
 	vao      gl.VertexArray
 	gh       *Game
 }
@@ -131,9 +134,11 @@ func (t *Textures) Init() {
 	//t.vao = t.gh.glc.CreateVertexArray()
 	t.vbo = t.gh.glc.CreateBuffer()
 	t.ubo = t.gh.glc.CreateBuffer()
+	t.ebo = t.gh.glc.CreateBuffer()
 
 	t.vert = t.gh.glc.GetAttribLocation(t.gh.program, "vert")
 	t.uv = t.gh.glc.GetAttribLocation(t.gh.program, "uvs")
+	t.ef = t.gh.glc.GetAttribLocation(t.gh.program, "effects")
 
 	//t.gh.glc.BindVertexArray(t.vao)
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
@@ -144,8 +149,13 @@ func (t *Textures) Init() {
 	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.STATIC_DRAW)
 	t.gh.glc.VertexAttribPointer(t.uv, 2, gl.FLOAT, true, 2*4, 0)
 
+	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ebo)
+	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.STATIC_DRAW)
+	t.gh.glc.VertexAttribPointer(t.ef, 1, gl.FLOAT, true, 4, 0)
+
 	t.gh.glc.EnableVertexAttribArray(t.vert)
 	t.gh.glc.EnableVertexAttribArray(t.uv)
+	t.gh.glc.EnableVertexAttribArray(t.ef)
 
 	t.gh.glc.UseProgram(t.gh.program)
 	t.gh.glc.ActiveTexture(gl.TEXTURE0)
@@ -153,9 +163,10 @@ func (t *Textures) Init() {
 }
 
 func (t *Textures) Cleanup() {
-	t.gh.glc.DeleteVertexArray(t.vao)
+	//t.gh.glc.DeleteVertexArray(t.vao)
 	t.gh.glc.DeleteBuffer(t.vbo)
 	t.gh.glc.DeleteBuffer(t.ubo)
+	t.gh.glc.DeleteBuffer(t.ebo)
 	t.gh.glc.DeleteTexture(t.texID)
 }
 
@@ -165,6 +176,7 @@ func (t *Textures) Draw() {
 
 func (t *Textures) Update() {
 	uvUpdated := false
+	effectsUpdated := false
 	for i := range t.gh.objects {
 		if t.gh.objects[i].dirty {
 			t.UpdateObject(t.gh.objects[i])
@@ -172,6 +184,10 @@ func (t *Textures) Update() {
 		if t.gh.objects[i].dirtyUvs {
 			t.UpdateUV(t.gh.objects[i])
 			uvUpdated = true
+		}
+		if t.gh.objects[i].dirtyEffect {
+			t.UpdateEffect(t.gh.objects[i])
+			effectsUpdated = true
 		}
 	}
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
@@ -181,6 +197,15 @@ func (t *Textures) Update() {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ubo)
 		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.DYNAMIC_DRAW)
 	}
+
+	if effectsUpdated {
+		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ebo)
+		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.DYNAMIC_DRAW)
+	}
+}
+
+func (t *Textures) UpdateEffect(s *Sprite) {
+
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {
@@ -258,6 +283,7 @@ func (t *Textures) UpdateObject(s *Sprite) {
 func (t *Textures) AddSprite(s *Sprite) {
 	t.UpdateObject(s)
 	t.UpdateUV(s)
+	t.UpdateEffect(s)
 }
 
 func (t *Textures) UpdateUV(s *Sprite) {

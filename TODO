@@ -1,8 +1,9 @@
+- effect to shader
+    -> updateEffect (in textures)
+    -> set effect on sprite on start (default none = 0)
+    -> make effect type byte
 - empty texture (space)
 - sounds
-- Time
-    - Switch numbers periodically
-        -> Change uv?
 - Game modes
     -> Easy (same speed)
     -> Normal (Increasing speed)

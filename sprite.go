@@ -8,27 +8,27 @@ import (
 )
 
 type Sprite struct {
-	gh       *Game
-	id       int
-	uEffect  gl.Uniform
-	fx       float32
-	fy       float32
-	z        float32
-	tx       float32
-	ty       float32
-	effect   Effect
-	hidden   bool
-	prevX    float32
-	prevY    float32
-	Texture  Texture
-	dirty    bool
-	dirtyUvs bool
+	gh          *Game
+	id          int
+	uEffect     gl.Uniform
+	fx          float32
+	fy          float32
+	z           float32
+	tx          float32
+	ty          float32
+	effect      Effect
+	hidden      bool
+	prevX       float32
+	prevY       float32
+	Texture     Texture
+	dirty       bool
+	dirtyUvs    bool
+	dirtyEffect bool
 }
 
 func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game) {
 	s.gh = g
 	tex = strings.ToLower(tex)
-	//	s.uEffect = s.gh.glc.GetUniformLocation(s.gh.program, "effect")
 	s.fx = fx
 	s.fy = fy
 	s.tx = tx
@@ -76,4 +76,9 @@ func (s *Sprite) ChangeTexture(tex string) {
 	s.Texture = s.gh.tex.Types[tex]
 	s.dirtyUvs = true
 	s.dirty = true
+}
+
+func (s *Sprite) ChangeEffect(e Effect) {
+	s.effect = e
+	s.dirtyEffect = true
 }
