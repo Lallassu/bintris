@@ -28,6 +28,8 @@ Shader effects
 
 - Cleanup shaders (effects in frag shader instead)
 
+Shader effects(pixelize): https://thebookofshaders.com/10/
+
 Optimize:
 https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp
 

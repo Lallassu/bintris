@@ -27,8 +27,14 @@ func (m *Menu) Init(g *Game) {
 	m.about = m.gh.tex.AddText("about", 0.34+offsetX, 0.44, 0.6, 0.05, 0.05, EffectMetaballsBlue)
 	m.quit = m.gh.tex.AddText("quit", 0.37+offsetX, 0.37, 0.6, 0.05, 0.05, EffectMetaballsBlue)
 
+	for i := range m.logo {
+		m.logo[i].ChangeEffect(EffectMetaballs)
+	}
 }
 func (m *Menu) Show() {
+	if !m.hidden {
+		return
+	}
 	m.hidden = false
 
 	for i := range m.logo {
@@ -57,6 +63,9 @@ func (m *Menu) Show() {
 }
 
 func (m *Menu) Hide() {
+	if m.hidden {
+		return
+	}
 	m.hidden = true
 
 	for i := range m.logo {

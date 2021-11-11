@@ -23,7 +23,6 @@ type Textures struct {
 	vbo      gl.Buffer
 	ubo      gl.Buffer
 	ebo      gl.Buffer // Not element buffer, it's effect buffer ;)
-	vao      gl.VertexArray
 	gh       *Game
 }
 
@@ -126,21 +125,20 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	//t.verts = make([]float32, 1*20000)
 	t.Vertices = make([]byte, 1*200000)
 	t.Uvs = make([]byte, 1*20000)
+	t.Effects = make([]byte, 1*20000)
 
 	return nil
 }
 
 func (t *Textures) Init() {
-	//t.vao = t.gh.glc.CreateVertexArray()
 	t.vbo = t.gh.glc.CreateBuffer()
 	t.ubo = t.gh.glc.CreateBuffer()
 	t.ebo = t.gh.glc.CreateBuffer()
 
 	t.vert = t.gh.glc.GetAttribLocation(t.gh.program, "vert")
 	t.uv = t.gh.glc.GetAttribLocation(t.gh.program, "uvs")
-	t.ef = t.gh.glc.GetAttribLocation(t.gh.program, "effects")
+	t.ef = t.gh.glc.GetAttribLocation(t.gh.program, "effect")
 
-	//t.gh.glc.BindVertexArray(t.vao)
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
 	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
 	t.gh.glc.VertexAttribPointer(t.vert, 2, gl.FLOAT, false, 2*4, 0)
@@ -151,7 +149,7 @@ func (t *Textures) Init() {
 
 	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ebo)
 	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.STATIC_DRAW)
-	t.gh.glc.VertexAttribPointer(t.ef, 1, gl.FLOAT, true, 4, 0)
+	t.gh.glc.VertexAttribPointer(t.ef, 2, gl.FLOAT, false, 2*4, 0)
 
 	t.gh.glc.EnableVertexAttribArray(t.vert)
 	t.gh.glc.EnableVertexAttribArray(t.uv)
@@ -163,7 +161,6 @@ func (t *Textures) Init() {
 }
 
 func (t *Textures) Cleanup() {
-	//t.gh.glc.DeleteVertexArray(t.vao)
 	t.gh.glc.DeleteBuffer(t.vbo)
 	t.gh.glc.DeleteBuffer(t.ubo)
 	t.gh.glc.DeleteBuffer(t.ebo)
@@ -177,9 +174,11 @@ func (t *Textures) Draw() {
 func (t *Textures) Update() {
 	uvUpdated := false
 	effectsUpdated := false
+	vertsUpdated := false
 	for i := range t.gh.objects {
 		if t.gh.objects[i].dirty {
 			t.UpdateObject(t.gh.objects[i])
+			vertsUpdated = true
 		}
 		if t.gh.objects[i].dirtyUvs {
 			t.UpdateUV(t.gh.objects[i])
@@ -190,22 +189,86 @@ func (t *Textures) Update() {
 			effectsUpdated = true
 		}
 	}
-	t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
-	t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
+
+	if vertsUpdated {
+		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
+		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
+	}
 
 	if uvUpdated {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ubo)
-		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.DYNAMIC_DRAW)
+		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.STATIC_DRAW)
 	}
 
 	if effectsUpdated {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ebo)
-		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.DYNAMIC_DRAW)
+		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.STATIC_DRAW)
 	}
 }
 
 func (t *Textures) UpdateEffect(s *Sprite) {
+	eff := math.Float32bits(float32(s.effect))
+	t.Effects[4*s.id*12] = byte(eff >> 0)
+	t.Effects[4*s.id*12+1] = byte(eff >> 8)
+	t.Effects[4*s.id*12+2] = byte(eff >> 16)
+	t.Effects[4*s.id*12+3] = byte(eff >> 24)
 
+	t.Effects[4*s.id*12+4] = byte(eff >> 0)
+	t.Effects[4*s.id*12+5] = byte(eff >> 8)
+	t.Effects[4*s.id*12+6] = byte(eff >> 16)
+	t.Effects[4*s.id*12+7] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+8] = byte(eff >> 0)
+	t.Effects[4*s.id*12+9] = byte(eff >> 8)
+	t.Effects[4*s.id*12+10] = byte(eff >> 16)
+	t.Effects[4*s.id*12+11] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+12] = byte(eff >> 0)
+	t.Effects[4*s.id*12+13] = byte(eff >> 8)
+	t.Effects[4*s.id*12+14] = byte(eff >> 16)
+	t.Effects[4*s.id*12+15] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+16] = byte(eff >> 0)
+	t.Effects[4*s.id*12+17] = byte(eff >> 8)
+	t.Effects[4*s.id*12+18] = byte(eff >> 16)
+	t.Effects[4*s.id*12+19] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+20] = byte(eff >> 0)
+	t.Effects[4*s.id*12+21] = byte(eff >> 8)
+	t.Effects[4*s.id*12+22] = byte(eff >> 16)
+	t.Effects[4*s.id*12+23] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+24] = byte(eff >> 0)
+	t.Effects[4*s.id*12+25] = byte(eff >> 8)
+	t.Effects[4*s.id*12+26] = byte(eff >> 16)
+	t.Effects[4*s.id*12+27] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+28] = byte(eff >> 0)
+	t.Effects[4*s.id*12+29] = byte(eff >> 8)
+	t.Effects[4*s.id*12+30] = byte(eff >> 16)
+	t.Effects[4*s.id*12+31] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+32] = byte(eff >> 0)
+	t.Effects[4*s.id*12+33] = byte(eff >> 8)
+	t.Effects[4*s.id*12+34] = byte(eff >> 16)
+	t.Effects[4*s.id*12+35] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+36] = byte(eff >> 0)
+	t.Effects[4*s.id*12+37] = byte(eff >> 8)
+	t.Effects[4*s.id*12+38] = byte(eff >> 16)
+	t.Effects[4*s.id*12+39] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+40] = byte(eff >> 0)
+	t.Effects[4*s.id*12+41] = byte(eff >> 8)
+	t.Effects[4*s.id*12+42] = byte(eff >> 16)
+	t.Effects[4*s.id*12+43] = byte(eff >> 24)
+
+	t.Effects[4*s.id*12+44] = byte(eff >> 0)
+	t.Effects[4*s.id*12+45] = byte(eff >> 8)
+	t.Effects[4*s.id*12+46] = byte(eff >> 16)
+	t.Effects[4*s.id*12+47] = byte(eff >> 24)
+
+	s.dirtyEffect = false
 }
 
 func (t *Textures) UpdateObject(s *Sprite) {

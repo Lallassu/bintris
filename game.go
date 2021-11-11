@@ -17,26 +17,21 @@ const (
 )
 
 type Game struct {
-	ids      int
-	idLock   sync.Mutex
-	images   *glutil.Images
-	fps      *debug.FPS
-	glc      gl.Context
-	lastTS   time.Time
-	frameDt  float64
-	elapsed  float64
-	uEffect  gl.Uniform
-	uTime    gl.Uniform
-	uModel   gl.Uniform
-	uView    gl.Uniform
-	uProj    gl.Uniform
-	touchX   float32
-	touchY   float32
-	lastX    int
-	lastY    int
-	size     size.Event
-	sizePrev size.Event
-	//objects map[int]Object
+	ids          int
+	idLock       sync.Mutex
+	images       *glutil.Images
+	fps          *debug.FPS
+	glc          gl.Context
+	lastTS       time.Time
+	frameDt      float64
+	elapsed      float64
+	uTime        gl.Uniform
+	touchX       float32
+	touchY       float32
+	lastX        int
+	lastY        int
+	size         size.Event
+	sizePrev     size.Event
 	objects      []*Sprite
 	program      gl.Program
 	projf        []float32
@@ -61,8 +56,7 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	// g.uEffect = g.glc.GetUniformLocation(g.program, "effect")
-	// g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
+	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 
 	rand.Seed(time.Now().Unix())
 
@@ -167,6 +161,7 @@ func (g *Game) Draw() {
 		g.frameDt -= wMaxInvFPS
 	}
 
+	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
 	g.tex.Draw()
 	g.tex.Update()
 

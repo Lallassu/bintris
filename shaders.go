@@ -3,26 +3,43 @@ package main
 const vertexShader = `#version 300 es
 layout (location = 0) in vec2 vert;
 layout (location = 1) in vec2 uvs;
+layout (location = 2) in vec2 effect;
+
+uniform highp float uTime;
 
 out vec2 uv;
 out vec2 pos;
+out vec2 eff;
 
 void main() {
 	uv = uvs;
-	gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
 	pos = vec2(gl_Position.x, gl_Position.y);
+	eff = effect;
+
+	if (eff.x == 1.0) {
+		gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
+	} else {
+		gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
+	}
 }
 `
 const fragmentShader = `#version 300 es
 in mediump vec2 uv;
 in mediump vec2 pos;
+in mediump vec2 eff;
 uniform sampler2D image;
+uniform highp float uTime;
 layout (location = 0) out highp vec4 color;
 
 void main() {
 	color = texture(image, uv);
-	if (pos.y > 0.7 ) { // fract(sin(pos.x)*1.0) > 0.5) {
-		color.a = 0.1;
+	if (eff.x == 1.0) {
+		//	color.b = 1.0 * sin(uTime);
+		if (fract(sin(pos.y*uTime)) > 0.1) {
+			color.b -= sin(pos.y*uTime);
+		} else {
+			color.b += sin(pos.y*uTime);
+		}
 	}
 }
 
