@@ -93,21 +93,31 @@ void main() {
 		 	color.a = clamp(sin(uv.x*uTime), 1.0, 0.5);
 			color.b += 0.8;
 		 }
+	 	if (color.r > 0.5 && color.g < 0.2) {
+			color.b = clamp(sin(uTime), 0.0, 0.8);
+			color.r = clamp(sin(uTime), 0.0, 0.3);
+		}
    } else if(eff.x == 2.0 || eff.x == 4.0) { // TileTop
    	 color = texture(image, uv);
 	 if (pos.y > 0.75) {
 	 	color.a = 1.0-pos.y;
 	 }
 	 if (eff.x == 4.0) {
-	    float r = color.r;
-	    color.r = color.b;
-		color.b = r;
+	 	if (color.r > 0.5 && color.g < 0.2) {
+			color.r = 0.0;
+		}
 	 }
    } else if(eff.x == 3.0) { // Stats
    	  color = texture(image, uv);
+	  if (color.r > 0.5 && color.g < 0.2) {
+	  	color.r = 0.0;
+	  }
 	  color.b += 0.8;
    } else  {
    	 color = texture(image, uv);
+	 	if (color.r > 0.5 && color.g < 0.2) {
+			color.r = 0.0;
+		}
    }
 }
 `
