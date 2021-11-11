@@ -17,33 +17,29 @@ const (
 )
 
 type Game struct {
-	ids          int
-	idLock       sync.Mutex
-	images       *glutil.Images
-	fps          *debug.FPS
-	glc          gl.Context
-	lastTS       time.Time
-	frameDt      float64
-	elapsed      float64
-	uTime        gl.Uniform
-	touchX       float32
-	touchY       float32
-	lastX        int
-	lastY        int
-	size         size.Event
-	sizePrev     size.Event
-	objects      []*Sprite
-	program      gl.Program
-	projf        []float32
-	viewf        []float32
-	tex          Textures
-	tiles        []TileSet
-	mode         Mode
-	menu         Menu
-	score        []*Sprite
-	time         []*Sprite
-	currTimeTxt  []*Sprite
-	currScoreTxt []*Sprite
+	ids      int
+	idLock   sync.Mutex
+	images   *glutil.Images
+	fps      *debug.FPS
+	glc      gl.Context
+	lastTS   time.Time
+	frameDt  float64
+	elapsed  float64
+	uTime    gl.Uniform
+	touchX   float32
+	touchY   float32
+	lastX    int
+	lastY    int
+	size     size.Event
+	sizePrev size.Event
+	objects  []*Sprite
+	program  gl.Program
+	projf    []float32
+	viewf    []float32
+	tex      Textures
+	tiles    []TileSet
+	mode     Mode
+	menu     Menu
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -85,24 +81,8 @@ func (g *Game) Init(glctx gl.Context) {
 		g.tiles = append(g.tiles, ts)
 	}
 
-	g.score = g.tex.AddText("Score:", 0.05, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-	g.currScoreTxt = g.tex.AddText("0000", 0.22, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-	g.time = g.tex.AddText("Time:", 0.35, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-	g.currTimeTxt = g.tex.AddText("0000", 0.49, 0.90, 0.1, 0.02, 0.029, EffectMetaballsBlue)
-	//g.Hide()
-
 	g.menu.Init(g)
-	// g.tex.AddText("Time:", g.X(120), g.Y(295), 0.0,
-	// 	g.SX(8),
-	// 	g.SY(10),
-	// 	EffectMetaballsBlue)
-	// g.tex.AddText("0000", g.X(165), g.Y(295), 0.0,
-	// 	g.SX(8),
-	// 	g.SY(10),
-	// 	EffectMetaballsBlue)
-
-	// Test
-
+	g.mode.Init(g)
 	g.tex.Init()
 
 	g.images = glutil.NewImages(g.glc)
@@ -115,26 +95,6 @@ func (g *Game) Stop() {
 	//g.tex.Cleanup()
 	// g.fps.Release()
 	// g.images.Release()
-}
-
-func (g *Game) Hide() {
-	for i := range g.score {
-		g.score[i].Hide()
-	}
-
-	for i := range g.time {
-		g.time[i].Hide()
-	}
-}
-
-func (g *Game) Show() {
-	for i := range g.score {
-		g.score[i].Show()
-	}
-
-	for i := range g.time {
-		g.time[i].Show()
-	}
 }
 
 func (g *Game) Draw() {

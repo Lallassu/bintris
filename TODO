@@ -1,7 +1,7 @@
-- effect to shader
-    -> updateEffect (in textures)
-    -> set effect on sprite on start (default none = 0)
-    -> make effect type byte
+- Game Over Text + effect 
+    -> All turns red except game over
+    -> Main menu (or scoreboard)
+
 - empty texture (space)
 - sounds
 - Game modes
@@ -17,14 +17,6 @@ Touchups
 Shader effects
 --------------
 - Menu effect (select + click)
-- Menu logo effect
-- Type where position is below X% of screen "shatter" (for new tiles)
-    -> New tiles effect
-
-- Set effect as an value for the ubo as a stride.
-    - applied once per uv-set
-- Object -> collection of sprites that moves the same and same effect.
-    - For Addtext as well
 
 - Cleanup shaders (effects in frag shader instead)
 

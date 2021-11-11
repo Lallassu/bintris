@@ -16,21 +16,76 @@ const (
 
 // Mode is handling game modes
 type Mode struct {
-	Type     GameMode
-	Speed    float64
-	Time     time.Time
-	Score    int
-	gh       *Game
-	lastTile time.Time
-	secsPrev string
+	Type         GameMode
+	Speed        float64
+	Time         time.Time
+	Score        int
+	gh           *Game
+	lastTile     time.Time
+	secsPrev     string
+	score        []*Sprite
+	time         []*Sprite
+	currTimeTxt  []*Sprite
+	currScoreTxt []*Sprite
+	hidden       bool
 }
 
-func (m *Mode) Start(gm GameMode, gh *Game) {
-	m.gh = gh
+func (m *Mode) Init(g *Game) {
+	m.gh = g
+	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone)
+	m.currScoreTxt = g.tex.AddText("0000", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.time = g.tex.AddText("Time:", 0.54, 0.91, 0.1, 0.04, 0.055, EffectNone)
+	m.currTimeTxt = g.tex.AddText("0000", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.Hide()
+}
+
+func (m *Mode) Start(gm GameMode) {
 	m.Type = gm
 	m.Time = time.Now()
 	m.Speed = 0.1
 	m.Score = 0
+	m.gh.menu.Hide()
+	m.Show()
+}
+
+func (m *Mode) Hide() {
+	if m.hidden {
+		return
+	}
+	m.hidden = true
+	for i := range m.score {
+		m.score[i].Hide()
+	}
+
+	for i := range m.time {
+		m.time[i].Hide()
+	}
+	for i := range m.currTimeTxt {
+		m.currTimeTxt[i].Hide()
+	}
+	for i := range m.currScoreTxt {
+		m.currScoreTxt[i].Hide()
+	}
+}
+
+func (m *Mode) Show() {
+	if !m.hidden {
+		return
+	}
+	m.hidden = false
+	for i := range m.score {
+		m.score[i].Show()
+	}
+
+	for i := range m.time {
+		m.time[i].Show()
+	}
+	for i := range m.currTimeTxt {
+		m.currTimeTxt[i].Show()
+	}
+	for i := range m.currScoreTxt {
+		m.currScoreTxt[i].Show()
+	}
 }
 
 func (m *Mode) Reset() {
@@ -41,6 +96,7 @@ func (m *Mode) Reset() {
 	m.Speed = 0.1
 	m.Score = 0
 	m.lastTile = time.Now()
+	m.Show()
 }
 
 func (m *Mode) Update(dt float64) {
@@ -79,7 +135,7 @@ func (m *Mode) Update(dt float64) {
 	if secs != m.secsPrev {
 		for i := 0; i < len(secs); i++ {
 			if i < 4 {
-				m.gh.currTimeTxt[i].ChangeTexture(string(secs[i]))
+				m.currTimeTxt[i].ChangeTexture(string(secs[i]))
 			}
 		}
 	}
@@ -92,7 +148,7 @@ func (m *Mode) AddScore(points int) {
 	txt := strconv.Itoa(m.Score)
 	for i := 0; i < len(txt); i++ {
 		if i < 4 {
-			m.gh.currScoreTxt[i].ChangeTexture(string(txt[i]))
+			m.currScoreTxt[i].ChangeTexture(string(txt[i]))
 		}
 	}
 }

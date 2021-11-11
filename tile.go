@@ -39,20 +39,21 @@ func (t *TileSet) Init(size int, number int, g *Game) {
 	t.Sprites = append(t.Sprites, c)
 
 	c.Init(0.04, 0.1, 0.5, 0.745, 0.1, "tile", g)
+	c.ChangeEffect(EffectTileTop)
 	t.tile = c
 	g.AddObjects(c)
 
 	// 0.037 is just an offset for the actuall texture that is badly aligned :P
 	w := float32(0.732)
 	for x := float32(0); x < w; x += w / 4.0 {
-		s := g.tex.AddText("0", x+w/4-0.07, 0.125, 0.7, 0.05, 0.05, EffectMetaballsBlue)
+		s := g.tex.AddText("0", x+w/4-0.07, 0.125, 0.7, 0.05, 0.05, EffectNumber)
 		t.numberSlots = append(t.numberSlots, s...)
-		s = g.tex.AddText("1", x+w/4-0.07, 0.125, 0.7, 0.05, 0.05, EffectMetaballsBlue)
+		s = g.tex.AddText("1", x+w/4-0.07, 0.125, 0.7, 0.05, 0.05, EffectNumber)
 		s[0].Hide()
 		t.numberSlots = append(t.numberSlots, s...)
 	}
 
-	n := g.tex.AddText(t.NumberStr, 0.84, 0.121, 0.7, 0.06, 0.06, EffectMetaballsBlue)
+	n := g.tex.AddText(t.NumberStr, 0.84, 0.121, 0.7, 0.06, 0.06, EffectNumber)
 	t.Sprites = append(t.Sprites, n...)
 }
 
