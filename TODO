@@ -1,6 +1,7 @@
-- Game Over Text + effect 
-    -> All turns red except game over
-    -> Main menu (or scoreboard)
+- Scoreboard 
+    - Row blinking where current win was.
+        - Position, Score, Time, Date
+    - 10 positions
 
 - empty texture (space)
 - sounds

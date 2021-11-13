@@ -20,6 +20,10 @@ void main() {
 	if (eff.x == 1.0) {
 		gl_Position.x = pos.x - sin(uTime)/30.0;
 		gl_Position.y = pos.y - cos(uTime)/20.0;
+	} else if(eff.x == 6.0) {
+		gl_Position.x = pos.x - sin(uTime)/30.0;
+	} else if(eff.x == 7.0) {
+		gl_Position.x = pos.x + sin(uTime)/30.0;
 	} else {
 		gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
 	}
@@ -46,9 +50,9 @@ vec2 random2( vec2 p ) {
 void main() {
 	if (eff.x == 1.0) { // MetaBalls
 	     vec4 c = texture(image, uv);
-		 if (uTime < 1.5) {
-		 	c.a += (c.a*uTime)-1.0;
-		 }
+		 if (uTime < 4.0) {
+		 	c.a += sin(c.a*uTime/3.0)-1.0;
+		 } 
 
          vec2 u_resolution = vec2(1000.0, 1000.0);
 
@@ -86,12 +90,12 @@ void main() {
    		     }
    		 }
 
-         color2 += step(0.05*pos.y, m_dist);
+          color2 += step(0.05*pos.y, m_dist);
        	 color = c * vec4(color2,1.0);
 		 if (color.r == 0.0 && color.b == 0.0 && color.g == 0.0 && color.a > 0.0) {
 		 	color = c;
-		 	color.a = clamp(sin(uv.x*uTime), 1.0, 0.5);
-			color.b += 0.8;
+		 	color.a = clamp(sin(pos.x*uTime), 1.0, 0.5);
+			color.b = 0.8;
 		 }
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.b = clamp(sin(uTime), 0.0, 0.8);
@@ -113,6 +117,19 @@ void main() {
 	  	color.r = 0.0;
 	  }
 	  color.b += 0.8;
+   } else if(eff.x == 5.0) { // GameOver (Red)
+   	    color = texture(image, uv);
+   		if (color.a > 0.4) {
+			color.r = 1.0;
+			color.a = 0.2;
+	 	}
+   } else if(eff.x == 6.0 || eff.x == 7.0) { // Game Over "Logo"
+   	    color = texture(image, uv);
+		color.r = clamp(sin(uTime*5.0), 0.8, 1.0);
+		color.b += 0.2;
+	 	if (color.r > 0.5 && color.g < 0.2) {
+			color.a = 0.0;
+		}
    } else  {
    	 color = texture(image, uv);
 	 	if (color.r > 0.5 && color.g < 0.2) {

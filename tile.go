@@ -111,12 +111,14 @@ func (t *TileSet) Reset(offset float32) {
 	for i := range t.Sprites {
 		t.Sprites[i].Show()
 		t.Sprites[i].ChangeY(offset)
+		t.Sprites[i].ChangeEffect(EffectNumber)
 	}
 	for i := range t.numberSlots {
 		if t.numberSlots[i].Texture.Name != "1" {
 			t.numberSlots[i].Show()
 		}
 		t.numberSlots[i].ChangeY(offset)
+		t.numberSlots[i].ChangeEffect(EffectNumber)
 	}
 	t.hidden = false
 }
@@ -136,12 +138,12 @@ func (t *TileSet) VerifyNumber() {
 }
 
 func (t *TileSet) Update(dt float64) {
-	if t.hidden {
+	if t.hidden || t.gh.mode.gameOver {
 		return
 	}
 
 	// Check for collissions
-	if t.tile.fy <= 0.028 {
+	if t.tile.fy <= 0.036 {
 		return
 	}
 
@@ -164,5 +166,14 @@ func (t *TileSet) Update(dt float64) {
 	}
 	for i := range t.numberSlots {
 		t.numberSlots[i].ChangeY(-float32(t.Speed * dt))
+	}
+}
+
+func (t *TileSet) GameOver() {
+	for i := range t.Sprites {
+		t.Sprites[i].ChangeEffect(EffectGameOver)
+	}
+	for i := range t.numberSlots {
+		t.numberSlots[i].ChangeEffect(EffectGameOver)
 	}
 }

@@ -40,6 +40,7 @@ type Game struct {
 	tiles    []TileSet
 	mode     Mode
 	menu     Menu
+	bg       *Sprite
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -69,10 +70,11 @@ func (g *Game) Init(glctx gl.Context) {
 		panic(err)
 	}
 
-	s2 := &Sprite{}
-	s2.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
-	s2.dirty = true
-	g.AddObjects(s2)
+	g.bg = &Sprite{}
+	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
+	g.bg.ChangeEffect(EffectNone)
+	g.bg.dirty = true
+	g.AddObjects(g.bg)
 
 	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
@@ -126,6 +128,23 @@ func (g *Game) Draw() {
 	g.tex.Update()
 
 	//	g.fps.Draw(g.size)
+}
+
+func (g *Game) GameOver() {
+	for i := range g.tiles {
+		g.tiles[i].GameOver()
+	}
+	g.bg.ChangeEffect(EffectGameOver)
+}
+
+func (g *Game) Reset() {
+	g.bg.ChangeEffect(EffectNone)
+	for i := range g.tiles {
+		g.tiles[i].Hide()
+	}
+
+	g.mode.Hide()
+	g.menu.Show()
 }
 
 func (g *Game) Click(sz size.Event, x, y float32) {
