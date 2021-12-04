@@ -426,9 +426,6 @@ func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect
 
 	for i, ch := range txt {
 		c := string(ch)
-		if ch == ':' {
-			c = "colon"
-		}
 		s := Sprite{}
 		s.Init(fx, fy, pz, tx, ty, c, t.gh)
 

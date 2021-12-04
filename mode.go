@@ -16,10 +16,12 @@ const (
 
 // Mode is handling game modes
 type Mode struct {
+	started      bool
 	Type         GameMode
 	gameOver     bool
 	Speed        float64
 	Time         time.Time
+	timeSecs     string
 	Score        int
 	gh           *Game
 	lastTile     time.Time
@@ -34,18 +36,21 @@ type Mode struct {
 }
 
 func (m *Mode) Init(g *Game) {
+	m.gameOver = false
 	m.gh = g
+	m.Time = time.Now()
 	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.75, 0.6, 0.1, 0.19, EffectGameOver1)
 	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver2)
 
 	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currScoreTxt = g.tex.AddText("0000", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.currScoreTxt = g.tex.AddText("    ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
 	m.time = g.tex.AddText("Time:", 0.54, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currTimeTxt = g.tex.AddText("0000", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.currTimeTxt = g.tex.AddText("    ", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
 	m.Hide()
 }
 
 func (m *Mode) Start(gm GameMode) {
+	m.started = true
 	m.Type = gm
 	m.Time = time.Now()
 	m.Speed = 0.1
@@ -86,6 +91,8 @@ func (m *Mode) Hide() {
 
 func (m *Mode) GameOver() {
 	m.gameOver = true
+	m.started = false
+
 	for i := range m.gameOver1 {
 		m.gameOver1[i].Show()
 		m.gameOver2[i].Show()
@@ -94,18 +101,21 @@ func (m *Mode) GameOver() {
 	for i := range m.time {
 		m.time[i].ChangeEffect(EffectGameOver)
 	}
+
 	for i := range m.currTimeTxt {
 		m.currTimeTxt[i].ChangeEffect(EffectGameOver)
 	}
+
 	for i := range m.currScoreTxt {
 		m.currScoreTxt[i].ChangeEffect(EffectGameOver)
 	}
+
 	for i := range m.score {
 		m.score[i].ChangeEffect(EffectGameOver)
 	}
-	m.gh.GameOver()
 
-	// TBD: Print score + time
+	m.gh.GameOver()
+	m.gh.scoreboard.Add(strconv.Itoa(m.Score), m.timeSecs)
 
 	go func() {
 		time.Sleep(5 * time.Second)
@@ -126,12 +136,16 @@ func (m *Mode) Show() {
 	for i := range m.time {
 		m.time[i].Show()
 	}
+
 	for i := range m.currTimeTxt {
 		m.currTimeTxt[i].Show()
 	}
+
 	for i := range m.currScoreTxt {
 		m.currScoreTxt[i].Show()
 	}
+
+	m.gh.bg.Show()
 
 }
 
@@ -178,6 +192,7 @@ func (m *Mode) Update(dt float64) {
 
 	// Update timer
 	secs := strconv.Itoa(int(time.Since(m.Time).Seconds()))
+	m.timeSecs = secs
 	// Only update if changed.
 	if secs != m.secsPrev {
 		for i := 0; i < len(secs); i++ {
@@ -191,11 +206,18 @@ func (m *Mode) Update(dt float64) {
 
 func (m *Mode) AddScore(points int) {
 	m.Score += points
-	// TBD: Update score text
 	txt := strconv.Itoa(m.Score)
 	for i := 0; i < len(txt); i++ {
 		if i < 4 {
 			m.currScoreTxt[i].ChangeTexture(string(txt[i]))
 		}
 	}
+}
+
+func (m *Mode) IsGameOver() bool {
+	return m.gameOver
+}
+
+func (m *Mode) Started() bool {
+	return m.started
 }

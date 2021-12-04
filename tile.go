@@ -2,7 +2,6 @@ package main
 
 import (
 	"strconv"
-	"time"
 )
 
 type TileSet struct {
@@ -17,7 +16,6 @@ type TileSet struct {
 	sizex       float32
 	sizey       float32
 	scale       float32
-	clicked     time.Time
 	gh          *Game
 	hidden      bool
 	tileWidth   float32
@@ -62,11 +60,6 @@ func (t *TileSet) SetSpeed(s float64) {
 }
 
 func (t *TileSet) Click(x, y float32) {
-	if time.Since(t.clicked) < time.Duration(100*time.Millisecond) {
-		return
-	}
-
-	t.clicked = time.Now()
 	slot0 := 0
 	slot1 := 0
 	w := float32(0.732)

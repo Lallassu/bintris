@@ -1,23 +1,25 @@
+- Particle engine
+    -> particle effects.
+    -> Load 100
+
 - Scoreboard 
+    - Load rows
     - Row blinking where current win was.
-        - Position, Score, Time, Date
     - 10 positions
 
-- empty texture (space)
+- Menu effect (select - hover?)
+- Transition effect (start, gameover etc)
 - sounds
-- Game modes
-    -> Easy (same speed)
-    -> Normal (Increasing speed)
-    -> Hard (random speed per tile)
+
+- use sensor to create a nudge of the metaballs?
+  https://pkg.go.dev/golang.org/x/mobile@v0.0.0-20211109191125-d61a72f26a1a/exp/sensor
 
 Touchups
 --------
+- effects when destroying tile
 - Font?
 - background?
 
-Shader effects
---------------
-- Menu effect (select + click)
 
 - Cleanup shaders (effects in frag shader instead)
 

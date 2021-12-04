@@ -17,30 +17,32 @@ const (
 )
 
 type Game struct {
-	ids      int
-	idLock   sync.Mutex
-	images   *glutil.Images
-	fps      *debug.FPS
-	glc      gl.Context
-	lastTS   time.Time
-	frameDt  float64
-	elapsed  float64
-	uTime    gl.Uniform
-	touchX   float32
-	touchY   float32
-	lastX    int
-	lastY    int
-	size     size.Event
-	sizePrev size.Event
-	objects  []*Sprite
-	program  gl.Program
-	projf    []float32
-	viewf    []float32
-	tex      Textures
-	tiles    []TileSet
-	mode     Mode
-	menu     Menu
-	bg       *Sprite
+	ids        int
+	idLock     sync.Mutex
+	images     *glutil.Images
+	fps        *debug.FPS
+	glc        gl.Context
+	lastTS     time.Time
+	frameDt    float64
+	elapsed    float64
+	uTime      gl.Uniform
+	touchX     float32
+	touchY     float32
+	lastX      int
+	lastY      int
+	size       size.Event
+	sizePrev   size.Event
+	objects    []*Sprite
+	program    gl.Program
+	projf      []float32
+	viewf      []float32
+	tex        Textures
+	tiles      []TileSet
+	mode       Mode
+	menu       Menu
+	scoreboard Scoreboard
+	bg         *Sprite
+	clicked    time.Time
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -75,6 +77,7 @@ func (g *Game) Init(glctx gl.Context) {
 	g.bg.ChangeEffect(EffectNone)
 	g.bg.dirty = true
 	g.AddObjects(g.bg)
+	g.bg.Hide()
 
 	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
@@ -83,6 +86,7 @@ func (g *Game) Init(glctx gl.Context) {
 		g.tiles = append(g.tiles, ts)
 	}
 
+	g.scoreboard.Init(g)
 	g.menu.Init(g)
 	g.mode.Init(g)
 	g.tex.Init()
@@ -144,26 +148,38 @@ func (g *Game) Reset() {
 	}
 
 	g.mode.Hide()
-	g.menu.Show()
+	g.bg.Hide()
+	g.scoreboard.Show()
 }
 
 func (g *Game) Click(sz size.Event, x, y float32) {
+	if time.Since(g.clicked) < time.Duration(150*time.Millisecond) {
+		return
+	}
+	g.clicked = time.Now()
+
 	x /= float32(sz.WidthPx)
 	y /= float32(sz.HeightPx)
 	y = 1 - y
 
-	if g.menu.hidden {
+	if !g.mode.IsGameOver() && g.mode.Started() {
 		for i, c := range g.tiles {
 			if !c.hidden {
 				// Offset Y a bit to have a bit off click-free area between tiles
 				if float32(x) > c.tile.fx && float32(x) < c.tile.fx+0.822 &&
 					float32(y) > c.tile.fy+0.01 && float32(y) < c.tile.fy+0.09 {
 					g.tiles[i].Click(x, y)
+					break
 				}
 			}
 		}
 	} else {
-		g.menu.KeyDown(x, y)
+		if !g.menu.Hidden() {
+			g.menu.KeyDown(x, y)
+		}
+		if !g.scoreboard.Hidden() {
+			g.scoreboard.KeyDown(x, y)
+		}
 	}
 }
 

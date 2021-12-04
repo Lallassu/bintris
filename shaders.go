@@ -125,8 +125,8 @@ void main() {
 	 	}
    } else if(eff.x == 6.0 || eff.x == 7.0) { // Game Over "Logo"
    	    color = texture(image, uv);
-		color.r = clamp(sin(uTime*5.0), 0.8, 1.0);
-		color.b += 0.2;
+		//color.r = clamp(sin(uTime*5.0), 0.8, 1.0);
+		//color.b += 0.2;
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.a = 0.0;
 		}

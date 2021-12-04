@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -30,11 +29,13 @@ func (m *Menu) Init(g *Game) {
 	for i := range m.logo {
 		m.logo[i].ChangeEffect(EffectMetaballs)
 	}
+	m.hidden = false
 }
 func (m *Menu) Show() {
 	if !m.hidden {
 		return
 	}
+	m.gh.bg.Hide()
 	m.hidden = false
 
 	for i := range m.logo {
@@ -94,16 +95,18 @@ func (m *Menu) Hide() {
 }
 
 func (m *Menu) KeyDown(x, y float32) {
-	if x > 0.36 && x < 0.36+(float32(len(m.start))*0.05) && y > 0.65 && y < 0.65+0.05 {
+	if x > 0.36 && x < 0.36+(float32(len(m.start))*0.055) && y > 0.65 && y < 0.65+0.05 {
 		m.gh.mode.Start(GameModeNormal)
-	} else if x > 0.18 && x < 0.18+(float32(len(m.how))*0.05) && y > 0.58 && y < 0.58+0.05 {
-		fmt.Printf("HOW\n")
-	} else if x > 0.22 && x < 0.22+(float32(len(m.scoreBoard))*0.05) && y > 0.51 && y < 0.51+0.05 {
-		fmt.Printf("Score\n")
-	} else if x > 0.36 && x < 0.36+(float32(len(m.about))*0.05) && y > 0.44 && y < 0.44+0.05 {
-		fmt.Printf("Menu: %v\n", m.about[0].Texture)
-		m.about[0].ChangeTexture("b")
-	} else if x > 0.39 && x < 0.39+(float32(len(m.quit))*0.05) && y > 0.37 && y < 0.37+0.05 {
+	} else if x > 0.18 && x < 0.18+(float32(len(m.how))*0.055) && y > 0.58 && y < 0.58+0.05 {
+	} else if x > 0.22 && x < 0.22+(float32(len(m.scoreBoard))*0.055) && y > 0.51 && y < 0.51+0.05 {
+		m.gh.scoreboard.Show()
+		m.gh.menu.Hide()
+	} else if x > 0.36 && x < 0.36+(float32(len(m.about))*0.055) && y > 0.44 && y < 0.44+0.05 {
+	} else if x > 0.39 && x < 0.39+(float32(len(m.quit))*0.055) && y > 0.37 && y < 0.37+0.05 {
 		os.Exit(0)
 	}
+}
+
+func (m *Menu) Hidden() bool {
+	return m.hidden
 }
