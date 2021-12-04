@@ -67,7 +67,6 @@ func (s *Scoreboard) LoadFile() []Score {
 				Time:  line[2],
 				Date:  line[3],
 			})
-			fmt.Printf("score: %v\n", score)
 		}
 	}
 
@@ -112,8 +111,8 @@ func (s *Scoreboard) Show() {
 		s.header[i].Show()
 	}
 
-	sc := LoadFile()
 	// TBD: Load from file and add to list.
+	// sc := s.LoadFile()
 }
 
 func (s *Scoreboard) Hide() {
