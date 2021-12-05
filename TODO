@@ -5,10 +5,9 @@
     -> particle effects.
     -> Load 100
 
+- Background
 - Scoreboard 
-    - Load rows
     - Row blinking where current win was.
-    - 10 positions
 
 - Menu effect (select - hover?)
 - Transition effect (start, gameover etc)

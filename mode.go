@@ -17,7 +17,7 @@ const (
 )
 
 var startTimeRelease = time.Second * 3
-var maxSpeed = 1.0
+var maxSpeed = 0.8
 
 // Mode is handling game modes
 type Mode struct {
@@ -153,7 +153,6 @@ func (m *Mode) Show() {
 	}
 
 	m.gh.bg.Show()
-
 }
 
 func (m *Mode) Reset() {
@@ -204,10 +203,12 @@ func (m *Mode) Update(dt float64) {
 			t.Reset(1)
 			t.SetSpeed(m.Speed)
 			m.lastTile = time.Now()
-			if m.timeRelease > time.Millisecond*500 {
+			if m.timeRelease > time.Millisecond*1500 {
 				m.timeRelease -= time.Millisecond * 50
+			} else {
+				m.timeRelease -= time.Millisecond * 10
 			}
-			fmt.Printf("==> %v\n", m.timeRelease)
+			fmt.Printf("==> %v (%v)\n", m.timeRelease, m.Speed)
 		}
 		if len(hidden) == 15-9 {
 			m.GameOver()
