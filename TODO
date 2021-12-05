@@ -1,3 +1,6 @@
+- Center better.
+    - global offset (for scoreboard + menu)
+    
 - Particle engine
     -> particle effects.
     -> Load 100

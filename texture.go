@@ -123,9 +123,9 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 
 	// TBD: Dynamic sizes?
 	//t.verts = make([]float32, 1*20000)
-	t.Vertices = make([]byte, 1*200000)
-	t.Uvs = make([]byte, 1*20000)
-	t.Effects = make([]byte, 1*20000)
+	t.Vertices = make([]byte, 1*300000)
+	t.Uvs = make([]byte, 1*30000)
+	t.Effects = make([]byte, 1*30000)
 
 	return nil
 }

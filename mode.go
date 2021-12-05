@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"math"
 	"math/rand"
 	"strconv"
 	"time"
@@ -14,6 +16,9 @@ const (
 	GameModeHard
 )
 
+var startTimeRelease = time.Second * 3
+var maxSpeed = 1.0
+
 // Mode is handling game modes
 type Mode struct {
 	started      bool
@@ -21,7 +26,7 @@ type Mode struct {
 	gameOver     bool
 	Speed        float64
 	Time         time.Time
-	timeSecs     string
+	timeSecs     int
 	Score        int
 	gh           *Game
 	lastTile     time.Time
@@ -33,6 +38,7 @@ type Mode struct {
 	gameOver1    []*Sprite
 	gameOver2    []*Sprite
 	hidden       bool
+	timeRelease  time.Duration
 }
 
 func (m *Mode) Init(g *Game) {
@@ -43,9 +49,9 @@ func (m *Mode) Init(g *Game) {
 	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver2)
 
 	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currScoreTxt = g.tex.AddText("    ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.currScoreTxt = g.tex.AddText("0     ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
 	m.time = g.tex.AddText("Time:", 0.54, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currTimeTxt = g.tex.AddText("    ", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.currTimeTxt = g.tex.AddText("0    ", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
 	m.Hide()
 }
 
@@ -58,6 +64,7 @@ func (m *Mode) Start(gm GameMode) {
 	m.gh.menu.Hide()
 	m.Show()
 	m.gameOver = false
+	m.timeRelease = startTimeRelease
 }
 
 func (m *Mode) Hide() {
@@ -115,10 +122,10 @@ func (m *Mode) GameOver() {
 	}
 
 	m.gh.GameOver()
-	m.gh.scoreboard.Add(strconv.Itoa(m.Score), m.timeSecs)
 
 	go func() {
 		time.Sleep(5 * time.Second)
+		m.gh.scoreboard.Add(m.Score, m.timeSecs)
 		m.gh.Reset()
 	}()
 }
@@ -150,14 +157,27 @@ func (m *Mode) Show() {
 }
 
 func (m *Mode) Reset() {
+	for i := range m.currScoreTxt {
+		m.currScoreTxt[i].ChangeTexture(" ")
+	}
+	m.currScoreTxt[0].ChangeTexture("0")
+
+	for i := range m.currTimeTxt {
+		m.currTimeTxt[i].ChangeTexture(" ")
+	}
+	m.currTimeTxt[0].ChangeTexture("0")
+
 	for i := range m.gh.tiles {
 		m.gh.tiles[i].Hide()
 	}
+
+	m.timeRelease = startTimeRelease
 	m.Time = time.Now()
 	m.Speed = 0.1
 	m.Score = 0
 	m.lastTile = time.Now()
 	m.Show()
+
 }
 
 func (m *Mode) Update(dt float64) {
@@ -168,7 +188,8 @@ func (m *Mode) Update(dt float64) {
 	switch m.Type {
 	case GameModeEasy:
 	case GameModeNormal:
-		m.Speed = 0.9 + time.Since(m.Time).Seconds()/100
+		// Make sure not to pass max speed
+		m.Speed = math.Min(maxSpeed, 0.2+time.Since(m.Time).Seconds()/100)
 		c := 0
 		hidden := []*TileSet{}
 		for i := range m.gh.tiles {
@@ -178,21 +199,25 @@ func (m *Mode) Update(dt float64) {
 				hidden = append(hidden, &m.gh.tiles[i])
 			}
 		}
-		if len(hidden) > 0 && time.Since(m.lastTile).Seconds() > 2 || len(hidden) == 15 {
+		if len(hidden) > 0 && time.Since(m.lastTile).Seconds() > m.timeRelease.Seconds() || len(hidden) == 15 {
 			t := hidden[rand.Intn(len(hidden))]
 			t.Reset(1)
 			t.SetSpeed(m.Speed)
 			m.lastTile = time.Now()
+			if m.timeRelease > time.Millisecond*500 {
+				m.timeRelease -= time.Millisecond * 50
+			}
+			fmt.Printf("==> %v\n", m.timeRelease)
 		}
-		if len(hidden) == 13 { //15-9 {
+		if len(hidden) == 15-9 {
 			m.GameOver()
 		}
 	case GameModeHard:
 	}
 
 	// Update timer
-	secs := strconv.Itoa(int(time.Since(m.Time).Seconds()))
-	m.timeSecs = secs
+	m.timeSecs = int(time.Since(m.Time).Seconds())
+	secs := strconv.Itoa(m.timeSecs)
 	// Only update if changed.
 	if secs != m.secsPrev {
 		for i := 0; i < len(secs); i++ {
@@ -208,9 +233,7 @@ func (m *Mode) AddScore(points int) {
 	m.Score += points
 	txt := strconv.Itoa(m.Score)
 	for i := 0; i < len(txt); i++ {
-		if i < 4 {
-			m.currScoreTxt[i].ChangeTexture(string(txt[i]))
-		}
+		m.currScoreTxt[i].ChangeTexture(string(txt[i]))
 	}
 }
 

@@ -147,9 +147,9 @@ func (g *Game) Reset() {
 		g.tiles[i].Hide()
 	}
 
+	g.mode.Reset()
 	g.mode.Hide()
 	g.bg.Hide()
-	g.scoreboard.Show()
 }
 
 func (g *Game) Click(sz size.Event, x, y float32) {
