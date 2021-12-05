@@ -6,6 +6,7 @@ layout (location = 1) in vec2 uvs;
 layout (location = 2) in vec2 effect;
 
 uniform highp float uTime;
+uniform highp float uPulse;
 
 out mediump vec2 uv;
 out mediump vec2 pos;
@@ -36,6 +37,7 @@ in mediump vec2 eff;
 
 uniform sampler2D image;
 uniform highp float uTime;
+uniform highp float uPulse;
 
 layout (location = 0) out highp vec4 color;
 
@@ -48,7 +50,7 @@ vec2 random2( vec2 p ) {
 }
 
 void main() {
-	if (eff.x == 1.0) { // MetaBalls
+	if (eff.x == 1.0 ) { // MetaBalls 
 	     vec4 c = texture(image, uv);
 		 if (uTime < 4.0) {
 		 	c.a += sin(c.a*uTime/3.0)-1.0;
@@ -117,6 +119,12 @@ void main() {
 	  	color.r = 0.0;
 	  }
 	  color.b += 0.8;
+   } else if (eff.x == 8.0) { // stats blinking
+   	  color = texture(image, uv);
+	  if (color.r > 0.5 && color.g < 0.2) {
+	  	color.b += sin(uTime*10.0);
+	  }
+
    } else if(eff.x == 5.0) { // GameOver (Red)
    	    color = texture(image, uv);
    		if (color.a > 0.4) {
@@ -125,12 +133,13 @@ void main() {
 	 	}
    } else if(eff.x == 6.0 || eff.x == 7.0) { // Game Over "Logo"
    	    color = texture(image, uv);
-		//color.r = clamp(sin(uTime*5.0), 0.8, 1.0);
-		//color.b += 0.2;
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.a = 0.0;
 		}
-   } else  {
+   } else if(eff.x == 9.0) { // EffectBg
+   	    color = texture(image, uv);
+		color.r -= min(0.5, sin(uTime*10.0*pos.x*pos.y));
+   } else {
    	 color = texture(image, uv);
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;

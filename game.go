@@ -18,6 +18,7 @@ const (
 
 type Game struct {
 	ids        int
+	pulse      float32
 	idLock     sync.Mutex
 	images     *glutil.Images
 	fps        *debug.FPS
@@ -26,6 +27,7 @@ type Game struct {
 	frameDt    float64
 	elapsed    float64
 	uTime      gl.Uniform
+	uPulse     gl.Uniform
 	touchX     float32
 	touchY     float32
 	lastX      int
@@ -56,6 +58,7 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
+	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
 
 	rand.Seed(time.Now().Unix())
 
@@ -74,7 +77,7 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.bg = &Sprite{}
 	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
-	g.bg.ChangeEffect(EffectNone)
+	g.bg.ChangeEffect(EffectBg)
 	g.bg.dirty = true
 	g.AddObjects(g.bg)
 	g.bg.Hide()
@@ -128,10 +131,13 @@ func (g *Game) Draw() {
 	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
+
+	// TBD: Pendle between 1 and -1
+	g.pulse += 0.1
+
+	g.glc.Uniform1f(g.uPulse, g.pulse)
 	g.tex.Draw()
 	g.tex.Update()
-
-	//	g.fps.Draw(g.size)
 }
 
 func (g *Game) GameOver() {
@@ -142,7 +148,7 @@ func (g *Game) GameOver() {
 }
 
 func (g *Game) Reset() {
-	g.bg.ChangeEffect(EffectNone)
+	g.bg.ChangeEffect(EffectBg)
 	for i := range g.tiles {
 		g.tiles[i].Hide()
 	}

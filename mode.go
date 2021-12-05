@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"strconv"
@@ -45,8 +44,8 @@ func (m *Mode) Init(g *Game) {
 	m.gameOver = false
 	m.gh = g
 	m.Time = time.Now()
-	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.75, 0.6, 0.1, 0.19, EffectGameOver1)
-	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver2)
+	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver1)
+	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.35, 0.6, 0.1, 0.19, EffectGameOver2)
 
 	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone)
 	m.currScoreTxt = g.tex.AddText("0     ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
@@ -208,7 +207,6 @@ func (m *Mode) Update(dt float64) {
 			} else {
 				m.timeRelease -= time.Millisecond * 10
 			}
-			fmt.Printf("==> %v (%v)\n", m.timeRelease, m.Speed)
 		}
 		if len(hidden) == 15-9 {
 			m.GameOver()

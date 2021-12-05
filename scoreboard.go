@@ -141,17 +141,23 @@ func (s *Scoreboard) Show(sc []Score) {
 			break
 		}
 
-		s.ChangeTexture(fmt.Sprintf("%d", i+1), &s.rows[i][0])
-		s.ChangeTexture(strconv.Itoa(sc[i].Score), &s.rows[i][1])
-		s.ChangeTexture(strconv.Itoa(sc[i].Time), &s.rows[i][2])
-		s.ChangeTexture(sc[i].Date, &s.rows[i][3])
+		e := Effect(EffectNone)
+		if sc[i].NewScore {
+			e = EffectStatsBlink
+		}
+
+		s.ChangeTexture(fmt.Sprintf("%d", i+1), &s.rows[i][0], e)
+		s.ChangeTexture(strconv.Itoa(sc[i].Score), &s.rows[i][1], e)
+		s.ChangeTexture(strconv.Itoa(sc[i].Time), &s.rows[i][2], e)
+		s.ChangeTexture(sc[i].Date, &s.rows[i][3], e)
 	}
 }
 
-func (s *Scoreboard) ChangeTexture(val string, sc *[]*Sprite) {
+func (s *Scoreboard) ChangeTexture(val string, sc *[]*Sprite, e Effect) {
 	for i := 0; i < len(val); i++ {
 		if i < len(*sc) {
 			(*sc)[i].ChangeTexture(string(val[i]))
+			(*sc)[i].ChangeEffect(e)
 		}
 	}
 }
