@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"math"
 	"math/rand"
 	"sync"
 	"time"
@@ -18,6 +17,7 @@ const (
 )
 
 type Game struct {
+	visible    float32
 	ids        int
 	pulse      float32
 	idLock     sync.Mutex
@@ -133,7 +133,17 @@ func (g *Game) Draw() {
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
 
-	g.pulse = float32(math.Max(1.0, float64(time.Since(g.mode.Time).Milliseconds())))
+	//g.pulse = float32(math.Max(1.0, float64(time.Since(g.mode.Time).Milliseconds())))
+	if g.mode.started {
+		div := float32(5)
+		if g.visible/div != g.pulse {
+			if g.pulse < g.visible/div {
+				g.pulse += 0.007
+			} else if g.pulse > g.visible/div {
+				g.pulse -= 0.007
+			}
+		}
+	}
 	g.glc.Uniform1f(g.uPulse, g.pulse)
 
 	g.tex.Draw()

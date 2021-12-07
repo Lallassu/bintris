@@ -208,7 +208,8 @@ func (m *Mode) Update(dt float64) {
 				m.timeRelease -= time.Millisecond * 10
 			}
 		}
-		if len(hidden) == 15-9 {
+		m.gh.visible = 15 - float32(len(hidden))
+		if len(hidden) == 15-10 {
 			m.GameOver()
 		}
 	case GameModeHard:
