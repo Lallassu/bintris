@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 	"math/rand"
 	"sync"
 	"time"
@@ -132,10 +133,9 @@ func (g *Game) Draw() {
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
 
-	// TBD: Pendle between 1 and -1
-	g.pulse += 0.1
-
+	g.pulse = float32(math.Max(1.0, float64(time.Since(g.mode.Time).Milliseconds())))
 	g.glc.Uniform1f(g.uPulse, g.pulse)
+
 	g.tex.Draw()
 	g.tex.Update()
 }
