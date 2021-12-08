@@ -38,7 +38,7 @@ func (s *Scoreboard) Init(g *Game) {
 	// Grab the path to cache dir to find our "files" dir.
 	// Note: workaround as we don't have getFilesDir()
 
-	// s.dir = os.Getenv("TMPDIR")
+	s.dir = os.Getenv("TMPDIR")
 	s.dir = "/tmp/" // TBD: REMOVE
 
 	s.dir = strings.ReplaceAll(s.dir, "cache", "files")
@@ -46,9 +46,9 @@ func (s *Scoreboard) Init(g *Game) {
 	s.logo = s.gh.tex.AddText("scoreboard", 0.25, 0.8, 0.6, 0.05, 0.1, EffectMetaballs)
 	s.back = s.gh.tex.AddText("back", 0.385, 0.1, 0.6, 0.05, 0.05, EffectNone)
 	s.header = append(s.header, s.gh.tex.AddText("#", 0.05, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
-	s.header = append(s.header, s.gh.tex.AddText("Score", 0.20, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
-	s.header = append(s.header, s.gh.tex.AddText("Time", 0.45, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
-	s.header = append(s.header, s.gh.tex.AddText("Date", 0.65, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
+	s.header = append(s.header, s.gh.tex.AddText("Score", 0.15, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
+	s.header = append(s.header, s.gh.tex.AddText("Time", 0.35, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
+	s.header = append(s.header, s.gh.tex.AddText("Date", 0.55, 0.7, 0.6, 0.03, 0.03, EffectStats)...)
 
 	// TBD: Preload top 10 score positions
 	hOffset := float32(0.05)
@@ -56,9 +56,9 @@ func (s *Scoreboard) Init(g *Game) {
 	sizeY := float32(0.035)
 	for i := 0; i < noOfRows; i++ {
 		s.rows[i][0] = s.gh.tex.AddText("  ", 0.05, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
-		s.rows[i][1] = s.gh.tex.AddText("      ", 0.20, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
-		s.rows[i][2] = s.gh.tex.AddText("      ", 0.45, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
-		s.rows[i][3] = s.gh.tex.AddText("                   ", 0.65, 0.7-float32(i+1)*hOffset, 0.6, sizeX/2, sizeY, EffectNone)
+		s.rows[i][1] = s.gh.tex.AddText("      ", 0.15, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
+		s.rows[i][2] = s.gh.tex.AddText("      ", 0.35, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
+		s.rows[i][3] = s.gh.tex.AddText("                   ", 0.55, 0.7-float32(i+1)*hOffset, 0.6, sizeX, sizeY, EffectNone)
 	}
 
 	s.Hide()
@@ -204,7 +204,7 @@ func (s *Scoreboard) Add(score, sec int) {
 	sc = append(sc, Score{
 		Score:    score,
 		Time:     sec,
-		Date:     time.Now().Format("2006-01-02 15:04"),
+		Date:     time.Now().Format("20060102 15:04"),
 		NewScore: true,
 	})
 

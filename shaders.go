@@ -50,13 +50,13 @@ vec2 random2( vec2 p ) {
 }
 
 void main() {
+   	color = texture(image, uv);
    	if (eff.x == 0.0) {
-   	    color = texture(image, uv);
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;
 		}
  	} else if (eff.x == 1.0 || eff.x == 9.0) { // MetaBalls  + EffectBg
-	     vec4 c = texture(image, uv);
+	     vec4 c = color;
 		 if (uTime < 4.0) {
 		 	c.a += sin(c.a*uTime/3.0)-1.0;
 		 } 
@@ -112,6 +112,11 @@ void main() {
 	      if (color.r == 0.0 && color.b == 0.0 && color.g == 0.0 && color.a > 0.0) {
 		    c.r = max(0.3, uPulse);
 	      	color = c;
+		  } else {
+		    c.g += sin(uTime/10.0)/10.0;
+		    c.r += cos(uTime/5.0)/10.0;
+		    c.b += tan(uTime/20.0)/10.0;
+	      	color = c;
 		  }
 		} else {
           color2 += step(0.05*pos.y, m_dist);
@@ -127,7 +132,6 @@ void main() {
 	   	  }
 		} 
    } else if(eff.x == 2.0 || eff.x == 4.0) { // TileTop
-   	 color = texture(image, uv);
 	 if (pos.y > 0.75) {
 	 	color.a = 1.0-pos.y;
 	 }
@@ -137,30 +141,23 @@ void main() {
 		}
 	 }
    } else if(eff.x == 3.0) { // Stats
-   	  color = texture(image, uv);
 	  if (color.r > 0.5 && color.g < 0.2) {
 	  	color.r = 0.0;
 	  }
 	  color.b += 0.8;
    } else if (eff.x == 8.0) { // stats blinking
-   	  color = texture(image, uv);
-	  if (color.r > 0.5 && color.g < 0.2) {
-	  	color.b += sin(uTime*10.0);
-	  }
+      color.b = sin(uTime*7.0);
 
    } else if(eff.x == 5.0) { // GameOver (Red)
-   	    color = texture(image, uv);
    		if (color.a > 0.4) {
 			color.r = 1.0;
 			color.a = 0.2;
 	 	}
    } else if(eff.x == 6.0 || eff.x == 7.0) { // Game Over "Logo"
-   	    color = texture(image, uv);
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.a = 0.0;
 		}
    } else {
-   	 color = texture(image, uv);
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;
 		}

@@ -60,6 +60,8 @@ func (m *Mode) Start(gm GameMode) {
 	m.Time = time.Now()
 	m.Speed = 0.1
 	m.Score = 0
+	m.gh.visible = 0
+	m.gh.pulse = 2
 	m.gh.menu.Hide()
 	m.Show()
 	m.gameOver = false
@@ -123,7 +125,7 @@ func (m *Mode) GameOver() {
 	m.gh.GameOver()
 
 	go func() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(3 * time.Second)
 		m.gh.scoreboard.Add(m.Score, m.timeSecs)
 		m.gh.Reset()
 	}()
@@ -208,7 +210,7 @@ func (m *Mode) Update(dt float64) {
 				m.timeRelease -= time.Millisecond * 10
 			}
 		}
-		m.gh.visible = 15 - float32(len(hidden))
+		m.gh.visible = 14 - float32(len(hidden))
 		if len(hidden) == 15-10 {
 			m.GameOver()
 		}
