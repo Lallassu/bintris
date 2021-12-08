@@ -45,6 +45,7 @@ type Game struct {
 	menu       Menu
 	scoreboard Scoreboard
 	bg         *Sprite
+	backBg     *Sprite
 	clicked    time.Time
 }
 
@@ -75,6 +76,12 @@ func (g *Game) Init(glctx gl.Context) {
 	if err = g.tex.Load("packed.png", "packed.json", g); err != nil {
 		panic(err)
 	}
+
+	g.backBg = &Sprite{}
+	g.backBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "blank", g)
+	g.backBg.dirty = true
+	g.AddObjects(g.backBg)
+	g.backBg.ChangeEffect(EffectMenu)
 
 	g.bg = &Sprite{}
 	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)

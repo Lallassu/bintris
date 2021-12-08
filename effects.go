@@ -1,6 +1,6 @@
 package main
 
-type Effect int
+type Effect float32
 
 // Not using iota as it's easier to see values as we
 // need to use them raw in the shaders.
@@ -15,4 +15,5 @@ const (
 	EffectGameOver2  = 7
 	EffectStatsBlink = 8
 	EffectBg         = 9
+	EffectMenu       = 10
 )
