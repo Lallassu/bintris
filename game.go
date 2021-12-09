@@ -30,6 +30,8 @@ type Game struct {
 	elapsed    float64
 	uTime      gl.Uniform
 	uPulse     gl.Uniform
+	uTouchX    gl.Uniform
+	uTouchY    gl.Uniform
 	touchX     float32
 	touchY     float32
 	lastX      int
@@ -64,6 +66,8 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
+	g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
+	g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
 
 	rand.Seed(time.Now().Unix())
 
@@ -157,6 +161,8 @@ func (g *Game) Draw() {
 		}
 	}
 	g.glc.Uniform1f(g.uPulse, g.pulse)
+	g.glc.Uniform1f(g.uTouchX, g.touchX)
+	g.glc.Uniform1f(g.uTouchY, g.touchY)
 
 	g.tex.Draw()
 	g.tex.Update()
@@ -171,7 +177,7 @@ func (g *Game) GameOver() {
 
 func (g *Game) Reset() {
 	g.bg.ChangeEffect(EffectBg)
-	g.backBg.ChangeEffect(EffectMenu)
+	g.backBg.Show()
 	for i := range g.tiles {
 		g.tiles[i].Hide()
 	}
@@ -182,14 +188,16 @@ func (g *Game) Reset() {
 }
 
 func (g *Game) Click(sz size.Event, x, y float32) {
+	x /= float32(sz.WidthPx)
+	y /= float32(sz.HeightPx)
+	y = 1 - y
+	g.touchX = x
+	g.touchY = y
+
 	if time.Since(g.clicked) < time.Duration(150*time.Millisecond) {
 		return
 	}
 	g.clicked = time.Now()
-
-	x /= float32(sz.WidthPx)
-	y /= float32(sz.HeightPx)
-	y = 1 - y
 
 	if !g.mode.IsGameOver() && g.mode.Started() {
 		for i, c := range g.tiles {

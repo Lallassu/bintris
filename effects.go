@@ -16,5 +16,4 @@ const (
 	EffectStatsBlink = 8
 	EffectBg         = 9
 	EffectMenu       = 10
-	EffectMenuPlay   = 11
 )
