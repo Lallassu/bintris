@@ -97,10 +97,10 @@ void main() {
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;
 		}
-    } else if(eff.x == 10.0) { // Menu bg
+    } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);
        vec2 st = gl_FragCoord.xy/u_resolution.xy*3.;
-       // st += st * abs(sin(uTime*0.1)*3.0);
+       //st += st * abs(sin(uTime*0.1)*3.0);
        vec3 c = vec3(0.0);
 
        vec2 q = vec2(0.);
@@ -114,18 +114,22 @@ void main() {
        float f = fbm(st+r);
 
        c = mix(vec3(0.101961,0.619608,0.666667),
-                   vec3(0.666667,0.666667,0.498039),
+                   vec3(0.666667,0.666667,0.198039),
                    clamp((f*f)*4.0,0.0,1.0));
 
        c = mix(c,
-                   vec3(0,0,0.164706),
+                   vec3(0,0,sin(uTime*0.164706)),
                    clamp(length(q),0.0,1.0));
 
        c = mix(c,
-                   vec3(0.666667,1,1),
+                   vec3(sin(uTime*0.666667),1,1),
                    clamp(length(r.x),0.0,1.0));
 
-       color = vec4((f*f*f+.6*f*f+.5*f)*c,1.);
+	   if (eff.x == 10.0) {
+       	   color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
+		} else {
+       	   color = vec4((f*f*f+.6*f*f+.5*f)*c,0.2);
+		}
  	} else if (eff.x == 1.0 || eff.x == 9.0) { // MetaBalls  + EffectBg
 	     vec4 c = color;
 		 if (uTime < 4.0) {

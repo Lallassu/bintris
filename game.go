@@ -166,6 +166,7 @@ func (g *Game) GameOver() {
 
 func (g *Game) Reset() {
 	g.bg.ChangeEffect(EffectBg)
+	g.backBg.ChangeEffect(EffectMenu)
 	for i := range g.tiles {
 		g.tiles[i].Hide()
 	}

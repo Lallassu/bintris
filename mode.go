@@ -66,6 +66,7 @@ func (m *Mode) Start(gm GameMode) {
 	m.Show()
 	m.gameOver = false
 	m.timeRelease = startTimeRelease
+	m.gh.backBg.ChangeEffect(EffectMenuPlay)
 }
 
 func (m *Mode) Hide() {
