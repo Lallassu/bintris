@@ -22,16 +22,16 @@ void main() {
 	pos = gl_Position.xy;
 
 	eff = effect;
-	//if (eff.x == 1.0) {
-	//    gl_Position.x = pos.x - sin(uTime)/30.0;
-	//    gl_Position.y = pos.y - cos(uTime)/20.0;
-	//} else if(eff.x == 6.0) {
-	//	gl_Position.x = pos.x - sin(uTime)/30.0;
-	//} else if(eff.x == 7.0) {
-	//	gl_Position.x = pos.x + sin(uTime)/30.0;
-	//} else {
-		gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
-	//}
+	if (eff.x == 1.0) {
+	    gl_Position.x = pos.x - sin(uTime)/30.0;
+	    gl_Position.y = pos.y - cos(uTime)/20.0;
+	} else if(eff.x == 6.0) {
+		gl_Position.x = pos.x - sin(uTime)/30.0;
+	} else if(eff.x == 7.0) {
+		gl_Position.x = pos.x + sin(uTime)/30.0;
+	} else {
+	  gl_Position = vec4(2.0*vert.x-1.0, 2.0*vert.y-1.0, 0.0, 1.0);
+	}
 }
 `
 const fragmentShader = `#version 300 es
@@ -104,7 +104,7 @@ void main() {
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;
 		}
-    } else if(eff.x == 10.0) { // Menu bg
+    } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);
        vec2 st = gl_FragCoord.xy/u_resolution.xy*3.;
        //st += st * abs(sin(uTime*0.1)*3.0);
@@ -132,9 +132,13 @@ void main() {
                    vec3(sin(uTime*0.666667),1,1),
                    clamp(length(r.x),0.0,1.0));
 
-		float dx = distance(pos2.x, uTouchX);
-		float dy = distance(pos2.y, uTouchY);
-       	color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
+		float dx = distance(pos2.x, 0.5+sin(uTime)/10.0);
+		float dy = distance(pos2.y, 1.05);
+		if (eff.x == 10.0) {
+			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0-(dx/dy));
+		} else {
+			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
+		}
  	} else if (eff.x == 1.0 || eff.x == 9.0) { // MetaBalls  + EffectBg
 	     vec4 c = color;
 		 if (uTime < 4.0) {

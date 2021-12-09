@@ -64,6 +64,8 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
+	g.touchX = 0.5
+
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
 	g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
@@ -182,7 +184,6 @@ func (g *Game) Reset() {
 		g.tiles[i].Hide()
 	}
 
-	g.mode.Reset()
 	g.mode.Hide()
 	g.bg.Hide()
 }

@@ -55,6 +55,7 @@ func (m *Mode) Init(g *Game) {
 }
 
 func (m *Mode) Start(gm GameMode) {
+	m.Reset()
 	m.started = true
 	m.Type = gm
 	m.Time = time.Now()

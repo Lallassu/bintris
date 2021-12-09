@@ -35,6 +35,7 @@ func (m *Menu) Show() {
 	if !m.hidden {
 		return
 	}
+	m.gh.backBg.ChangeEffect(EffectMenu)
 	m.gh.bg.Hide()
 	m.hidden = false
 
@@ -100,11 +101,14 @@ func (m *Menu) KeyDown(x, y float32) {
 	} else if x > 0.18 && x < 0.18+(float32(len(m.how))*0.055) && y > 0.58 && y < 0.58+0.05 {
 		m.gh.menu.Hide()
 		m.gh.howto.Show()
+		m.gh.backBg.ChangeEffect(EffectMenuStill)
 	} else if x > 0.22 && x < 0.22+(float32(len(m.scoreBoard))*0.055) && y > 0.51 && y < 0.51+0.05 {
 		m.gh.scoreboard.Show([]Score{})
+		m.gh.backBg.ChangeEffect(EffectMenuStill)
 		m.gh.menu.Hide()
 	} else if x > 0.36 && x < 0.36+(float32(len(m.about))*0.055) && y > 0.44 && y < 0.44+0.05 {
 		m.gh.menu.Hide()
+		m.gh.backBg.ChangeEffect(EffectMenuStill)
 		m.gh.about.Show()
 	} else if x > 0.39 && x < 0.39+(float32(len(m.quit))*0.055) && y > 0.37 && y < 0.37+0.05 {
 		os.Exit(0)
