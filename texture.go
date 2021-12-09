@@ -123,9 +123,9 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 
 	// TBD: Dynamic sizes?
 	//t.verts = make([]float32, 1*20000)
-	t.Vertices = make([]byte, 1*300000)
-	t.Uvs = make([]byte, 1*30000)
-	t.Effects = make([]byte, 1*30000)
+	t.Vertices = make([]byte, 550000)
+	t.Uvs = make([]byte, 550000)
+	t.Effects = make([]byte, 55000)
 
 	return nil
 }
@@ -426,6 +426,11 @@ func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect
 
 	for i, ch := range txt {
 		c := string(ch)
+		if c == "/" {
+			c = "slash"
+		} else if c == "." {
+			c = "dot"
+		}
 		s := Sprite{}
 		s.Init(fx, fy, pz, tx, ty, c, t.gh)
 

@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	version    = "1.0"
 	wMaxInvFPS = 1 / 60.0
 )
 
@@ -42,6 +43,8 @@ type Game struct {
 	tex        Textures
 	tiles      []TileSet
 	mode       Mode
+	about      About
+	howto      HowToPlay
 	menu       Menu
 	scoreboard Scoreboard
 	bg         *Sprite
@@ -100,6 +103,8 @@ func (g *Game) Init(glctx gl.Context) {
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
 	g.mode.Init(g)
+	g.about.Init(g)
+	g.howto.Init(g)
 	g.tex.Init()
 
 	g.images = glutil.NewImages(g.glc)
@@ -145,7 +150,7 @@ func (g *Game) Draw() {
 		div := float32(5)
 		if g.visible/div != g.pulse {
 			if g.pulse < g.visible/div {
-				g.pulse += 0.007
+				g.pulse += 0.005
 			} else if g.pulse > g.visible/div {
 				g.pulse -= 0.007
 			}
@@ -203,6 +208,12 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 		}
 		if !g.scoreboard.Hidden() {
 			g.scoreboard.KeyDown(x, y)
+		}
+		if !g.about.Hidden() {
+			g.about.KeyDown(x, y)
+		}
+		if !g.howto.Hidden() {
+			g.howto.KeyDown(x, y)
 		}
 	}
 }
