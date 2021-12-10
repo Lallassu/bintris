@@ -7,8 +7,8 @@ layout (location = 2) in vec2 effect;
 
 uniform highp float uTime;
 uniform highp float uPulse;
-uniform highp float uTouchX;
-uniform highp float uTouchY;
+//uniform highp float uTouchX;
+//uniform highp float uTouchY;
 
 out mediump vec2 uv;
 out mediump vec2 pos;
@@ -22,7 +22,7 @@ void main() {
 	pos = gl_Position.xy;
 
 	eff = effect;
-	if (eff.x == 1.0) {
+	if (eff.x == 100.0) { // Unused
 	    gl_Position.x = pos.x - sin(uTime)/30.0;
 	    gl_Position.y = pos.y - cos(uTime)/20.0;
 	} else if(eff.x == 6.0) {
@@ -43,8 +43,8 @@ in mediump vec2 eff;
 uniform sampler2D image;
 uniform highp float uTime;
 uniform highp float uPulse;
-uniform highp float uTouchX;
-uniform highp float uTouchY;
+//uniform highp float uTouchX;
+//uniform highp float uTouchY;
 
 layout (location = 0) out highp vec4 color;
 
@@ -99,6 +99,11 @@ float fbm ( in vec2 _st) {
 }
 
 void main() {
+    // skip all outside of the screen
+	if (pos.x > 1.0) {
+		discard;
+		return; // Not sure if needed?
+	}
    	color = texture(image, uv);
    	if (eff.x == 0.0) {
 	 	if (color.r > 0.5 && color.g < 0.2) {
@@ -132,10 +137,12 @@ void main() {
                    vec3(sin(uTime*0.666667),1,1),
                    clamp(length(r.x),0.0,1.0));
 
-		float dx = distance(pos2.x, 0.5+sin(uTime)/10.0);
-		float dy = distance(pos2.y, 1.05);
+		//float dx = distance(pos2.x, 0.5+sin(uTime)/10.0);
+		float dx = distance(pos2.x, 0.5);
+		float dy = distance(pos2.y, -0.05);
 		if (eff.x == 10.0) {
-			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0-(dx/dy));
+			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.2-(dx/dy)-dy/2.0);
+			color.r += (1.2-(dx/dy)-dy);
 		} else {
 			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
 		}

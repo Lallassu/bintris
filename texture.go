@@ -122,7 +122,6 @@ func (t *Textures) Load(texFile, layoutFile string, gh *Game) error {
 	}
 
 	// TBD: Dynamic sizes?
-	//t.verts = make([]float32, 1*20000)
 	t.Vertices = make([]byte, 550000)
 	t.Uvs = make([]byte, 550000)
 	t.Effects = make([]byte, 55000)
@@ -192,17 +191,17 @@ func (t *Textures) Update() {
 
 	if vertsUpdated {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.vbo)
-		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Vertices, gl.DYNAMIC_DRAW)
+		t.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, t.Vertices)
 	}
 
 	if uvUpdated {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ubo)
-		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Uvs, gl.STATIC_DRAW)
+		t.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, t.Uvs)
 	}
 
 	if effectsUpdated {
 		t.gh.glc.BindBuffer(gl.ARRAY_BUFFER, t.ebo)
-		t.gh.glc.BufferData(gl.ARRAY_BUFFER, t.Effects, gl.STATIC_DRAW)
+		t.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, t.Effects)
 	}
 }
 

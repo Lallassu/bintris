@@ -18,22 +18,22 @@ const (
 )
 
 type Game struct {
-	visible    float32
-	ids        int
-	pulse      float32
-	idLock     sync.Mutex
-	images     *glutil.Images
-	fps        *debug.FPS
-	glc        gl.Context
-	lastTS     time.Time
-	frameDt    float64
-	elapsed    float64
-	uTime      gl.Uniform
-	uPulse     gl.Uniform
-	uTouchX    gl.Uniform
-	uTouchY    gl.Uniform
-	touchX     float32
-	touchY     float32
+	visible float32
+	ids     int
+	pulse   float32
+	idLock  sync.Mutex
+	images  *glutil.Images
+	fps     *debug.FPS
+	glc     gl.Context
+	lastTS  time.Time
+	frameDt float64
+	elapsed float64
+	uTime   gl.Uniform
+	uPulse  gl.Uniform
+	//uTouchX    gl.Uniform
+	//uTouchY    gl.Uniform
+	//touchX     float32
+	//touchY     float32
 	lastX      int
 	lastY      int
 	size       size.Event
@@ -64,12 +64,10 @@ func (g *Game) Init(glctx gl.Context) {
 		return
 	}
 
-	g.touchX = 0.5
-
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
-	g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
-	g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
+	// g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
+	// g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
 
 	rand.Seed(time.Now().Unix())
 
@@ -142,6 +140,16 @@ func (g *Game) Draw() {
 				}
 			}
 			g.mode.Update(wMaxInvFPS)
+			if g.mode.started {
+				div := float32(5)
+				if g.visible/div != g.pulse {
+					if g.pulse < g.visible/div {
+						g.pulse += 0.005
+					} else if g.pulse > g.visible/div {
+						g.pulse -= 0.007
+					}
+				}
+			}
 		} else {
 			break
 		}
@@ -150,21 +158,9 @@ func (g *Game) Draw() {
 	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
-
-	//g.pulse = float32(math.Max(1.0, float64(time.Since(g.mode.Time).Milliseconds())))
-	if g.mode.started {
-		div := float32(5)
-		if g.visible/div != g.pulse {
-			if g.pulse < g.visible/div {
-				g.pulse += 0.005
-			} else if g.pulse > g.visible/div {
-				g.pulse -= 0.007
-			}
-		}
-	}
 	g.glc.Uniform1f(g.uPulse, g.pulse)
-	g.glc.Uniform1f(g.uTouchX, g.touchX)
-	g.glc.Uniform1f(g.uTouchY, g.touchY)
+	// g.glc.Uniform1f(g.uTouchX, g.touchX)
+	// g.glc.Uniform1f(g.uTouchY, g.touchY)
 
 	g.tex.Draw()
 	g.tex.Update()
@@ -192,8 +188,8 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 	x /= float32(sz.WidthPx)
 	y /= float32(sz.HeightPx)
 	y = 1 - y
-	g.touchX = x
-	g.touchY = y
+	//g.touchX = x
+	//g.touchY = y
 
 	if time.Since(g.clicked) < time.Duration(150*time.Millisecond) {
 		return
