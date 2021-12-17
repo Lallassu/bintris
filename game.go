@@ -52,6 +52,7 @@ type Game struct {
 	bg         *Sprite
 	backBg     *Sprite
 	clicked    time.Time
+	sound      Sound
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -104,6 +105,10 @@ func (g *Game) Init(glctx gl.Context) {
 		g.tiles = append(g.tiles, ts)
 	}
 
+	g.sound = Sound{}
+	g.sound.Init()
+	g.sound.Load("blip", "sounds/test.wav")
+
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
 	g.mode.Init(g)
@@ -118,7 +123,8 @@ func (g *Game) Init(glctx gl.Context) {
 
 func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
-	//g.tex.Cleanup()
+	g.sound.Close()
+	g.tex.Cleanup()
 	// g.fps.Release()
 	// g.images.Release()
 }
@@ -141,10 +147,10 @@ func (g *Game) Draw() {
 			}
 			g.mode.Update(wMaxInvFPS)
 			if g.mode.started {
-				div := float32(5)
+				div := float32(4.5)
 				if g.visible/div != g.pulse {
 					if g.pulse < g.visible/div {
-						g.pulse += 0.005
+						g.pulse += 0.007
 					} else if g.pulse > g.visible/div {
 						g.pulse -= 0.007
 					}

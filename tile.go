@@ -127,6 +127,7 @@ func (t *TileSet) VerifyNumber() {
 	if num == t.Number {
 		t.Hide()
 		t.gh.mode.AddScore(t.Number)
+		t.gh.sound.Play("blip")
 	}
 }
 

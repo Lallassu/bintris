@@ -201,9 +201,9 @@ void main() {
           color2 += step(0.01, m_dist);
        	  color = c * vec4(color2,1.0);
 	      if (color.r == 0.0 && color.b == 0.0 && color.g == 0.0 && color.a > 0.0) {
-		    c.r = max(0.66, uPulse);
-			c.g = 0.0;
-			c.b = 0.0;
+			c.r += sin(uPulse*pos.y);
+			c.b += uPulse;
+			c.a = max(0.4, pos.y);
 	      	color = c;
 		  } else {
 		    c.g += sin(uTime/10.0)/10.0;
