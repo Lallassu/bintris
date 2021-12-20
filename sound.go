@@ -10,8 +10,6 @@ import (
 	"golang.org/x/mobile/exp/audio/al"
 )
 
-//	"golang.org/x/mobile/exp/audio/al"
-
 type Sound struct {
 	sources   []al.Source
 	buffers   []al.Buffer
@@ -59,6 +57,10 @@ func (s *Sound) Play(name string) {
 		return
 	}
 	id := s.sounds[name]
+	if len(s.sources) < id {
+		fmt.Printf("Error: Sound is not loaded? Len: %d Id: %d\n", len(s.sources), id)
+		return
+	}
 	al.PlaySources(s.sources[id])
 }
 
@@ -66,7 +68,6 @@ func (s *Sound) Close() {
 	if !s.initiated {
 		return
 	}
-	fmt.Printf("Closed audio device...\n")
 	for i := range s.sources {
 		al.DeleteSources(s.sources[i])
 	}
