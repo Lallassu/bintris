@@ -143,6 +143,7 @@ func (s *Scoreboard) Show(sc []Score) {
 
 		e := Effect(EffectNone)
 		if sc[i].NewScore {
+			s.gh.sound.Play("win")
 			e = EffectStatsBlink
 		}
 

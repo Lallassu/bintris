@@ -132,6 +132,8 @@ func (m *Mode) GameOver() {
 		time.Sleep(3 * time.Second)
 		m.gh.scoreboard.Add(m.Score, m.timeSecs)
 		m.gh.Reset()
+		time.Sleep(4 * time.Second)
+		m.gh.sound.Play("main")
 	}()
 }
 

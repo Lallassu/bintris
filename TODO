@@ -1,12 +1,13 @@
-- BG: Time + Score into texture of BG
-- 
 - Sounds
     - bg-sound
     - click-menu
     - game-over
     - flip-binary
     - score "money sound"
+- Gameplay
+    -> After 10 sec, bitrot?
 - optimize 
+    - AddText outside of textures.go (game?)
     - Texture instances
         -> menu
         -> gameplay
@@ -20,4 +21,4 @@ https://stackoverflow.com/questions/17224879/opengl-alpha-blending-issue-blendin
 
 
 Credits:
-- SketchyLogic (music + sfx) OpenGameart.org
+- SketchyLogic (music) OpenGameart.org

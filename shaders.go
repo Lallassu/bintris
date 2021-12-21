@@ -7,8 +7,8 @@ layout (location = 2) in vec2 effect;
 
 uniform highp float uTime;
 uniform highp float uPulse;
-//uniform highp float uTouchX;
-//uniform highp float uTouchY;
+uniform highp float uTouchX;
+uniform highp float uTouchY;
 
 out highp vec2 uv;
 out highp vec2 pos;
@@ -43,8 +43,8 @@ in mediump vec2 eff;
 uniform sampler2D image;
 uniform highp float uTime;
 uniform highp float uPulse;
-//uniform highp float uTouchX;
-//uniform highp float uTouchY;
+uniform highp float uTouchX;
+uniform highp float uTouchY;
 
 layout (location = 0) out highp vec4 color;
 
@@ -112,7 +112,7 @@ void main() {
     } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);
        vec2 st = gl_FragCoord.xy/u_resolution.xy*3.;
-       //st += st * abs(sin(uTime*0.1)*3.0);
+       //st += st * abs(sin(uTime*0.5)*3.0);
        vec3 c = vec3(0.0);
 
        vec2 q = vec2(0.);
@@ -142,7 +142,8 @@ void main() {
 		float dy = distance(pos2.y, -0.05);
 		if (eff.x == 10.0) {
 			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.2-(dx/dy)-dy/2.0);
-			color.r += (1.2-(dx/dy)-dy);
+			color.r += (1.2-(dx/dy)-dy) + uTouchX/3.0;
+			color.b += (1.2-(dx/dy)-dy) + uTouchY/3.0;
 		} else {
 			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
 		}

@@ -19,22 +19,22 @@ const (
 )
 
 type Game struct {
-	visible float32
-	ids     int
-	pulse   float32
-	idLock  sync.Mutex
-	images  *glutil.Images
-	fps     *debug.FPS
-	glc     gl.Context
-	lastTS  time.Time
-	frameDt float64
-	elapsed float64
-	uTime   gl.Uniform
-	uPulse  gl.Uniform
-	//uTouchX    gl.Uniform
-	//uTouchY    gl.Uniform
-	//touchX     float32
-	//touchY     float32
+	visible    float32
+	ids        int
+	pulse      float32
+	idLock     sync.Mutex
+	images     *glutil.Images
+	fps        *debug.FPS
+	glc        gl.Context
+	lastTS     time.Time
+	frameDt    float64
+	elapsed    float64
+	uTime      gl.Uniform
+	uPulse     gl.Uniform
+	uTouchX    gl.Uniform
+	uTouchY    gl.Uniform
+	touchX     float32
+	touchY     float32
 	lastX      int
 	lastY      int
 	size       size.Event
@@ -69,8 +69,8 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
-	// g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
-	// g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
+	g.uTouchX = g.glc.GetUniformLocation(g.program, "uTouchX")
+	g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
 
 	rand.Seed(time.Now().Unix())
 
@@ -120,9 +120,9 @@ func (g *Game) Init(glctx gl.Context) {
 	g.sound.Load("click", "sounds/click.wav", al.FormatMono8, 11025)
 	g.sound.Load("tile", "sounds/tile.wav", al.FormatMono8, 11025)
 	g.sound.Load("blip", "sounds/beep.wav", al.FormatMono16, 9000)
-	//g.sound.Load("win", "sounds/win.wav")
+	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 18000)
 
-	//g.sound.Play("main")
+	g.sound.Play("main")
 
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
@@ -180,8 +180,8 @@ func (g *Game) Draw() {
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
 	g.glc.Uniform1f(g.uPulse, g.pulse)
-	// g.glc.Uniform1f(g.uTouchX, g.touchX)
-	// g.glc.Uniform1f(g.uTouchY, g.touchY)
+	g.glc.Uniform1f(g.uTouchX, g.touchX)
+	g.glc.Uniform1f(g.uTouchY, g.touchY)
 
 	g.tex.Draw()
 	g.tex.Update()
@@ -202,7 +202,6 @@ func (g *Game) Reset() {
 		g.tiles[i].Hide()
 	}
 
-	g.sound.Play("main")
 	g.mode.Hide()
 	g.bg.Hide()
 }
@@ -211,8 +210,8 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 	x /= float32(sz.WidthPx)
 	y /= float32(sz.HeightPx)
 	y = 1 - y
-	//g.touchX = x
-	//g.touchY = y
+	g.touchX = x
+	g.touchY = y
 
 	if time.Since(g.clicked) < time.Duration(150*time.Millisecond) {
 		return
