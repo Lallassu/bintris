@@ -13,19 +13,57 @@ func (s *HowToPlay) Init(g *Game) {
 
 	s.logo = s.gh.tex.AddText("how to play", 0.20, 0.8, 0.6, 0.05, 0.1, EffectMetaballs)
 	s.back = s.gh.tex.AddText("back", 0.385, 0.1, 0.6, 0.05, 0.05, EffectNone)
-	s.text = append(s.text, s.gh.tex.AddText("Binary - It is just about adding numbers.", 0.00, 0.75, 0.6, 0.02, 0.02, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("Each slot can have 2 values: 1 OR 0.", 0.05, 0.7, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Each row can have values between 1-15.", 0.05, 0.65, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Left slot is the most significant.", 0.05, 0.60, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Slot 1: Value 8 - left", 0.05, 0.55, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Slot 2: Value 4", 0.05, 0.50, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Slot 3: Value 2", 0.05, 0.45, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Slot 4: Value 1 - right", 0.05, 0.40, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Examples:", 0.05, 0.35, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("0 0 0 1 = 1   = 0 + 0 + 0 + 1", 0.1, 0.30, 0.6, 0.025, 0.025, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("1 0 0 0 = 8   = 8 + 0 + 0 + 0", 0.1, 0.27, 0.6, 0.025, 0.025, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("1 1 0 0 = 12  = 8 + 4 + 0 + 0", 0.1, 0.23, 0.6, 0.025, 0.025, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("1 1 1 1 = 15  = 8 + 4 + 2 + 1", 0.1, 0.20, 0.6, 0.025, 0.025, EffectStats)...)
+	s.text = append(s.text, s.gh.tex.AddText("Each slot can have 2 values: 1 OR 0", 0.05, 0.7, 0.6, 0.02, 0.02, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("Each row can have values between 1-15", 0.05, 0.65, 0.6, 0.02, 0.02, EffectNone)...)
+
+	// TBD: Rewrite this a bit more generic.
+	t1 := &Sprite{}
+	t1.Init(0.05, 0.45, 0.6, 0.9, 0.15, "tile", g)
+	g.AddObjects(t1)
+	t1.Hide()
+	s.text = append(s.text, t1)
+
+	t2 := &Sprite{}
+	t2.Init(0.08, 0.32, 0.6, 0.4, 0.05, "tile", g)
+	g.AddObjects(t2)
+	t2.Hide()
+	s.text = append(s.text, t2)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.12, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.22, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.32, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("1", 0.42, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("=", 0.50, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("1", 0.55, 0.33, 0.6, 0.025, 0.025, EffectNone)...)
+
+	t3 := &Sprite{}
+	t3.Init(0.08, 0.26, 0.6, 0.4, 0.05, "tile", g)
+	g.AddObjects(t3)
+	t3.Hide()
+	s.text = append(s.text, t3)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.12, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("1", 0.22, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.32, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.42, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("=", 0.50, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("4", 0.55, 0.27, 0.6, 0.025, 0.025, EffectNone)...)
+
+	t4 := &Sprite{}
+	t4.Init(0.08, 0.20, 0.6, 0.4, 0.05, "tile", g)
+	g.AddObjects(t4)
+	t4.Hide()
+	s.text = append(s.text, t4)
+	s.text = append(s.text, s.gh.tex.AddText("1", 0.12, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("1", 0.22, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.32, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("0", 0.42, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("=", 0.50, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+	s.text = append(s.text, s.gh.tex.AddText("12 [8+4]", 0.55, 0.21, 0.6, 0.025, 0.025, EffectNone)...)
+
+	s.text = append(s.text, s.gh.tex.AddText("Value 8", 0.07, 0.52, 0.6, 0.02, 0.02, EffectStats)...)
+	s.text = append(s.text, s.gh.tex.AddText("Value 4", 0.30, 0.52, 0.6, 0.02, 0.02, EffectStats)...)
+	s.text = append(s.text, s.gh.tex.AddText("Value 2", 0.52, 0.52, 0.6, 0.02, 0.02, EffectStats)...)
+	s.text = append(s.text, s.gh.tex.AddText("Value 1", 0.76, 0.52, 0.6, 0.02, 0.02, EffectStats)...)
+	s.text = append(s.text, s.gh.tex.AddText("Examples:", 0.05, 0.40, 0.6, 0.02, 0.02, EffectNone)...)
 
 	s.Hide()
 }

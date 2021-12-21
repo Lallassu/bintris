@@ -10,9 +10,9 @@ uniform highp float uPulse;
 //uniform highp float uTouchX;
 //uniform highp float uTouchY;
 
-out mediump vec2 uv;
-out mediump vec2 pos;
-out mediump vec2 pos2;
+out highp vec2 uv;
+out highp vec2 pos;
+out highp vec2 pos2;
 out mediump vec2 eff;
 
 void main() {
@@ -35,9 +35,9 @@ void main() {
 }
 `
 const fragmentShader = `#version 300 es
-in mediump vec2 uv;
-in mediump vec2 pos;
-in mediump vec2 pos2;
+in highp vec2 uv;
+in highp vec2 pos;
+in highp vec2 pos2;
 in mediump vec2 eff;
 
 uniform sampler2D image;

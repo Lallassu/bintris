@@ -52,6 +52,7 @@ type Game struct {
 	scoreboard Scoreboard
 	bg         *Sprite
 	backBg     *Sprite
+	menuBg     *Sprite
 	clicked    time.Time
 	sound      Sound
 }
@@ -92,6 +93,12 @@ func (g *Game) Init(glctx gl.Context) {
 	g.AddObjects(g.backBg)
 	g.backBg.ChangeEffect(EffectMenu)
 
+	g.menuBg = &Sprite{}
+	g.menuBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "menubg", g)
+	g.menuBg.dirty = true
+	g.AddObjects(g.menuBg)
+	g.menuBg.ChangeEffect(EffectNone)
+
 	g.bg = &Sprite{}
 	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
 	g.bg.ChangeEffect(EffectBg)
@@ -115,7 +122,7 @@ func (g *Game) Init(glctx gl.Context) {
 	g.sound.Load("blip", "sounds/beep.wav", al.FormatMono16, 9000)
 	//g.sound.Load("win", "sounds/win.wav")
 
-	g.sound.Play("main")
+	//g.sound.Play("main")
 
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
@@ -190,6 +197,7 @@ func (g *Game) GameOver() {
 func (g *Game) Reset() {
 	g.bg.ChangeEffect(EffectBg)
 	g.backBg.Show()
+	g.menuBg.Show()
 	for i := range g.tiles {
 		g.tiles[i].Hide()
 	}
