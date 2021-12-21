@@ -60,6 +60,7 @@ func (t *TileSet) SetSpeed(s float64) {
 }
 
 func (t *TileSet) Click(x, y float32) {
+	t.gh.sound.Play("click")
 	slot0 := 0
 	slot1 := 0
 	w := float32(0.732)
@@ -127,7 +128,7 @@ func (t *TileSet) VerifyNumber() {
 	if num == t.Number {
 		t.Hide()
 		t.gh.mode.AddScore(t.Number)
-		t.gh.sound.Play("blip")
+		t.gh.sound.Play("tile")
 	}
 }
 
@@ -164,6 +165,7 @@ func (t *TileSet) Update(dt float64) {
 }
 
 func (t *TileSet) GameOver() {
+	t.gh.sound.Play("gameover")
 	for i := range t.Sprites {
 		t.Sprites[i].ChangeEffect(EffectGameOver)
 	}

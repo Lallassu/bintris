@@ -26,7 +26,7 @@ func (s *Sound) Init() {
 	s.sounds = make(map[string]int)
 }
 
-func (s *Sound) Load(name, file string) {
+func (s *Sound) Load(name, file string, format uint32, hz int32) {
 	// So we still can play w/o audio
 	if !s.initiated {
 		return
@@ -48,7 +48,7 @@ func (s *Sound) Load(name, file string) {
 	id := len(s.buffers) - 1
 	s.sounds[name] = id
 
-	s.buffers[id].BufferData(al.FormatStereo16, data, 25000)
+	s.buffers[id].BufferData(format, data, hz)
 	s.sources[id].QueueBuffers(s.buffers[id])
 }
 
@@ -56,12 +56,36 @@ func (s *Sound) Play(name string) {
 	if !s.initiated {
 		return
 	}
-	id := s.sounds[name]
+
+	id, ok := s.sounds[name]
+	if !ok {
+		fmt.Printf("Sound %v not found\n", name)
+		return
+	}
+
 	if len(s.sources) < id {
 		fmt.Printf("Error: Sound is not loaded? Len: %d Id: %d\n", len(s.sources), id)
 		return
 	}
 	al.PlaySources(s.sources[id])
+}
+
+func (s *Sound) Stop(name string) {
+	if !s.initiated {
+		return
+	}
+
+	id, ok := s.sounds[name]
+	if !ok {
+		fmt.Printf("Sound %v not found\n", name)
+		return
+	}
+
+	if len(s.sources) < id {
+		fmt.Printf("Error: Sound is not loaded? Len: %d Id: %d\n", len(s.sources), id)
+		return
+	}
+	al.StopSources(s.sources[id])
 }
 
 func (s *Sound) Close() {

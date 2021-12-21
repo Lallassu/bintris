@@ -1,6 +1,13 @@
-- sounds (OpenAL)
+- Sounds
+    - bg-sound
+    - click-menu
+    - game-over
+    - flip-binary
+    - score "money sound"
 - optimize 
-
+    - Texture instances
+        -> menu
+        -> gameplay
 
 
 Optimize:
@@ -8,3 +15,7 @@ https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp
 
 Blending issue:
 https://stackoverflow.com/questions/17224879/opengl-alpha-blending-issue-blending-ignored-maybe
+
+
+Credits:
+- SketchyLogic (music + sfx) OpenGameart.org

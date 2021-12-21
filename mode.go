@@ -68,6 +68,7 @@ func (m *Mode) Start(gm GameMode) {
 	m.gameOver = false
 	m.timeRelease = startTimeRelease
 	m.gh.backBg.Hide()
+	m.gh.sound.Stop("main")
 }
 
 func (m *Mode) Hide() {

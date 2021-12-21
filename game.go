@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/mobile/event/size"
 	"golang.org/x/mobile/exp/app/debug"
+	"golang.org/x/mobile/exp/audio/al"
 	"golang.org/x/mobile/exp/gl/glutil"
 	"golang.org/x/mobile/gl"
 )
@@ -107,7 +108,14 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.sound = Sound{}
 	g.sound.Init()
-	g.sound.Load("blip", "sounds/test.wav")
+	g.sound.Load("main", "sounds/main.wav", al.FormatMono16, 9000)
+	g.sound.Load("gameover", "sounds/gameover.wav", al.FormatMono8, 11025)
+	g.sound.Load("click", "sounds/click.wav", al.FormatMono8, 11025)
+	g.sound.Load("tile", "sounds/tile.wav", al.FormatMono8, 11025)
+	g.sound.Load("blip", "sounds/beep.wav", al.FormatMono16, 9000)
+	//g.sound.Load("win", "sounds/win.wav")
+
+	g.sound.Play("main")
 
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
@@ -186,6 +194,7 @@ func (g *Game) Reset() {
 		g.tiles[i].Hide()
 	}
 
+	g.sound.Play("main")
 	g.mode.Hide()
 	g.bg.Hide()
 }
