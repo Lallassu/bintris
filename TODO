@@ -1,3 +1,13 @@
+- Sprite: Type
+    -> Play, Menu
+- Texture to own struct, only Texture.
+    -> Added to program once
+- glData as own struct for buffers + drawing
+  - Sprite adds to one or the other depending on type.
+  - Size depends on ID (
+- Play: Draw other buffers.
+
+
 - Sounds
     - bg-sound
     - click-menu
@@ -11,7 +21,6 @@
     - Texture instances
         -> menu
         -> gameplay
-
 
 Optimize:
 https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp

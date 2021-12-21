@@ -143,7 +143,7 @@ void main() {
 		if (eff.x == 10.0) {
 			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.2-(dx/dy)-dy/2.0);
 			color.r += (1.2-(dx/dy)-dy) + uTouchX/3.0;
-			color.b += (1.2-(dx/dy)-dy) + uTouchY/3.0;
+			color.b += (1.4-(dx/dy)-dy) + uTouchY/3.0;
 		} else {
 			color = vec4((f*f*f+.6*f*f+.5*f)*c,1.0);
 		}
