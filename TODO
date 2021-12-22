@@ -8,6 +8,9 @@
 - Play: Draw other buffers.
 
 
+- FSM for state changes
+
+- Loop sounds
 - Sounds
     - bg-sound
     - click-menu

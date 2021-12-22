@@ -7,6 +7,13 @@ import (
 	"golang.org/x/mobile/gl"
 )
 
+type SpriteType int
+
+const (
+	SpritePlay SpriteType = iota + 1
+	SpriteMenu
+)
+
 type Sprite struct {
 	gh          *Game
 	id          int
@@ -24,9 +31,10 @@ type Sprite struct {
 	dirty       bool
 	dirtyUvs    bool
 	dirtyEffect bool
+	sType       SpriteType
 }
 
-func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game) {
+func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game, sType SpriteType) {
 	s.gh = g
 	tex = strings.ToLower(tex)
 	s.fx = fx
@@ -34,10 +42,17 @@ func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game) {
 	s.tx = tx
 	s.ty = ty
 	s.z = z
-	s.id = s.gh.NewID()
+	s.sType = sType
 
 	s.Texture = s.gh.tex.Types[tex]
-	s.gh.tex.AddSprite(s)
+	switch sType {
+	case SpriteMenu:
+		s.id = s.gh.NewMenuID()
+		s.gh.glMenu.AddSprite(s)
+	case SpritePlay:
+		s.id = s.gh.NewPlayID()
+		s.gh.glPlay.AddSprite(s)
+	}
 	s.dirty = true
 }
 

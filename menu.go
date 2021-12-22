@@ -20,12 +20,12 @@ func (m *Menu) Init(g *Game) {
 	m.gh = g
 
 	offsetX := float32(0.02)
-	m.logo = m.gh.tex.AddText("bintris", 0.14, 0.75, 0.6, 0.1, 0.19, EffectMetaballs)
-	m.start = m.gh.tex.AddText("start", 0.34+offsetX, 0.65, 0.6, 0.05, 0.05, EffectNone)
-	m.how = m.gh.tex.AddText("Rules", 0.34+offsetX, 0.58, 0.6, 0.05, 0.05, EffectNone)
-	m.scoreBoard = m.gh.tex.AddText("Score", 0.34+offsetX, 0.51, 0.6, 0.05, 0.05, EffectNone)
-	m.about = m.gh.tex.AddText("about", 0.34+offsetX, 0.44, 0.6, 0.05, 0.05, EffectNone)
-	m.quit = m.gh.tex.AddText("quit", 0.365+offsetX, 0.27, 0.6, 0.05, 0.05, EffectNone)
+	m.logo = m.gh.tex.AddText("bintris", 0.14, 0.75, 0.6, 0.1, 0.19, EffectMetaballs, SpriteMenu)
+	m.start = m.gh.tex.AddText("start", 0.34+offsetX, 0.65, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
+	m.how = m.gh.tex.AddText("Rules", 0.34+offsetX, 0.58, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
+	m.scoreBoard = m.gh.tex.AddText("Score", 0.34+offsetX, 0.51, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
+	m.about = m.gh.tex.AddText("about", 0.34+offsetX, 0.44, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
+	m.quit = m.gh.tex.AddText("quit", 0.365+offsetX, 0.27, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
 
 	for i := range m.logo {
 		m.logo[i].ChangeEffect(EffectMetaballs)

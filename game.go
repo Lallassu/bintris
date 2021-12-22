@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"golang.org/x/mobile/event/size"
-	"golang.org/x/mobile/exp/app/debug"
 	"golang.org/x/mobile/exp/audio/al"
 	"golang.org/x/mobile/exp/gl/glutil"
 	"golang.org/x/mobile/gl"
@@ -20,11 +19,10 @@ const (
 
 type Game struct {
 	visible    float32
-	ids        int
+	playIds    int
+	menuIds    int
 	pulse      float32
 	idLock     sync.Mutex
-	images     *glutil.Images
-	fps        *debug.FPS
 	glc        gl.Context
 	lastTS     time.Time
 	frameDt    float64
@@ -55,6 +53,8 @@ type Game struct {
 	menuBg     *Sprite
 	clicked    time.Time
 	sound      Sound
+	glPlay     *GLData
+	glMenu     *GLData
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -66,6 +66,7 @@ func (g *Game) Init(glctx gl.Context) {
 		log.Printf("error creating GL program: %v", err)
 		return
 	}
+	g.glc.UseProgram(g.program)
 
 	g.uTime = g.glc.GetUniformLocation(g.program, "uTime")
 	g.uPulse = g.glc.GetUniformLocation(g.program, "uPulse")
@@ -73,6 +74,11 @@ func (g *Game) Init(glctx gl.Context) {
 	g.uTouchY = g.glc.GetUniformLocation(g.program, "uTouchY")
 
 	rand.Seed(time.Now().Unix())
+
+	g.glPlay = &GLData{}
+	g.glMenu = &GLData{}
+	g.glPlay.Init(g, 12000, SpritePlay)
+	g.glMenu.Init(g, 50000, SpriteMenu)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -88,28 +94,23 @@ func (g *Game) Init(glctx gl.Context) {
 	}
 
 	g.backBg = &Sprite{}
-	g.backBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "blank", g)
-	g.backBg.dirty = true
+	g.backBg.Init(0.0, 0.0, -0.0001, 1.0, 1.0, "blank", g, SpriteMenu)
 	g.AddObjects(g.backBg)
 	g.backBg.ChangeEffect(EffectMenu)
 
 	g.menuBg = &Sprite{}
-	g.menuBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "menubg", g)
-	g.menuBg.dirty = true
+	g.menuBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "menubg", g, SpriteMenu)
 	g.AddObjects(g.menuBg)
 	g.menuBg.ChangeEffect(EffectNone)
 
 	g.bg = &Sprite{}
-	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g)
+	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g, SpritePlay)
 	g.bg.ChangeEffect(EffectBg)
-	g.bg.dirty = true
 	g.AddObjects(g.bg)
-	g.bg.Hide()
 
 	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
 		ts.Init(4, i, g)
-		ts.Hide()
 		g.tiles = append(g.tiles, ts)
 	}
 
@@ -131,8 +132,8 @@ func (g *Game) Init(glctx gl.Context) {
 	g.howto.Init(g)
 	g.tex.Init()
 
-	g.images = glutil.NewImages(g.glc)
-	g.fps = debug.NewFPS(g.images)
+	g.glMenu.Enable()
+	g.menu.Show()
 	g.lastTS = time.Now()
 }
 
@@ -140,8 +141,6 @@ func (g *Game) Stop() {
 	g.glc.DeleteProgram(g.program)
 	g.sound.Close()
 	g.tex.Cleanup()
-	// g.fps.Release()
-	// g.images.Release()
 }
 
 func (g *Game) Draw() {
@@ -179,12 +178,16 @@ func (g *Game) Draw() {
 	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
-	g.glc.Uniform1f(g.uPulse, g.pulse)
 	g.glc.Uniform1f(g.uTouchX, g.touchX)
 	g.glc.Uniform1f(g.uTouchY, g.touchY)
-
-	g.tex.Draw()
-	g.tex.Update()
+	g.glc.Uniform1f(g.uPulse, g.pulse)
+	if g.mode.Started() {
+		g.glPlay.Draw()
+		g.glPlay.Update()
+	} else {
+		g.glMenu.Draw()
+		g.glMenu.Update()
+	}
 }
 
 func (g *Game) GameOver() {
@@ -251,10 +254,30 @@ func (g *Game) AddObjects(obj ...*Sprite) {
 	}
 }
 
-func (g *Game) NewID() int {
+func (g *Game) HideAll() {
+	for i := range g.objects {
+		g.objects[i].Hide()
+	}
+}
+
+func (g *Game) MarkAllDirty() {
+	for i := range g.objects {
+		g.objects[i].dirty = true
+	}
+}
+
+func (g *Game) NewMenuID() int {
 	g.idLock.Lock()
 	defer g.idLock.Unlock()
 
-	g.ids++
-	return g.ids - 1
+	g.menuIds++
+	return g.menuIds - 1
+}
+
+func (g *Game) NewPlayID() int {
+	g.idLock.Lock()
+	defer g.idLock.Unlock()
+
+	g.playIds++
+	return g.playIds - 1
 }

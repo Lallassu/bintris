@@ -11,17 +11,17 @@ type About struct {
 func (s *About) Init(g *Game) {
 	s.gh = g
 
-	s.logo = s.gh.tex.AddText("about", 0.37, 0.8, 0.6, 0.05, 0.1, EffectMetaballs)
-	s.back = s.gh.tex.AddText("back", 0.385, 0.1, 0.6, 0.05, 0.05, EffectNone)
-	s.text = append(s.text, s.gh.tex.AddText(" Author:", 0.05, 0.7, 0.6, 0.02, 0.02, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("Magnus Persson", 0.28, 0.7, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Version:", 0.05, 0.65, 0.6, 0.02, 0.02, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText(version, 0.28, 0.65, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText(" Source:", 0.05, 0.60, 0.6, 0.02, 0.02, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("github.com/lallassu/bintris", 0.28, 0.60, 0.6, 0.02, 0.02, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("Credits:", 0.05, 0.55, 0.6, 0.02, 0.02, EffectStats)...)
-	s.text = append(s.text, s.gh.tex.AddText("https://thebookofshaders.com", 0.1, 0.50, 0.6, 0.017, 0.017, EffectNone)...)
-	s.text = append(s.text, s.gh.tex.AddText("it is written in go!", 0.25, 0.20, 0.6, 0.02, 0.02, EffectStatsBlink)...)
+	s.logo = s.gh.tex.AddText("about", 0.37, 0.8, 0.6, 0.05, 0.1, EffectMetaballs, SpriteMenu)
+	s.back = s.gh.tex.AddText("back", 0.385, 0.1, 0.6, 0.05, 0.05, EffectNone, SpriteMenu)
+	s.text = append(s.text, s.gh.tex.AddText(" Author:", 0.05, 0.7, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("Magnus Persson", 0.28, 0.7, 0.6, 0.02, 0.02, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("Version:", 0.05, 0.65, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText(version, 0.28, 0.65, 0.6, 0.02, 0.02, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText(" Source:", 0.05, 0.60, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("github.com/lallassu/bintris", 0.28, 0.60, 0.6, 0.02, 0.02, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("Credits:", 0.05, 0.55, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("https://thebookofshaders.com", 0.1, 0.50, 0.6, 0.017, 0.017, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("it is written in go!", 0.25, 0.20, 0.6, 0.02, 0.02, EffectStatsBlink, SpriteMenu)...)
 
 	s.Hide()
 }

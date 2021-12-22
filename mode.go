@@ -44,17 +44,19 @@ func (m *Mode) Init(g *Game) {
 	m.gameOver = false
 	m.gh = g
 	m.Time = time.Now()
-	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver1)
-	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.35, 0.6, 0.1, 0.19, EffectGameOver2)
+	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver1, SpritePlay)
+	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.35, 0.6, 0.1, 0.19, EffectGameOver2, SpritePlay)
 
-	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currScoreTxt = g.tex.AddText("0     ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats)
-	m.time = g.tex.AddText("Time:", 0.54, 0.91, 0.1, 0.04, 0.055, EffectNone)
-	m.currTimeTxt = g.tex.AddText("0    ", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats)
+	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone, SpritePlay)
+	m.currScoreTxt = g.tex.AddText("0     ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats, SpritePlay)
+	m.time = g.tex.AddText("Time:", 0.54, 0.91, 0.1, 0.04, 0.055, EffectNone, SpritePlay)
+	m.currTimeTxt = g.tex.AddText("0    ", 0.77, 0.91, 0.1, 0.04, 0.055, EffectStats, SpritePlay)
 	m.Hide()
 }
 
 func (m *Mode) Start(gm GameMode) {
+	m.gh.glPlay.Enable()
+
 	m.Reset()
 	m.started = true
 	m.Type = gm
@@ -103,7 +105,6 @@ func (m *Mode) Hide() {
 
 func (m *Mode) GameOver() {
 	m.gameOver = true
-	m.started = false
 
 	for i := range m.gameOver1 {
 		m.gameOver1[i].Show()
@@ -130,6 +131,8 @@ func (m *Mode) GameOver() {
 
 	go func() {
 		time.Sleep(3 * time.Second)
+		m.started = false
+		m.gh.glMenu.Enable()
 		m.gh.scoreboard.Add(m.Score, m.timeSecs)
 		m.gh.Reset()
 		time.Sleep(4 * time.Second)
@@ -196,6 +199,12 @@ func (m *Mode) Update(dt float64) {
 	case GameModeNormal:
 		// Make sure not to pass max speed
 		m.Speed = math.Min(maxSpeed, 0.2+time.Since(m.Time).Seconds()/100)
+
+		/// TBD REMOVE
+		m.Speed = 1.0
+		m.timeRelease -= time.Millisecond * 10
+		///
+
 		c := 0
 		hidden := []*TileSet{}
 		for i := range m.gh.tiles {
