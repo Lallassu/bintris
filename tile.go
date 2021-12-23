@@ -39,7 +39,6 @@ func (t *TileSet) Init(size int, number int, g *Game) {
 	c.Init(0.04, 0.1, 0.5, 0.745, 0.1, "tile", g, SpritePlay)
 	c.ChangeEffect(EffectTileTop)
 	t.tile = c
-	g.AddObjects(c)
 
 	// 0.037 is just an offset for the actuall texture that is badly aligned :P
 	w := float32(0.732)

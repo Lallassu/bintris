@@ -143,7 +143,6 @@ func (t *Textures) AddText(txt string, fx, fy, pz, tx, ty float32, effect Effect
 		// 0.005 is for spacing between chars
 		s.fx += float32(i) * (tx + 0.005)
 		s.dirty = true
-		t.gh.AddObjects(&s)
 		s.ChangeEffect(effect)
 		obj = append(obj, &s)
 	}

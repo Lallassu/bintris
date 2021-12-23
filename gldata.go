@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"golang.org/x/mobile/gl"
@@ -56,7 +55,6 @@ func (g *GLData) Enable() {
 	g.gh.glc.EnableVertexAttribArray(g.vert)
 	g.gh.glc.EnableVertexAttribArray(g.uv)
 	g.gh.glc.EnableVertexAttribArray(g.ef)
-	fmt.Printf("LEN: %v (verts per obj: %v)\n", g.objCount, len(g.Vertices)/g.objCount)
 }
 
 func (g *GLData) Cleanup() {
@@ -80,17 +78,24 @@ func (g *GLData) Update() {
 	uvUpdated := false
 	effectsUpdated := false
 	vertsUpdated := false
-	for i := range g.gh.objects {
-		if g.gh.objects[i].dirty && g.gh.objects[i].sType == g.sType {
-			g.UpdateObject(g.gh.objects[i])
+	var objects []*Sprite
+	if g.sType == SpritePlay {
+		objects = g.gh.objectsPlay
+	} else {
+		objects = g.gh.objectsMenu
+	}
+
+	for i := range objects {
+		if objects[i].dirty && objects[i].sType == g.sType {
+			g.UpdateObject(objects[i])
 			vertsUpdated = true
 		}
-		if g.gh.objects[i].dirtyUvs && g.gh.objects[i].sType == g.sType {
-			g.UpdateUV(g.gh.objects[i])
+		if objects[i].dirtyUvs && objects[i].sType == g.sType {
+			g.UpdateUV(objects[i])
 			uvUpdated = true
 		}
-		if g.gh.objects[i].dirtyEffect && g.gh.objects[i].sType == g.sType {
-			g.UpdateEffect(g.gh.objects[i])
+		if objects[i].dirtyEffect && objects[i].sType == g.sType {
+			g.UpdateEffect(objects[i])
 			effectsUpdated = true
 		}
 	}
@@ -115,10 +120,6 @@ func (g *GLData) Update() {
 }
 
 func (g *GLData) UpdateEffect(s *Sprite) {
-	if s.sType != g.sType {
-		fmt.Printf("WRONG TYPE!\n")
-		return
-	}
 	eff := math.Float32bits(float32(s.effect))
 	g.Effects[4*s.id*12] = byte(eff >> 0)
 	g.Effects[4*s.id*12+1] = byte(eff >> 8)
@@ -184,10 +185,6 @@ func (g *GLData) UpdateEffect(s *Sprite) {
 }
 
 func (g *GLData) UpdateObject(s *Sprite) {
-	if s.sType != g.sType {
-		fmt.Printf("WRONG TYPE!\n")
-		return
-	}
 	sx := math.Float32bits(s.fx)
 	sy := math.Float32bits(s.fy)
 	sxw := math.Float32bits(s.fx + s.tx)
@@ -260,10 +257,6 @@ func (g *GLData) UpdateObject(s *Sprite) {
 }
 
 func (g *GLData) UpdateUV(s *Sprite) {
-	if s.sType != g.sType {
-		fmt.Printf("WRONG TYPE!\n")
-		return
-	}
 	u1 := math.Float32bits(s.Texture.U1)
 	u2 := math.Float32bits(s.Texture.U2)
 	v1 := math.Float32bits(s.Texture.V1)

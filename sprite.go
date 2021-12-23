@@ -53,6 +53,7 @@ func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game, sType Spri
 		s.id = s.gh.NewPlayID()
 		s.gh.glPlay.AddSprite(s)
 	}
+	s.gh.AddObjects(sType, s)
 	s.dirty = true
 }
 

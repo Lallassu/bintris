@@ -18,43 +18,44 @@ const (
 )
 
 type Game struct {
-	visible    float32
-	playIds    int
-	menuIds    int
-	pulse      float32
-	idLock     sync.Mutex
-	glc        gl.Context
-	lastTS     time.Time
-	frameDt    float64
-	elapsed    float64
-	uTime      gl.Uniform
-	uPulse     gl.Uniform
-	uTouchX    gl.Uniform
-	uTouchY    gl.Uniform
-	touchX     float32
-	touchY     float32
-	lastX      int
-	lastY      int
-	size       size.Event
-	sizePrev   size.Event
-	objects    []*Sprite
-	program    gl.Program
-	projf      []float32
-	viewf      []float32
-	tex        Textures
-	tiles      []TileSet
-	mode       Mode
-	about      About
-	howto      HowToPlay
-	menu       Menu
-	scoreboard Scoreboard
-	bg         *Sprite
-	backBg     *Sprite
-	menuBg     *Sprite
-	clicked    time.Time
-	sound      Sound
-	glPlay     *GLData
-	glMenu     *GLData
+	visible     float32
+	playIds     int
+	menuIds     int
+	pulse       float32
+	idLock      sync.Mutex
+	glc         gl.Context
+	lastTS      time.Time
+	frameDt     float64
+	elapsed     float64
+	uTime       gl.Uniform
+	uPulse      gl.Uniform
+	uTouchX     gl.Uniform
+	uTouchY     gl.Uniform
+	touchX      float32
+	touchY      float32
+	lastX       int
+	lastY       int
+	size        size.Event
+	sizePrev    size.Event
+	objectsMenu []*Sprite
+	objectsPlay []*Sprite
+	program     gl.Program
+	projf       []float32
+	viewf       []float32
+	tex         Textures
+	tiles       []TileSet
+	mode        Mode
+	about       About
+	howto       HowToPlay
+	menu        Menu
+	scoreboard  Scoreboard
+	bg          *Sprite
+	backBg      *Sprite
+	menuBg      *Sprite
+	clicked     time.Time
+	sound       Sound
+	glPlay      *GLData
+	glMenu      *GLData
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -77,8 +78,8 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.glPlay = &GLData{}
 	g.glMenu = &GLData{}
-	g.glPlay.Init(g, 12000, SpritePlay)
-	g.glMenu.Init(g, 50000, SpriteMenu)
+	g.glPlay.Init(g, 16000, SpritePlay)
+	g.glMenu.Init(g, 55000, SpriteMenu)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -95,18 +96,15 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.backBg = &Sprite{}
 	g.backBg.Init(0.0, 0.0, -0.0001, 1.0, 1.0, "blank", g, SpriteMenu)
-	g.AddObjects(g.backBg)
 	g.backBg.ChangeEffect(EffectMenu)
 
 	g.menuBg = &Sprite{}
 	g.menuBg.Init(0.0, 0.0, -0.001, 1.0, 1.0, "menubg", g, SpriteMenu)
-	g.AddObjects(g.menuBg)
 	g.menuBg.ChangeEffect(EffectNone)
 
 	g.bg = &Sprite{}
 	g.bg.Init(0.0, 0.0, 0, 1.0, 1.0, "bg", g, SpritePlay)
 	g.bg.ChangeEffect(EffectBg)
-	g.AddObjects(g.bg)
 
 	for i := 1; i <= 15; i++ {
 		ts := TileSet{}
@@ -178,13 +176,13 @@ func (g *Game) Draw() {
 	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
-	g.glc.Uniform1f(g.uTouchX, g.touchX)
-	g.glc.Uniform1f(g.uTouchY, g.touchY)
-	g.glc.Uniform1f(g.uPulse, g.pulse)
 	if g.mode.Started() {
+		g.glc.Uniform1f(g.uPulse, g.pulse)
 		g.glPlay.Draw()
 		g.glPlay.Update()
 	} else {
+		g.glc.Uniform1f(g.uTouchX, g.touchX)
+		g.glc.Uniform1f(g.uTouchY, g.touchY)
 		g.glMenu.Draw()
 		g.glMenu.Update()
 	}
@@ -248,21 +246,22 @@ func (g *Game) Click(sz size.Event, x, y float32) {
 	}
 }
 
-func (g *Game) AddObjects(obj ...*Sprite) {
+func (g *Game) AddObjects(sType SpriteType, obj ...*Sprite) {
 	for i := range obj {
-		g.objects = append(g.objects, obj[i])
+		if sType == SpritePlay {
+			g.objectsPlay = append(g.objectsPlay, obj[i])
+		} else {
+			g.objectsMenu = append(g.objectsMenu, obj[i])
+		}
 	}
 }
 
 func (g *Game) HideAll() {
-	for i := range g.objects {
-		g.objects[i].Hide()
+	for i := range g.objectsPlay {
+		g.objectsPlay[i].Hide()
 	}
-}
-
-func (g *Game) MarkAllDirty() {
-	for i := range g.objects {
-		g.objects[i].dirty = true
+	for i := range g.objectsMenu {
+		g.objectsMenu[i].Hide()
 	}
 }
 

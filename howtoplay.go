@@ -19,13 +19,11 @@ func (s *HowToPlay) Init(g *Game) {
 	// TBD: Rewrite this a bit more generic.
 	t1 := &Sprite{}
 	t1.Init(0.05, 0.45, 0.6, 0.9, 0.15, "tile", g, SpriteMenu)
-	g.AddObjects(t1)
 	t1.Hide()
 	s.text = append(s.text, t1)
 
 	t2 := &Sprite{}
 	t2.Init(0.08, 0.32, 0.6, 0.4, 0.05, "tile", g, SpriteMenu)
-	g.AddObjects(t2)
 	t2.Hide()
 	s.text = append(s.text, t2)
 	s.text = append(s.text, s.gh.tex.AddText("0", 0.12, 0.33, 0.6, 0.025, 0.025, EffectNone, SpriteMenu)...)
@@ -37,7 +35,6 @@ func (s *HowToPlay) Init(g *Game) {
 
 	t3 := &Sprite{}
 	t3.Init(0.08, 0.26, 0.6, 0.4, 0.05, "tile", g, SpriteMenu)
-	g.AddObjects(t3)
 	t3.Hide()
 	s.text = append(s.text, t3)
 	s.text = append(s.text, s.gh.tex.AddText("0", 0.12, 0.27, 0.6, 0.025, 0.025, EffectNone, SpriteMenu)...)
@@ -49,7 +46,6 @@ func (s *HowToPlay) Init(g *Game) {
 
 	t4 := &Sprite{}
 	t4.Init(0.08, 0.20, 0.6, 0.4, 0.05, "tile", g, SpriteMenu)
-	g.AddObjects(t4)
 	t4.Hide()
 	s.text = append(s.text, t4)
 	s.text = append(s.text, s.gh.tex.AddText("1", 0.12, 0.21, 0.6, 0.025, 0.025, EffectNone, SpriteMenu)...)
