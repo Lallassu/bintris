@@ -25,7 +25,7 @@ type TileSet struct {
 
 func (t *TileSet) Init(size int, number int, g *Game) {
 	t.gh = g
-	t.id = g.NewPlayID()
+	t.id = g.NewTileID()
 	t.Speed = float64(g.size.HeightPx / 5)
 	t.Number = number
 	t.Size = size

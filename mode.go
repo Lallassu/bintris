@@ -55,7 +55,7 @@ func (m *Mode) Init(g *Game) {
 }
 
 func (m *Mode) Start(gm GameMode) {
-	m.gh.glPlay.Enable()
+	m.gh.glData.Enable(SpritePlay)
 
 	m.Reset()
 	m.started = true
@@ -132,7 +132,8 @@ func (m *Mode) GameOver() {
 	go func() {
 		time.Sleep(3 * time.Second)
 		m.started = false
-		m.gh.glMenu.Enable()
+		m.Hide()
+		m.gh.glData.Enable(SpriteMenu)
 		m.gh.scoreboard.Add(m.Score, m.timeSecs)
 		m.gh.Reset()
 		time.Sleep(4 * time.Second)
@@ -199,11 +200,6 @@ func (m *Mode) Update(dt float64) {
 	case GameModeNormal:
 		// Make sure not to pass max speed
 		m.Speed = math.Min(maxSpeed, 0.2+time.Since(m.Time).Seconds()/100)
-
-		/// TBD REMOVE
-		m.Speed = 1.0
-		m.timeRelease -= time.Millisecond * 10
-		///
 
 		c := 0
 		hidden := []*TileSet{}

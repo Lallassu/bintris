@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -54,8 +55,8 @@ type Game struct {
 	menuBg      *Sprite
 	clicked     time.Time
 	sound       Sound
-	glPlay      *GLData
-	glMenu      *GLData
+	glData      *GLData
+	tileIds     int
 }
 
 func (g *Game) Init(glctx gl.Context) {
@@ -76,10 +77,9 @@ func (g *Game) Init(glctx gl.Context) {
 
 	rand.Seed(time.Now().Unix())
 
-	g.glPlay = &GLData{}
-	g.glMenu = &GLData{}
-	g.glPlay.Init(g, 16000, SpritePlay)
-	g.glMenu.Init(g, 55000, SpriteMenu)
+	g.playIds = 677
+	g.glData = &GLData{}
+	g.glData.Init(g, 42500)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -130,9 +130,11 @@ func (g *Game) Init(glctx gl.Context) {
 	g.howto.Init(g)
 	g.tex.Init()
 
-	g.glMenu.Enable()
+	g.glData.Enable(SpriteMenu)
 	g.menu.Show()
 	g.lastTS = time.Now()
+
+	fmt.Printf("Menu: %v, Play: %v\n", g.menuIds, g.playIds)
 }
 
 func (g *Game) Stop() {
@@ -176,16 +178,11 @@ func (g *Game) Draw() {
 	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
-	if g.mode.Started() {
-		g.glc.Uniform1f(g.uPulse, g.pulse)
-		g.glPlay.Draw()
-		g.glPlay.Update()
-	} else {
-		g.glc.Uniform1f(g.uTouchX, g.touchX)
-		g.glc.Uniform1f(g.uTouchY, g.touchY)
-		g.glMenu.Draw()
-		g.glMenu.Update()
-	}
+	g.glc.Uniform1f(g.uPulse, g.pulse)
+	g.glc.Uniform1f(g.uTouchX, g.touchX)
+	g.glc.Uniform1f(g.uTouchY, g.touchY)
+	g.glData.Draw()
+	g.glData.Update(g.glData.sType)
 }
 
 func (g *Game) GameOver() {
@@ -279,4 +276,12 @@ func (g *Game) NewPlayID() int {
 
 	g.playIds++
 	return g.playIds - 1
+}
+
+func (g *Game) NewTileID() int {
+	g.idLock.Lock()
+	defer g.idLock.Unlock()
+
+	g.tileIds++
+	return g.tileIds - 1
 }

@@ -17,13 +17,12 @@ type GLData struct {
 	ubo      gl.Buffer
 	ebo      gl.Buffer // Not element buffer, it's effect buffer ;)
 	gh       *Game
-	objCount int
 	sType    SpriteType
+	vertMenu int
 }
 
-func (g *GLData) Init(gh *Game, bufferSize int, sType SpriteType) {
+func (g *GLData) Init(gh *Game, bufferSize int) {
 	g.gh = gh
-	g.sType = sType
 
 	// TBD: Dynamic sizes?
 	g.Vertices = make([]byte, bufferSize)
@@ -37,9 +36,7 @@ func (g *GLData) Init(gh *Game, bufferSize int, sType SpriteType) {
 	g.vert = g.gh.glc.GetAttribLocation(g.gh.program, "vert")
 	g.uv = g.gh.glc.GetAttribLocation(g.gh.program, "uvs")
 	g.ef = g.gh.glc.GetAttribLocation(g.gh.program, "effect")
-}
 
-func (g *GLData) Enable() {
 	g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.vbo)
 	g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Vertices, gl.DYNAMIC_DRAW)
 	g.gh.glc.VertexAttribPointer(g.vert, 2, gl.FLOAT, false, 2*4, 0)
@@ -57,6 +54,16 @@ func (g *GLData) Enable() {
 	g.gh.glc.EnableVertexAttribArray(g.ef)
 }
 
+func (g *GLData) Enable(sType SpriteType) {
+	g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.vbo)
+	g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Vertices, gl.DYNAMIC_DRAW)
+	g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.ubo)
+	g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Uvs, gl.STATIC_DRAW)
+	g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.ebo)
+	g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Effects, gl.STATIC_DRAW)
+	g.sType = sType
+}
+
 func (g *GLData) Cleanup() {
 	g.gh.glc.DeleteBuffer(g.vbo)
 	g.gh.glc.DeleteBuffer(g.ubo)
@@ -64,37 +71,44 @@ func (g *GLData) Cleanup() {
 }
 
 func (g *GLData) AddSprite(s *Sprite) {
-	g.objCount++
+	if s.sType == SpriteMenu {
+		g.vertMenu += 6
+	}
+
 	g.UpdateObject(s)
 	g.UpdateUV(s)
 	g.UpdateEffect(s)
 }
 
 func (g *GLData) Draw() {
-	g.gh.glc.DrawArrays(gl.TRIANGLES, 0, len(g.Vertices)/6)
+	if g.sType == SpritePlay {
+		g.gh.glc.DrawArrays(gl.TRIANGLES, g.vertMenu, len(g.Vertices))
+	} else {
+		g.gh.glc.DrawArrays(gl.TRIANGLES, 0, g.vertMenu)
+	}
 }
 
-func (g *GLData) Update() {
+func (g *GLData) Update(sType SpriteType) {
 	uvUpdated := false
 	effectsUpdated := false
 	vertsUpdated := false
 	var objects []*Sprite
-	if g.sType == SpritePlay {
+	if sType == SpritePlay {
 		objects = g.gh.objectsPlay
 	} else {
 		objects = g.gh.objectsMenu
 	}
 
 	for i := range objects {
-		if objects[i].dirty && objects[i].sType == g.sType {
+		if objects[i].dirty && objects[i].sType == sType {
 			g.UpdateObject(objects[i])
 			vertsUpdated = true
 		}
-		if objects[i].dirtyUvs && objects[i].sType == g.sType {
+		if objects[i].dirtyUvs && objects[i].sType == sType {
 			g.UpdateUV(objects[i])
 			uvUpdated = true
 		}
-		if objects[i].dirtyEffect && objects[i].sType == g.sType {
+		if objects[i].dirtyEffect && objects[i].sType == sType {
 			g.UpdateEffect(objects[i])
 			effectsUpdated = true
 		}
@@ -103,19 +117,16 @@ func (g *GLData) Update() {
 	if vertsUpdated {
 		g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.vbo)
 		g.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, g.Vertices)
-		//g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Vertices, gl.DYNAMIC_DRAW)
 	}
 
 	if uvUpdated {
 		g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.ubo)
 		g.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, g.Uvs)
-		//g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Uvs, gl.DYNAMIC_DRAW)
 	}
 
 	if effectsUpdated {
 		g.gh.glc.BindBuffer(gl.ARRAY_BUFFER, g.ebo)
 		g.gh.glc.BufferSubData(gl.ARRAY_BUFFER, 0, g.Effects)
-		//g.gh.glc.BufferData(gl.ARRAY_BUFFER, g.Effects, gl.DYNAMIC_DRAW)
 	}
 }
 

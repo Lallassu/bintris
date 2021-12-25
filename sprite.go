@@ -48,11 +48,10 @@ func (s *Sprite) Init(fx, fy, z, tx, ty float32, tex string, g *Game, sType Spri
 	switch sType {
 	case SpriteMenu:
 		s.id = s.gh.NewMenuID()
-		s.gh.glMenu.AddSprite(s)
 	case SpritePlay:
 		s.id = s.gh.NewPlayID()
-		s.gh.glPlay.AddSprite(s)
 	}
+	s.gh.glData.AddSprite(s)
 	s.gh.AddObjects(sType, s)
 	s.dirty = true
 }
