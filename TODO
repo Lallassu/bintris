@@ -1,3 +1,8 @@
+- Dynamic sprite size creation
+    -> VBO id placement.
+- Credits:
+    - SketchyLogic (music) OpenGameart.org
+
 - FSM for state changes
 
 - Loop sounds
