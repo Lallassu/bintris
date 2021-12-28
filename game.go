@@ -157,11 +157,6 @@ func (g *Game) Draw() {
 	for {
 		if g.frameDt >= wMaxInvFPS {
 			g.elapsed += wMaxInvFPS
-			for i := range g.tiles {
-				if !g.tiles[i].hidden {
-					g.tiles[i].Update(wMaxInvFPS)
-				}
-			}
 			g.mode.Update(wMaxInvFPS)
 			if g.mode.started {
 				div := float32(4.5)
@@ -181,9 +176,16 @@ func (g *Game) Draw() {
 		g.fps++
 	}
 
+	// Avoid flickering tiles
+	for i := range g.tiles {
+		if !g.tiles[i].hidden {
+			g.tiles[i].Update(dt) //wMaxInvFPS)
+		}
+	}
+
 	if g.fpsDt > time.Second {
 		g.fpsDt = 0
-		fmt.Printf("FPS: %v\n", g.fps)
+		fmt.Printf("XXX: FPS: %v\n", g.fps)
 		g.fps = 0
 	}
 
