@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="7"
+    android:versionName="2.0"
+    package="org.golang.todo.bintris">
+
+    <application
+        android:allowBackup="true"
+        android:label="Bintris"
+        android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+        <activity
+            android:name="go.lang.bintris.GoNativeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:label="Bintris"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="bintris"/>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

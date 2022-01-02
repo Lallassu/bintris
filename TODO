@@ -1,3 +1,8 @@
+- Copy android studio project to bintris.
+- Make build script.
+    - make android
+    - unpack + move (required?)
+
 - it is possible to set an app icon by creating assets/icon.png.
 
 - Dynamic sprite size creation
