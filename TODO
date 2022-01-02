@@ -1,26 +1,17 @@
-- Copy android studio project to bintris.
-- Make build script.
-    - make android
-    - unpack + move (required?)
+- Custom icon
+    - it is possible to set an app icon by creating assets/icon.png.
+- Score should be how many changed tiles required
+    4 -> 4 points, 1 -> 1 point 
+- After 60sec -> bitrot
+    - random change bit when added tile
 
-- it is possible to set an app icon by creating assets/icon.png.
-
-- Dynamic sprite size creation
-    -> VBO id placement.
 - Credits:
     - SketchyLogic (music) OpenGameart.org
 
-- FSM for state changes
+- Dynamic sprite size creation
+    -> VBO id placement.
 
-- Loop sounds
-- Sounds
-    - bg-sound
-    - click-menu
-    - game-over
-    - flip-binary
-    - score "money sound"
-- Gameplay
-    -> After 10 sec, bitrot?
+- FSM for state changes
 
 Optimize:
 https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp
@@ -29,5 +20,3 @@ Blending issue:
 https://stackoverflow.com/questions/17224879/opengl-alpha-blending-issue-blending-ignored-maybe
 
 
-Credits:
-- SketchyLogic (music) OpenGameart.org

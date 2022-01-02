@@ -39,7 +39,7 @@ func (s *Scoreboard) Init(g *Game) {
 	// Note: workaround as we don't have getFilesDir()
 
 	s.dir = os.Getenv("TMPDIR")
-	s.dir = "/tmp/" // TBD: REMOVE
+	//s.dir = "/tmp/" // local only
 
 	s.dir = strings.ReplaceAll(s.dir, "cache", "files")
 

@@ -1,4 +1,5 @@
-NDK=~/Android/Sdk/ndk/23.0.7599858
+#NDK=~/Android/Sdk/ndk/23.0.7599858
+NDK=~/Android/Sdk/ndk-bundle/
 AL_PATH=~/Downloads/openal/openal-soft/
 APK_TMP=/tmp/_bintris_apk_/
 ANDROID_HOME=~/Android/Sdk/
@@ -6,9 +7,10 @@ CMAKE_PATH=~/Downloads/cmake-3.22.1-linux-x86_64/bin
 GOMOBILE_PATH=~/go/src/golang.org/x/mobile/cmd/gomobile/gomobile
 
 # Make studio builds shared objects and places them in the AS project dir.
-studio: openal android
+studio: android
 	unzip bintris.apk -d $(APK_TMP)
 	cp -r $(APK_TMP)/lib/* AndroidProject/app/src/main/jniLibs/
+	rm -rf $(APK_TMP)
 
 openal:
 	PATH="$(CMAKE_PATH):$(PATH)" ANDROID_PLATFORM=android-23 ANDROID_HOME=$(ANDROID_HOME) ANDROID_NDK_HOME=$(NDK) $(GOMOBILE_PATH) init -openal $(AL_PATH)
