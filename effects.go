@@ -17,4 +17,5 @@ const (
 	EffectBg         = 9
 	EffectMenu       = 10
 	EffectMenuStill  = 11
+	EffectBitRot     = 12
 )

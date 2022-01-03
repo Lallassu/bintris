@@ -79,9 +79,9 @@ func (g *Game) Init(glctx gl.Context) {
 
 	rand.Seed(time.Now().Unix())
 
-	g.playIds = 677
+	g.playIds = 707
 	g.glData = &GLData{}
-	g.glData.Init(g, 42500)
+	g.glData.Init(g, 50000)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -122,6 +122,7 @@ func (g *Game) Init(glctx gl.Context) {
 	g.sound.Load("tile", "sounds/tile.wav", al.FormatMono8, 11025)
 	g.sound.Load("blip", "sounds/beep.wav", al.FormatMono16, 9000)
 	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 18000)
+	g.sound.Load("bitrot", "sounds/bitrot.wav", al.FormatMono16, 9000)
 
 	g.sound.Play("main")
 
@@ -148,7 +149,7 @@ func (g *Game) Stop() {
 func (g *Game) Draw() {
 	dt := time.Since(g.lastTS).Seconds()
 	g.frameDt += dt
-	g.fpsDt += time.Since(g.lastTS)
+	//g.fpsDt += time.Since(g.lastTS)
 	g.lastTS = time.Now()
 
 	g.glc.ClearColor(0.0, 0.0, 0.0, 0.0)
@@ -173,7 +174,7 @@ func (g *Game) Draw() {
 		}
 
 		g.frameDt -= wMaxInvFPS
-		g.fps++
+		//g.fps++
 	}
 
 	// Avoid flickering tiles
@@ -183,11 +184,11 @@ func (g *Game) Draw() {
 		}
 	}
 
-	if g.fpsDt > time.Second {
-		g.fpsDt = 0
-		fmt.Printf("XXX: FPS: %v\n", g.fps)
-		g.fps = 0
-	}
+	//	if g.fpsDt > time.Second {
+	//		g.fpsDt = 0
+	//		fmt.Printf("XXX: FPS: %v\n", g.fps)
+	//		g.fps = 0
+	//	}
 
 	g.glc.Uniform1f(g.uTime, float32(g.elapsed))
 	g.glc.Uniform1f(g.uPulse, g.pulse)

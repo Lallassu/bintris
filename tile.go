@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"strconv"
 )
 
@@ -100,7 +101,7 @@ func (t *TileSet) Hide() {
 	t.hidden = true
 }
 
-func (t *TileSet) Reset(offset float32) {
+func (t *TileSet) Reset(offset float32, bitRot bool) {
 	for i := range t.Sprites {
 		t.Sprites[i].Show()
 		t.Sprites[i].ChangeY(offset)
@@ -113,6 +114,32 @@ func (t *TileSet) Reset(offset float32) {
 		t.numberSlots[i].ChangeY(offset)
 		t.numberSlots[i].ChangeEffect(EffectNumber)
 	}
+
+	// If bitot, enable some of them by default.
+	if bitRot {
+		n := rand.Intn(4)
+		for i := 0; i < n; i++ {
+			pos := rand.Intn(6)
+			if pos%2 == 0 {
+				t.numberSlots[pos].Show()
+				t.numberSlots[pos+1].Hide()
+			} else {
+				t.numberSlots[pos].Show()
+				t.numberSlots[pos-1].Hide()
+			}
+			// make sure we don't set the bit for the actual number
+			num := 0
+			for i := 0; i < t.Size*2; i += 2 {
+				if t.numberSlots[i].hidden {
+					num |= (1 << (3 - (i / 2)))
+				}
+			}
+
+			if num == t.Number {
+				n++
+			}
+		}
+	}
 	t.hidden = false
 }
 
@@ -124,9 +151,17 @@ func (t *TileSet) VerifyNumber() {
 		}
 	}
 
+	// If correct number, add points based on how many bits are set.
+	// More bits => more flips => bigger reward
 	if num == t.Number {
 		t.Hide()
-		t.gh.mode.AddScore(t.Number)
+		n := t.Number
+		score := 0
+		for n > 0 {
+			score += n & 1
+			n >>= 1
+		}
+		t.gh.mode.AddScore(score)
 		t.gh.sound.Play("tile")
 	}
 }

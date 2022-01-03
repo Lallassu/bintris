@@ -20,7 +20,8 @@ func (s *About) Init(g *Game) {
 	s.text = append(s.text, s.gh.tex.AddText(" Source:", 0.05, 0.60, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
 	s.text = append(s.text, s.gh.tex.AddText("github.com/lallassu/bintris", 0.28, 0.60, 0.6, 0.02, 0.02, EffectNone, SpriteMenu)...)
 	s.text = append(s.text, s.gh.tex.AddText("Credits:", 0.05, 0.55, 0.6, 0.02, 0.02, EffectStats, SpriteMenu)...)
-	s.text = append(s.text, s.gh.tex.AddText("https://thebookofshaders.com", 0.1, 0.50, 0.6, 0.017, 0.017, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("thebookofshaders.com", 0.1, 0.50, 0.6, 0.017, 0.017, EffectNone, SpriteMenu)...)
+	s.text = append(s.text, s.gh.tex.AddText("opengameart.org [SketchyLogic - music]", 0.1, 0.45, 0.6, 0.017, 0.017, EffectNone, SpriteMenu)...)
 	s.text = append(s.text, s.gh.tex.AddText("it is written in go!", 0.25, 0.20, 0.6, 0.02, 0.02, EffectStatsBlink, SpriteMenu)...)
 
 	s.Hide()

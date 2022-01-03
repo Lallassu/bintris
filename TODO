@@ -1,12 +1,9 @@
-- Custom icon
-    - it is possible to set an app icon by creating assets/icon.png.
-- Score should be how many changed tiles required
-    4 -> 4 points, 1 -> 1 point 
-- After 60sec -> bitrot
-    - random change bit when added tile
+- Fix bitrot fade-out.
 
-- Credits:
-    - SketchyLogic (music) OpenGameart.org
+- Fix ticking sound:
+    -> Read header, get bytes of the buffer that 
+    contains the actual sound:
+    https://gamedev.stackexchange.com/questions/71571/how-do-i-prevent-clicking-at-the-end-of-each-sound-play-in-openal
 
 - Dynamic sprite size creation
     -> VBO id placement.

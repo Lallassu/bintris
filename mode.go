@@ -38,6 +38,8 @@ type Mode struct {
 	gameOver2    []*Sprite
 	hidden       bool
 	timeRelease  time.Duration
+	bitRot       bool
+	bitRotText   []*Sprite
 }
 
 func (m *Mode) Init(g *Game) {
@@ -46,6 +48,8 @@ func (m *Mode) Init(g *Game) {
 	m.Time = time.Now()
 	m.gameOver1 = m.gh.tex.AddText("GAME", 0.30, 0.55, 0.6, 0.1, 0.19, EffectGameOver1, SpritePlay)
 	m.gameOver2 = m.gh.tex.AddText("OVER", 0.30, 0.35, 0.6, 0.1, 0.19, EffectGameOver2, SpritePlay)
+
+	m.bitRotText = m.gh.tex.AddText("BITROT!", 0.15, 0.65, 0.6, 0.1, 0.19, EffectBitRot, SpritePlay)
 
 	m.score = g.tex.AddText("Score:", 0.05, 0.91, 0.1, 0.04, 0.055, EffectNone, SpritePlay)
 	m.currScoreTxt = g.tex.AddText("0     ", 0.33, 0.91, 0.1, 0.04, 0.055, EffectStats, SpritePlay)
@@ -94,6 +98,10 @@ func (m *Mode) Hide() {
 	for i := range m.currScoreTxt {
 		m.currScoreTxt[i].Hide()
 		m.currScoreTxt[i].ChangeEffect(EffectStats)
+	}
+
+	for i := range m.bitRotText {
+		m.bitRotText[i].Hide()
 	}
 
 	// Same len
@@ -185,6 +193,7 @@ func (m *Mode) Reset() {
 	m.Time = time.Now()
 	m.Speed = 0.1
 	m.Score = 0
+	m.bitRot = false
 	m.lastTile = time.Now()
 	m.Show()
 
@@ -201,6 +210,21 @@ func (m *Mode) Update(dt float64) {
 		// Make sure not to pass max speed
 		m.Speed = math.Min(maxSpeed, 0.2+time.Since(m.Time).Seconds()/100)
 
+		// Activate birot after a while
+		if time.Since(m.Time) > time.Second*1 && !m.bitRot {
+			m.bitRot = true
+			m.gh.sound.Play("bitrot")
+			for i := range m.bitRotText {
+				m.bitRotText[i].Show()
+			}
+			go func() {
+				time.Sleep(4 * time.Second)
+				for i := range m.bitRotText {
+					m.bitRotText[i].Hide()
+				}
+			}()
+		}
+
 		c := 0
 		hidden := []*TileSet{}
 		for i := range m.gh.tiles {
@@ -212,7 +236,7 @@ func (m *Mode) Update(dt float64) {
 		}
 		if len(hidden) > 0 && time.Since(m.lastTile).Seconds() > m.timeRelease.Seconds() || len(hidden) == 15 {
 			t := hidden[rand.Intn(len(hidden))]
-			t.Reset(1)
+			t.Reset(1, m.bitRot)
 			t.SetSpeed(m.Speed)
 			m.lastTile = time.Now()
 			if m.timeRelease > time.Millisecond*1500 {
