@@ -110,13 +110,17 @@ void main() {
 			color.r = 0.0;
 		}
     } else if(eff.x == 12.0) { // Bitrot
-		color.a -= cos(uTime)*(pos.y/cos(pos.x));
-		color.r -= sin(uTime)*(pos.y/cos(pos.y*uTime));
-
+		
+        vec2 u_resolution = vec2(1000.0, 1000.0);
+        vec2 st = gl_FragCoord.xy/u_resolution.xy*2.0;
+		color.r = 0.0;
+	    st *= 70.0;
+	    vec2 ipos = floor(st); 
+	    vec2 fpos = fract(st);  
+ 	   	color.a = max(0.2, fract(random(ipos)*tan(uTime)*10.0));
     } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);
        vec2 st = gl_FragCoord.xy/u_resolution.xy*3.;
-       //st += st * abs(sin(uTime*0.5)*3.0);
        vec3 c = vec3(0.0);
 
        vec2 q = vec2(0.);
