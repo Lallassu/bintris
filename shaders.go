@@ -110,8 +110,8 @@ void main() {
 			color.r = 0.0;
 		}
     } else if(eff.x == 12.0) { // Bitrot
-		color.r = 0.0;
-		color.a -= uTime-31.0;
+		color.a -= cos(uTime)*(pos.y/cos(pos.x));
+		color.r -= sin(uTime)*(pos.y/cos(pos.y*uTime));
 
     } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);

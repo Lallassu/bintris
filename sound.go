@@ -3,6 +3,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io"
 
@@ -43,8 +44,12 @@ func (s *Sound) Load(name, file string, format uint32, hz int32) {
 		panic(err)
 	}
 
-	// Skip headers (to avoid "playing" the header)
-	data = data[44:]
+	// Skip wav headers (to avoid "playing" the header)
+	// We could parse this correctly, by following:
+	// http://www.topherlee.com/software/pcm-tut-wavformat.html
+	// But this will do for now...
+	length := binary.LittleEndian.Uint32(data[40:44])
+	data = data[44:length]
 
 	s.sources = append(s.sources, al.GenSources(1)...)
 	s.buffers = append(s.buffers, al.GenBuffers(1)...)

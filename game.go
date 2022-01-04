@@ -120,8 +120,7 @@ func (g *Game) Init(glctx gl.Context) {
 	g.sound.Load("gameover", "sounds/gameover.wav", al.FormatMono8, 11025)
 	g.sound.Load("click", "sounds/click.wav", al.FormatMono8, 11025)
 	g.sound.Load("tile", "sounds/tile.wav", al.FormatMono8, 11025)
-	g.sound.Load("blip", "sounds/beep.wav", al.FormatMono16, 9000)
-	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 18000)
+	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 9000)
 	g.sound.Load("bitrot", "sounds/bitrot.wav", al.FormatMono16, 44100)
 
 	g.sound.Play("main")

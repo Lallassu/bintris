@@ -117,9 +117,9 @@ func (t *TileSet) Reset(offset float32, bitRot bool) {
 
 	// If bitot, enable some of them by default.
 	if bitRot {
-		n := rand.Intn(4)
+		n := rand.Intn(5)
 		for i := 0; i < n; i++ {
-			pos := rand.Intn(6)
+			pos := rand.Intn(8)
 			if pos%2 == 0 {
 				t.numberSlots[pos].Show()
 				t.numberSlots[pos+1].Hide()
