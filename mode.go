@@ -211,7 +211,7 @@ func (m *Mode) Update(dt float64) {
 		m.Speed = math.Min(maxSpeed, 0.2+time.Since(m.Time).Seconds()/100)
 
 		// Activate birot after a while
-		if time.Since(m.Time) > time.Second*1 && !m.bitRot {
+		if time.Since(m.Time) > time.Second*30 && !m.bitRot {
 			m.bitRot = true
 			m.gh.sound.Play("bitrot")
 			for i := range m.bitRotText {

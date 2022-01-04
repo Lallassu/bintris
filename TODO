@@ -1,10 +1,3 @@
-- Fix bitrot fade-out.
-
-- Fix ticking sound:
-    -> Read header, get bytes of the buffer that 
-    contains the actual sound:
-    https://gamedev.stackexchange.com/questions/71571/how-do-i-prevent-clicking-at-the-end-of-each-sound-play-in-openal
-
 - Dynamic sprite size creation
     -> VBO id placement.
 

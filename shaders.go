@@ -109,9 +109,10 @@ void main() {
 	 	if (color.r > 0.5 && color.g < 0.2) {
 			color.r = 0.0;
 		}
-    } else if(eff.x == 12.0) {
+    } else if(eff.x == 12.0) { // Bitrot
 		color.r = 0.0;
-		color.a -= uTime/10.0;
+		color.a -= uTime-31.0;
+
     } else if(eff.x == 10.0 || eff.x == 11.0) { // Menu bg
        vec2 u_resolution = vec2(1000.0, 1000.0);
        vec2 st = gl_FragCoord.xy/u_resolution.xy*3.;

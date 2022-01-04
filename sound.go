@@ -43,6 +43,9 @@ func (s *Sound) Load(name, file string, format uint32, hz int32) {
 		panic(err)
 	}
 
+	// Skip headers (to avoid "playing" the header)
+	data = data[44:]
+
 	s.sources = append(s.sources, al.GenSources(1)...)
 	s.buffers = append(s.buffers, al.GenBuffers(1)...)
 	id := len(s.buffers) - 1
