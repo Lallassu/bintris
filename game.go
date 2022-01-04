@@ -81,7 +81,7 @@ func (g *Game) Init(glctx gl.Context) {
 
 	g.playIds = 707
 	g.glData = &GLData{}
-	g.glData.Init(g, 50000)
+	g.glData.Init(g, 480000)
 
 	g.glc.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE)
 	g.glc.FrontFace(gl.CCW)
@@ -120,10 +120,8 @@ func (g *Game) Init(glctx gl.Context) {
 	g.sound.Load("gameover", "sounds/gameover.wav", al.FormatMono8, 11025)
 	g.sound.Load("click", "sounds/click.wav", al.FormatMono8, 11025)
 	g.sound.Load("tile", "sounds/tile.wav", al.FormatMono8, 11025)
-	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 9000)
 	g.sound.Load("bitrot", "sounds/bitrot.wav", al.FormatMono16, 44100)
-
-	g.sound.Play("main")
+	g.sound.Load("win", "sounds/win.wav", al.FormatMono16, 9000)
 
 	g.scoreboard.Init(g)
 	g.menu.Init(g)
@@ -137,6 +135,7 @@ func (g *Game) Init(glctx gl.Context) {
 	g.lastTS = time.Now()
 
 	fmt.Printf("Menu: %v, Play: %v\n", g.menuIds, g.playIds)
+	g.sound.Play("main")
 }
 
 func (g *Game) Stop() {
