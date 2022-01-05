@@ -1,10 +1,11 @@
-# Bintris
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/front.jpg)
+# 🎮 Bintris
+<img src=https://github.com/lallassu/bintris/raw/main/raw_assets/screenshots/front.jpg width=20%/> <img src=https://github.com/lallassu/bintris/raw/main/raw_assets/screenshots/play.jpg width=20%/> <img src=https://github.com/lallassu/bintris/raw/main/raw_assets/screenshots/bitrot.jpg width=20%/> <img src=https://github.com/lallassu/bintris/raw/main/raw_assets/screenshots/scoreboard.jpg width=20%/> 
 
-Please support by buying this game for almost nothing at Google PlayStore.
-Here:
+<h3>Bintris is a mobile game developed in Go!</h3>
 
-Or you can of course build it from source yourself.
+Support me by buying this game on Google PlayStore 💸:
+
+Or you can of course build it from source yourself (see instructions below 🪛).
 
 Enjoy!
 
@@ -14,16 +15,9 @@ bits represent the decimal number in the right column. When the bits represent t
 the line is cleared and points are gathered. Number of bits representing the decimal number is also how
 much points scored for the particular line.
 
-## Screenshots
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/play.jpg)
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/bitrot.jpg)
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/scoreboard.jpg)
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/howto.jpg)
+## Demo On Youtube
+[![Bintris](https://img.youtube.com/vi/nK01rQ2STPs/0.jpg)](https://www.youtube.com/watch?v=nK01rQ2STPs)
 
-## Demo
-![](https://raw.github.com/lallassu/bintris/master/raw_assets/screenshots/demo.mp4)
-
-<!--[![](https://raw.github.com/lallassu/gizmo/master/videopreview.png)](https://youtu.be/6zcQvsf4R4Q)-->
 
 ## About The Implementation
 The game is developed in Go and is implemented using OpenGL (graphics) and OpenAL (sound). Gomobile is used
@@ -79,17 +73,21 @@ Use `ldflags="-w" to remove debug information from the build (see Makefile)
 #### Changes Required to Gomobile Command
 Line 182 in `mobile/cmd/init.go`:
 ```go
-		cmd := exec.Command(cmake, "-S",
-			initOpenAL,
-			"-DANDROID_PLATFORM=23",
-			"-B", buildDir,
-			"-DCMAKE_TOOLCHAIN_FILE="+ndkRoot+"/build/cmake/android.toolchain.cmake",
-			"-DANDROID_HOST_TAG="+t.ClangPrefix())
+cmd := exec.Command(cmake, "-S",
+	initOpenAL,
+	"-DANDROID_PLATFORM=23",
+	"-B", buildDir,
+	"-DCMAKE_TOOLCHAIN_FILE="+ndkRoot+"/build/cmake/android.toolchain.cmake",
+	"-DANDROID_HOST_TAG="+t.ClangPrefix())
 ```
 
 ## ABD Debug
+View logs from connected phone (developer mode):
+`adb logs`
+
 Debug using:
 `adb shell pm list packages -f |grep bintris`
+
 Then download:
 `adb pull <path to bintris package base path>`
 
