@@ -1,4 +1,3 @@
-#NDK=~/Android/Sdk/ndk/23.0.7599858
 NDK=~/Android/Sdk/ndk-bundle/
 AL_PATH=~/Downloads/openal/openal-soft/
 APK_TMP=/tmp/_bintris_apk_/

@@ -48,6 +48,7 @@ func (s *Sound) Load(name, file string, format uint32, hz int32) {
 	// We could parse this correctly, by following:
 	// http://www.topherlee.com/software/pcm-tut-wavformat.html
 	// But this will do for now...
+	// Position 41-44 is specifying data length
 	length := binary.LittleEndian.Uint32(data[40:44])
 	data = data[44:length]
 
