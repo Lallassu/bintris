@@ -24,6 +24,8 @@ The game is developed in Go and is implemented using OpenGL (graphics) and OpenA
 to generate shared libraries that are used for the Android build. The game works just as good on Linux as on Android.
 
 It all started as an experiment with Gomobile and ended up as a fully working game, after a lot of frustration and gotchas! ;)
+With that said, the source is a bit of a mess and I have some stuff on my todo-list such as implementing full
+parsing of wav header, a simple FSM for the game etc.
 
 
 ## Building From Source
@@ -106,4 +108,7 @@ adb pull <path to bintris package base path>
 ```
 
 Too see what is included in the divided apk's.
+
+## License
+GNU General Public License v3.0 (see COPYING)
 
