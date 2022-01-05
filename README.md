@@ -34,6 +34,9 @@ go run .
 ```
 
 ## Build For Android
+First make sure you have built OpenAL (`make openal`). It's a bit complicated to make the OpenAL
+build work succesfully with current state of `gomobile`. I've added some notes below about this.
+
 1. Build bintris `make android`.
 2. Unzip bintris.apk
 3. Move lib to `jniLibs` in Android Studio project.
@@ -83,13 +86,19 @@ cmd := exec.Command(cmake, "-S",
 
 ## ABD Debug
 View logs from connected phone (developer mode):
-`adb logs`
+```
+adb logs
+```
 
 Debug using:
-`adb shell pm list packages -f |grep bintris`
+```
+adb shell pm list packages -f |grep bintris
+```
 
 Then download:
-`adb pull <path to bintris package base path>`
+```
+adb pull <path to bintris package base path>
+```
 
 Too see what is included in the divided apk's.
 
