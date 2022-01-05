@@ -1,0 +1,19 @@
+- Dynamic sprite size creation
+    -> VBO id placement.
+
+- FSM for state changes
+
+Optimize:
+https://github.com/tchayen/2d-opengl-rendering/blob/master/main.cpp
+
+Blending issue:
+https://stackoverflow.com/questions/17224879/opengl-alpha-blending-issue-blending-ignored-maybe
+
+--- Release ---
+- README for src repo + preview image
+- Youtube video
+- Cleanup the code 
+- Images (Screenshots)
+- Configure release in playstore + app 
+- Merge branches to master
+- Make repo public

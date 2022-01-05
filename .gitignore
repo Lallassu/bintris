@@ -3,13 +3,21 @@
 *.exe~
 *.dll
 *.so
+*.apk
 *.dylib
+bintris
+AndroidProject/app/src/main/jniLibs
+AndroidProject/app/debug
+AndroidProject/app/release
+AndroidProject/app/build
 
 # Test binary, built with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+*.apk
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
