@@ -37,10 +37,9 @@ go run .
 First make sure you have built OpenAL (`make openal`). It's a bit complicated to make the OpenAL
 build work succesfully with current state of `gomobile`. I've added some notes below about this.
 
-1. Build bintris `make android`.
-2. Unzip bintris.apk
-3. Move lib to `jniLibs` in Android Studio project.
-4. Build 
+```
+make android
+```
 
 ## Build For Android Studio
 The repository includes a very small Android Studio project that is used to build AAB package format for Google PlayStore. This
@@ -68,6 +67,12 @@ exp/audio/al/al_android.go:17
 ```c
  // All other code for reading ENV can be removed.
  *handle = dlopen("libopenal.so", RTLD_LAZY);
+```
+
+Build OpenAL:
+
+```
+make openal
 ```
 
 ### Go
