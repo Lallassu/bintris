@@ -5,7 +5,7 @@
 *.so
 *.apk
 *.dylib
-bintris
+./bintris
 AndroidProject/app/src/main/jniLibs
 AndroidProject/app/debug
 AndroidProject/app/release
