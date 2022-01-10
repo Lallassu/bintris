@@ -3,7 +3,7 @@
 
 <h3>Bintris is a mobile game developed in Go!</h3>
 
-Support me by buying this game on Google PlayStore 💸:
+Support me by buying this game on Google PlayStore 💸: https://play.google.com/store/apps/details?id=go.lang.bintris
 
 Or you can of course build it from source yourself (see instructions below 🪛).
 
