@@ -91,7 +91,7 @@ cmd := exec.Command(cmake, "-S",
 	"-DANDROID_HOST_TAG="+t.ClangPrefix())
 ```
 
-## ABD Debug
+## ADB Debug
 View logs from connected phone (developer mode):
 ```
 adb logs
