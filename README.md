@@ -30,8 +30,11 @@ parsing of wav header, a simple FSM for the game etc.
 
 ## Building From Source
 
-To just run the game on Linux, just issue the command:
+To just run the game on Linux, just issue the commands:
 ```bash
+# First remove line for modified version of gomobile
+sed -i '/nergal/d' go.mod
+# Then run the game
 go run .
 ```
 
